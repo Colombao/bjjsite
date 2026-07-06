@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CT Heishikan — Roger Santos Jiu-Jitsu | Jaraguá do Sul</title>
+<meta name="description" content="CT Heishikan — Roger Santos Brazilian Jiu-Jitsu em Jaraguá do Sul. Turmas para adultos e crianças. Disciplina, respeito, foco e confiança. Agende sua aula experimental.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Cormorant+Garamond:ital,wght@1,500;1,600&family=Archivo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0B0A08;
+  --panel:#141210;
+  --panel-2:#1C1915;
+  --gold:#D9A83C;
+  --gold-hi:#F0C566;
+  --gold-deep:#8F6B1E;
+  --bone:#F2EBDD;
+  --mute:#9C937F;
+  --line:rgba(217,168,60,.16);
+  --shadow:0 30px 80px rgba(0,0,0,.55);
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--ink);
+  color:var(--bone);
+  font-family:'Archivo',sans-serif;
+  font-weight:300;
+  line-height:1.7;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--gold);color:var(--ink)}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+
+/* ---------- Faixa de progresso (assinatura): branca → azul → roxa → marrom → preta ---------- */
+.belt-track{position:fixed;top:0;left:0;right:0;height:5px;z-index:1000;background:rgba(255,255,255,.05)}
+.belt-fill{
+  height:100%;width:0%;
+  background:linear-gradient(90deg,
+    #EDEAE2 0%, #EDEAE2 18%,
+    #2456A6 22%, #2456A6 40%,
+    #5B2D86 44%, #5B2D86 62%,
+    #6B4322 66%, #6B4322 84%,
+    #111 88%, #111 96%,
+    var(--gold) 97%, var(--gold) 100%);
+  background-size:100vw 100%;
+  transition:width .08s linear;
+}
+.belt-label{
+  position:fixed;top:12px;right:16px;z-index:1000;
+  font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--mute);
+  opacity:0;transition:opacity .4s;pointer-events:none;
+}
+.belt-label.show{opacity:.9}
+.belt-label b{color:var(--gold);font-weight:600}
+
+/* ---------- Navegação ---------- */
+nav{
+  position:fixed;top:5px;left:0;right:0;z-index:900;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.1rem clamp(1.2rem,4vw,3.5rem);
+  transition:background .4s,padding .4s,border-color .4s;
+  border-bottom:1px solid transparent;
+}
+nav.scrolled{
+  background:rgba(11,10,8,.88);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  padding:.7rem clamp(1.2rem,4vw,3.5rem);
+  border-bottom-color:var(--line);
+}
+.nav-brand{display:flex;align-items:center;gap:.75rem}
+.nav-brand img{width:44px;height:44px;border-radius:50%;border:1px solid var(--line)}
+.nav-brand .nb-txt{line-height:1.15}
+.nav-brand .nb-top{font-family:'Cinzel',serif;font-weight:700;font-size:.95rem;letter-spacing:.14em;color:var(--gold)}
+.nav-brand .nb-sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.85rem;color:var(--mute)}
+.nav-links{display:flex;gap:2.2rem;align-items:center}
+.nav-links a{
+  font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;font-weight:500;color:var(--bone);
+  position:relative;padding:.3rem 0;transition:color .3s;
+}
+.nav-links a::after{
+  content:'';position:absolute;left:0;bottom:0;width:100%;height:1px;
+  background:var(--gold);transform:scaleX(0);transform-origin:right;transition:transform .4s var(--ease);
+}
+.nav-links a:hover{color:var(--gold-hi)}
+.nav-links a:hover::after{transform:scaleX(1);transform-origin:left}
+.nav-cta{
+  border:1px solid var(--gold);color:var(--gold)!important;padding:.55rem 1.3rem!important;
+  transition:background .3s,color .3s!important;
+}
+.nav-cta::after{display:none}
+.nav-cta:hover{background:var(--gold);color:var(--ink)!important}
+.burger{display:none;background:none;border:none;cursor:pointer;z-index:1001;width:34px;height:26px;position:relative}
+.burger span{position:absolute;left:0;width:100%;height:2px;background:var(--gold);transition:.35s var(--ease)}
+.burger span:nth-child(1){top:2px}.burger span:nth-child(2){top:12px}.burger span:nth-child(3){top:22px}
+.burger.open span:nth-child(1){top:12px;transform:rotate(45deg)}
+.burger.open span:nth-child(2){opacity:0}
+.burger.open span:nth-child(3){top:12px;transform:rotate(-45deg)}
+
+/* ---------- Hero ---------- */
+.hero{position:relative;min-height:100svh;display:flex;align-items:flex-end;isolation:isolate}
+.hero-bg{position:absolute;inset:0;z-index:-2;overflow:hidden}
+.hero-bg img{
+  width:100%;height:100%;object-fit:cover;object-position:center 28%;
+  animation:heroZoom 12s var(--ease) forwards;filter:saturate(.92) contrast(1.04);
+}
+@keyframes heroZoom{from{transform:scale(1.12)}to{transform:scale(1)}}
+.hero-bg::after{
+  content:'';position:absolute;inset:0;
+  background:
+    linear-gradient(180deg,rgba(11,10,8,.62) 0%,rgba(11,10,8,.25) 34%,rgba(11,10,8,.55) 62%,rgba(11,10,8,.97) 100%),
+    radial-gradient(120% 90% at 78% 20%,transparent 30%,rgba(11,10,8,.55) 100%);
+}
+.hero-tri{
+  position:absolute;z-index:-1;left:50%;bottom:-6vh;transform:translateX(-50%);
+  width:min(88vmin,760px);height:min(88vmin,760px);opacity:0;
+  animation:triIn 2.2s 1s var(--ease) forwards;pointer-events:none;
+}
+@keyframes triIn{to{opacity:1}}
+.hero-tri svg{width:100%;height:100%;overflow:visible}
+.hero-tri path{
+  fill:none;stroke:url(#gTri);stroke-width:1.4;
+  stroke-dasharray:2400;stroke-dashoffset:2400;
+  animation:triDraw 3s 1.1s var(--ease) forwards;
+  filter:drop-shadow(0 0 14px rgba(217,168,60,.35));
+}
+@keyframes triDraw{to{stroke-dashoffset:0}}
+.hero-inner{
+  width:100%;max-width:1200px;margin:0 auto;
+  padding:0 clamp(1.4rem,5vw,3.5rem) clamp(4rem,9vh,7rem);
+}
+.hero-eyebrow{
+  display:flex;align-items:center;gap:1rem;margin-bottom:1.4rem;
+  opacity:0;animation:rise 1s .3s var(--ease) forwards;
+}
+.hero-eyebrow .rule{width:56px;height:1px;background:var(--gold)}
+.hero-eyebrow span{
+  font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15rem;color:var(--gold-hi);letter-spacing:.06em;
+}
+h1{
+  font-family:'Cinzel',serif;font-weight:800;
+  font-size:clamp(2.6rem,7.5vw,5.4rem);
+  line-height:1.02;letter-spacing:.015em;color:var(--bone);
+  text-shadow:0 4px 40px rgba(0,0,0,.6);
+}
+h1 .l1,h1 .l2{display:block;opacity:0;animation:rise 1.1s var(--ease) forwards}
+h1 .l1{animation-delay:.5s}
+h1 .l2{color:var(--gold);animation-delay:.68s;
+  background:linear-gradient(100deg,var(--gold-deep),var(--gold) 35%,var(--gold-hi) 55%,var(--gold) 75%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+.hero-sub{
+  max-width:560px;margin-top:1.5rem;font-size:1.05rem;color:#D8D0BF;font-weight:300;
+  opacity:0;animation:rise 1.1s .9s var(--ease) forwards;
+}
+.hero-actions{display:flex;gap:1rem;flex-wrap:wrap;margin-top:2.4rem;opacity:0;animation:rise 1.1s 1.1s var(--ease) forwards}
+@keyframes rise{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:translateY(0)}}
+.btn{
+  display:inline-flex;align-items:center;gap:.6rem;
+  font-family:'Archivo',sans-serif;font-weight:600;font-size:.78rem;
+  letter-spacing:.2em;text-transform:uppercase;
+  padding:1.05rem 2.1rem;position:relative;overflow:hidden;
+  transition:color .35s,border-color .35s,transform .35s var(--ease),box-shadow .35s;
+}
+.btn-gold{background:linear-gradient(120deg,var(--gold) 0%,var(--gold-hi) 50%,var(--gold) 100%);background-size:200% 100%;color:var(--ink);box-shadow:0 12px 34px rgba(217,168,60,.28)}
+.btn-gold:hover{background-position:100% 0;transform:translateY(-3px);box-shadow:0 18px 44px rgba(217,168,60,.4)}
+.btn-ghost{border:1px solid rgba(242,235,221,.35);color:var(--bone)}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold-hi);transform:translateY(-3px)}
+.hero-scroll{
+  position:absolute;bottom:1.6rem;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:.5rem;
+  font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--mute);
+  opacity:0;animation:rise 1s 1.8s var(--ease) forwards;
+}
+.hero-scroll::after{content:'';width:1px;height:44px;background:linear-gradient(180deg,var(--gold),transparent);animation:drip 2s infinite}
+@keyframes drip{0%{transform:scaleY(0);transform-origin:top}55%{transform:scaleY(1);transform-origin:top}56%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+/* ---------- Marquee ---------- */
+.marquee{
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  background:var(--panel);overflow:hidden;padding:1.1rem 0;position:relative;
+}
+.marquee-track{display:flex;width:max-content;animation:mq 30s linear infinite}
+.marquee:hover .marquee-track{animation-play-state:paused}
+@keyframes mq{to{transform:translateX(-50%)}}
+.mq-item{
+  display:flex;align-items:center;gap:2.6rem;padding-right:2.6rem;
+  font-family:'Cinzel',serif;font-weight:600;font-size:.85rem;letter-spacing:.34em;color:var(--mute);white-space:nowrap;
+}
+.mq-item i{width:7px;height:7px;background:var(--gold);transform:rotate(45deg);flex:none}
+.mq-item b{color:var(--gold);font-weight:700}
+
+/* ---------- Estrutura de seção ---------- */
+section{padding:clamp(5rem,10vw,8.5rem) clamp(1.4rem,5vw,3.5rem);position:relative}
+.wrap{max-width:1200px;margin:0 auto}
+.eyebrow{
+  display:flex;align-items:center;gap:.9rem;margin-bottom:1.1rem;
+  font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15rem;color:var(--gold);
+}
+.eyebrow::before{content:'';width:44px;height:1px;background:var(--gold)}
+h2{
+  font-family:'Cinzel',serif;font-weight:700;
+  font-size:clamp(1.9rem,4.4vw,3.1rem);line-height:1.12;letter-spacing:.01em;margin-bottom:1.4rem;
+}
+h2 em{font-style:normal;color:var(--gold)}
+.lead{color:#CFC7B4;max-width:640px}
+
+/* reveal on scroll */
+.rv{opacity:0;transform:translateY(34px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
+.rv.in{opacity:1;transform:none}
+.rv-d1{transition-delay:.12s}.rv-d2{transition-delay:.24s}.rv-d3{transition-delay:.36s}
+
+/* ---------- Sobre o Mestre ---------- */
+.mestre{background:radial-gradient(90% 70% at 15% 10%,rgba(217,168,60,.06),transparent 60%)}
+.mestre-grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:clamp(2.5rem,6vw,5.5rem);align-items:center}
+.mestre-figure{position:relative}
+.mestre-figure .frame{
+  position:relative;overflow:hidden;box-shadow:var(--shadow);
+}
+.mestre-figure .frame::after{content:'';position:absolute;inset:0;background:linear-gradient(200deg,transparent 55%,rgba(11,10,8,.5))}
+.mestre-figure img{width:100%;aspect-ratio:4/5;object-fit:cover;transition:transform 1.4s var(--ease)}
+.mestre-figure:hover img{transform:scale(1.045)}
+.mestre-figure .tri-badge{
+  position:absolute;right:-22px;bottom:-22px;width:110px;height:110px;
+  background:var(--ink);border:1px solid var(--line);display:grid;place-items:center;
+  box-shadow:var(--shadow);
+}
+.mestre-figure .tri-badge img{width:78%;height:78%;border-radius:50%;aspect-ratio:1;object-fit:cover}
+.mestre-figure .frame-edge{position:absolute;inset:0;border:1px solid var(--line);transform:translate(18px,18px);z-index:-1}
+.mestre-copy p{margin-bottom:1.15rem;color:#CFC7B4}
+.mestre-quote{
+  margin:1.8rem 0;padding-left:1.4rem;border-left:2px solid var(--gold);
+  font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.4rem;line-height:1.5;color:var(--bone);
+}
+.mestre-stats{display:flex;gap:2.6rem;margin-top:2.2rem;flex-wrap:wrap}
+.stat .num{font-family:'Cinzel',serif;font-weight:700;font-size:2.3rem;color:var(--gold);line-height:1}
+.stat .lbl{font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:var(--mute);margin-top:.45rem}
+
+/* ---------- Pilares ---------- */
+.pilares{background:var(--panel);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.pilar-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);margin-top:3rem}
+.pilar{background:var(--panel);padding:2.4rem 2rem;transition:background .5s}
+.pilar:hover{background:var(--panel-2)}
+.pilar .glyph{width:46px;height:46px;margin-bottom:1.4rem;position:relative}
+.pilar .glyph svg{width:100%;height:100%;stroke:var(--gold);fill:none;stroke-width:1.3}
+.pilar h3{font-family:'Cinzel',serif;font-size:1.02rem;font-weight:700;letter-spacing:.12em;margin-bottom:.7rem;color:var(--bone)}
+.pilar p{font-size:.92rem;color:var(--mute)}
+
+/* ---------- Programas ---------- */
+.prog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6rem;margin-top:3.4rem}
+.prog{
+  position:relative;overflow:hidden;background:var(--panel);border:1px solid var(--line);
+  min-height:520px;display:flex;flex-direction:column;justify-content:flex-end;
+  transition:transform .6s var(--ease),box-shadow .6s;
+}
+.prog:hover{transform:translateY(-8px);box-shadow:var(--shadow)}
+.prog .ph{position:absolute;inset:0}
+.prog .ph img{width:100%;height:100%;object-fit:cover;filter:saturate(.9);transition:transform 1.3s var(--ease)}
+.prog:hover .ph img{transform:scale(1.06)}
+.prog .ph::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,10,8,.15) 0%,rgba(11,10,8,.35) 45%,rgba(11,10,8,.95) 88%)}
+.prog-body{position:relative;padding:1.9rem 1.8rem}
+.prog-tag{
+  display:inline-block;font-size:.62rem;font-weight:600;letter-spacing:.26em;text-transform:uppercase;
+  color:var(--gold);border:1px solid var(--gold);padding:.35rem .8rem;margin-bottom:1rem;background:rgba(11,10,8,.55);backdrop-filter:blur(4px);
+}
+.prog h3{font-family:'Cinzel',serif;font-size:1.5rem;font-weight:700;margin-bottom:.55rem}
+.prog p{font-size:.93rem;color:#CFC7B4;max-width:34ch}
+.prog .prog-link{
+  display:inline-flex;align-items:center;gap:.5rem;margin-top:1.1rem;
+  font-size:.72rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-hi);
+}
+.prog .prog-link svg{transition:transform .35s var(--ease)}
+.prog:hover .prog-link svg{transform:translateX(6px)}
+
+/* ---------- Horários ---------- */
+.horarios{background:var(--panel)}
+.hor-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.6rem;margin-top:3rem}
+.hor-card{
+  border:1px solid var(--line);background:var(--ink);padding:2.4rem;position:relative;overflow:hidden;
+  transition:border-color .4s,transform .5s var(--ease);
+}
+.hor-card:hover{border-color:rgba(217,168,60,.45);transform:translateY(-5px)}
+.hor-card::before{
+  content:'';position:absolute;top:0;left:0;width:100%;height:3px;
+  background:linear-gradient(90deg,var(--gold),transparent 70%);
+}
+.hor-card h3{font-family:'Cinzel',serif;font-size:1.25rem;font-weight:700;letter-spacing:.08em;color:var(--gold);margin-bottom:.4rem}
+.hor-card .who{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--mute);font-size:1.05rem;margin-bottom:1.6rem}
+.hor-row{display:flex;justify-content:space-between;align-items:baseline;padding:.95rem 0;border-bottom:1px dashed rgba(217,168,60,.18)}
+.hor-row:last-of-type{border-bottom:none}
+.hor-row .dia{font-weight:500;font-size:.95rem;letter-spacing:.04em}
+.hor-row .hora{font-family:'Cinzel',serif;font-weight:600;color:var(--bone);letter-spacing:.06em}
+.hor-note{margin-top:2.2rem;display:flex;gap:.8rem;align-items:flex-start;font-size:.88rem;color:var(--mute)}
+.hor-note i{width:8px;height:8px;background:var(--gold);transform:rotate(45deg);margin-top:.45rem;flex:none}
+/* ---------- Galeria ---------- */
+.gal-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:230px;gap:1rem;margin-top:3.2rem;
+}
+.gal{position:relative;overflow:hidden;border:1px solid rgba(217,168,60,.1);cursor:pointer}
+.gal img{width:100%;height:100%;object-fit:cover;transition:transform 1.1s var(--ease),filter .6s}
+.gal:hover img{transform:scale(1.07)}
+.gal::after{
+  content:attr(data-cap);position:absolute;left:0;right:0;bottom:0;
+  padding:2.2rem 1.2rem .9rem;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--bone);
+  background:linear-gradient(180deg,transparent,rgba(11,10,8,.92));
+  opacity:0;transform:translateY(8px);transition:.5s var(--ease);
+}
+.gal:hover::after{opacity:1;transform:none}
+.gal.w2{grid-column:span 2}
+.gal.h2{grid-row:span 2}
+
+/* ---------- Loja (em breve) ---------- */
+.loja{
+  background:
+    radial-gradient(70% 100% at 85% 0%,rgba(217,168,60,.09),transparent 55%),
+    var(--panel);
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  text-align:center;
+}
+.loja .wrap{max-width:760px}
+.loja .kimono-ico{width:64px;height:64px;margin:0 auto 1.8rem;stroke:var(--gold);fill:none;stroke-width:1.2}
+.loja h2{margin-bottom:1rem}
+.loja p{color:var(--mute);margin-bottom:2.4rem}
+.loja-form{display:flex;gap:.8rem;max-width:480px;margin:0 auto;flex-wrap:wrap;justify-content:center}
+.loja-form input{
+  flex:1;min-width:240px;background:var(--ink);border:1px solid var(--line);color:var(--bone);
+  padding:1rem 1.2rem;font-family:'Archivo';font-size:.9rem;outline:none;transition:border-color .3s;
+}
+.loja-form input:focus{border-color:var(--gold)}
+.loja-form input::placeholder{color:#6E6757}
+
+/* ---------- Contato / Local ---------- */
+.contato-grid{display:grid;grid-template-columns:minmax(0,6fr) minmax(0,5fr);gap:clamp(2.5rem,6vw,5rem);align-items:center}
+.cont-item{display:flex;gap:1.2rem;padding:1.35rem 0;border-bottom:1px solid rgba(217,168,60,.14);align-items:flex-start}
+.cont-item:last-child{border-bottom:none}
+.cont-item .ico{width:42px;height:42px;flex:none;border:1px solid var(--line);display:grid;place-items:center}
+.cont-item .ico svg{width:19px;height:19px;stroke:var(--gold);fill:none;stroke-width:1.6}
+.cont-item .lbl{font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;color:var(--mute);margin-bottom:.2rem}
+.cont-item .val{font-size:1.02rem;font-weight:400;color:var(--bone)}
+.cont-item .val:hover{color:var(--gold-hi)}
+.cont-figure{position:relative}
+.cont-figure img{width:100%;aspect-ratio:4/5;object-fit:cover;object-position:top;box-shadow:var(--shadow)}
+.cont-figure::after{content:'';position:absolute;inset:0;border:1px solid var(--line);transform:translate(-16px,16px);z-index:-1}
+
+/* ---------- CTA final ---------- */
+.cta-final{
+  text-align:center;position:relative;overflow:hidden;
+  background:linear-gradient(180deg,var(--ink) 0%,#151208 100%);
+}
+.cta-final .tri-bg{
+  position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);
+  width:min(120vmin,900px);opacity:.07;pointer-events:none;
+}
+.cta-final .tri-bg svg{width:100%}
+.cta-final h2{font-size:clamp(2rem,5.4vw,3.6rem)}
+.cta-final .lead{margin:1.2rem auto 2.6rem}
+
+/* ---------- Footer ---------- */
+footer{border-top:1px solid var(--line);background:#080706;padding:3.2rem clamp(1.4rem,5vw,3.5rem) 2rem}
+.foot-grid{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;gap:2rem;flex-wrap:wrap;align-items:center}
+.foot-brand{display:flex;align-items:center;gap:.9rem}
+.foot-brand img{width:52px;height:52px;border-radius:50%;border:1px solid var(--line)}
+.foot-brand .fb-top{font-family:'Cinzel',serif;font-weight:700;letter-spacing:.14em;color:var(--gold)}
+.foot-brand .fb-sub{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--mute);font-size:.9rem}
+.foot-social{display:flex;gap:1rem}
+.foot-social a{
+  width:42px;height:42px;border:1px solid var(--line);display:grid;place-items:center;transition:.35s;
+}
+.foot-social a svg{width:18px;height:18px;stroke:var(--bone);fill:none;stroke-width:1.6;transition:.35s}
+.foot-social a:hover{border-color:var(--gold);transform:translateY(-4px)}
+.foot-social a:hover svg{stroke:var(--gold)}
+.foot-base{max-width:1200px;margin:2.4rem auto 0;padding-top:1.6rem;border-top:1px solid rgba(217,168,60,.1);display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;font-size:.72rem;color:#6E6757;letter-spacing:.06em}
+
+/* ---------- WhatsApp flutuante ---------- */
+.wa-float{
+  position:fixed;right:1.4rem;bottom:1.4rem;z-index:950;
+  width:58px;height:58px;border-radius:50%;
+  background:linear-gradient(135deg,#22c15e,#128C7E);display:grid;place-items:center;
+  box-shadow:0 14px 34px rgba(18,140,126,.45);
+  transition:transform .4s var(--ease),box-shadow .4s;
+  animation:waPulse 2.6s infinite;
+}
+@keyframes waPulse{0%,100%{box-shadow:0 14px 34px rgba(18,140,126,.45),0 0 0 0 rgba(34,193,94,.4)}50%{box-shadow:0 14px 34px rgba(18,140,126,.45),0 0 0 14px rgba(34,193,94,0)}}
+.wa-float:hover{transform:scale(1.1) translateY(-3px)}
+.wa-float svg{width:28px;height:28px;fill:#fff}
+
+/* ---------- Responsivo ---------- */
+@media(max-width:1020px){
+  .pilar-grid{grid-template-columns:repeat(2,1fr)}
+  .prog-grid{grid-template-columns:1fr;max-width:560px;margin-left:auto;margin-right:auto}
+  .prog{min-height:440px}
+  .gal-grid{grid-template-columns:repeat(2,1fr);grid-auto-rows:200px}
+}
+@media(max-width:880px){
+  .nav-links{
+    position:fixed;inset:0;background:rgba(11,10,8,.97);backdrop-filter:blur(18px);
+    flex-direction:column;justify-content:center;gap:2.4rem;
+    opacity:0;pointer-events:none;transition:opacity .45s;
+  }
+  .nav-links.open{opacity:1;pointer-events:auto}
+  .nav-links a{font-size:1rem}
+  .burger{display:block}
+  .mestre-grid,.contato-grid{grid-template-columns:1fr}
+  .cont-figure{order:-1}
+  .hor-grid{grid-template-columns:1fr}
+  .mestre-figure .tri-badge{right:10px;bottom:-22px}
+}
+@media(max-width:560px){
+  .pilar-grid{grid-template-columns:1fr}
+  .gal-grid{grid-auto-rows:170px}
+  .belt-label{display:none}
+  .hero-inner{padding-bottom:5.5rem}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+  .rv{opacity:1;transform:none}
+  h1 .l1,h1 .l2,.hero-eyebrow,.hero-sub,.hero-actions,.hero-scroll{opacity:1}
+  .hero-tri{opacity:.9}.hero-tri path{stroke-dashoffset:0}
+}
+</style>
+</head>
+<body>
+
+<div class="belt-track"><div class="belt-fill" id="beltFill"></div></div>
+<div class="belt-label" id="beltLabel">FAIXA <b id="beltName">BRANCA</b></div>
+
+<nav id="nav">
+  <a class="nav-brand" href="#inicio">
+    <img src="img/logo-heishikan.jpg" alt="Logo CT Heishikan">
+    <span class="nb-txt">
+      <span class="nb-top">CT HEISHIKAN</span><br>
+      <span class="nb-sub">Roger Santos BJJ</span>
+    </span>
+  </a>
+  <div class="nav-links" id="navLinks">
+    <a href="#mestre">O Mestre</a>
+    <a href="#programas">Programas</a>
+    <a href="#horarios">Horários</a>
+    <a href="#galeria">Galeria</a>
+    <a href="#contato">Contato</a>
+    <a class="nav-cta" href="https://wa.me/5547988224140?text=Ol%C3%A1!%20Quero%20agendar%20uma%20aula%20experimental%20no%20CT%20Heishikan." target="_blank" rel="noopener">Aula Experimental</a>
+  </div>
+  <button class="burger" id="burger" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+</nav>
+
+<header class="hero" id="inicio">
+  <div class="hero-bg"><img src="img/hero-roger.jpg" alt="Mestre Roger Santos no tatame do CT Heishikan" fetchpriority="high"></div>
+  <div class="hero-tri" aria-hidden="true">
+    <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+      <defs><linearGradient id="gTri" x1="0" y1="1" x2="1" y2="0">
+        <stop offset="0" stop-color="#8F6B1E"/><stop offset=".5" stop-color="#D9A83C"/><stop offset="1" stop-color="#F0C566"/>
+      </linearGradient></defs>
+      <path d="M50 6 L96 94 L4 94 Z"/>
+    </svg>
+  </div>
+  <div class="hero-inner">
+    <div class="hero-eyebrow"><span class="rule"></span><span>Jaraguá do Sul · Santa Catarina</span></div>
+    <h1>
+      <span class="l1">A ARTE SUAVE,</span>
+      <span class="l2">LEVADA A SÉRIO.</span>
+    </h1>
+    <p class="hero-sub">No CT Heishikan, o Jiu-Jitsu brasileiro é ensinado como se vive: com disciplina, respeito, foco e confiança — do primeiro nó na faixa branca à jornada rumo à faixa preta.</p>
+    <div class="hero-actions">
+      <a class="btn btn-gold" href="https://wa.me/5547988224140?text=Ol%C3%A1!%20Quero%20agendar%20uma%20aula%20experimental%20no%20CT%20Heishikan." target="_blank" rel="noopener">Agendar aula experimental</a>
+      <a class="btn btn-ghost" href="#programas">Conhecer os programas</a>
+    </div>
+  </div>
+  <div class="hero-scroll">Role</div>
+</header>
+
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track" id="mqTrack">
+    <div class="mq-item">
+      <b>DISCIPLINA</b><i></i><span>RESPEITO</span><i></i><b>FOCO</b><i></i><span>CONFIANÇA</span><i></i>
+      <b>OSS</b><i></i><span>CT HEISHIKAN</span><i></i>
+    </div>
+  </div>
+</div>
+<section class="mestre" id="mestre">
+  <div class="wrap mestre-grid">
+    <div class="mestre-figure rv">
+      <div class="frame-edge"></div>
+      <div class="frame"><img src="img/mestre-retrato.jpg" alt="Professor Roger Santos, faixa preta de Brazilian Jiu-Jitsu"></div>
+      <div class="tri-badge"><img src="img/logo-heishikan.jpg" alt="Emblema CT Heishikan"></div>
+    </div>
+    <div class="mestre-copy">
+      <p class="eyebrow rv">Quem conduz o tatame</p>
+      <h2 class="rv rv-d1">Professor <em>Roger Santos</em></h2>
+      <p class="rv rv-d2">À frente do CT Heishikan, o professor Roger Santos dedica sua vida a transmitir o Jiu-Jitsu brasileiro em sua forma mais completa: técnica apurada, defesa pessoal real e formação de caráter dentro e fora do tatame.</p>
+      <p class="rv rv-d2">A equipe integra a linhagem <strong>Jaraguá BJJ — Henrique Buda</strong>, unindo tradição e metodologia moderna em um ambiente acolhedor, onde iniciantes, competidores, crianças e famílias treinam lado a lado.</p>
+      <blockquote class="mestre-quote rv rv-d3">“A faixa apenas cobre dois centímetros do seu quadril. O resto, você precisa conquistar todos os dias.”</blockquote>
+      <div class="mestre-stats">
+        <div class="stat rv rv-d1"><div class="num" data-count="20">0</div><div class="lbl">Anos de tatame</div></div>
+        <div class="stat rv rv-d2"><div class="num" data-count="100">0</div><div class="lbl">Alunos formados</div></div>
+        <div class="stat rv rv-d3"><div class="num" data-count="4">0</div><div class="lbl">Valores inegociáveis</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pilares">
+  <div class="wrap">
+    <p class="eyebrow rv">Nossa filosofia</p>
+    <h2 class="rv rv-d1">Os quatro pilares do <em>Heishikan</em></h2>
+    <div class="pilar-grid">
+      <div class="pilar rv">
+        <div class="glyph"><svg viewBox="0 0 24 24"><path d="M12 2 L21 21 L3 21 Z"/><path d="M12 9 v6"/></svg></div>
+        <h3>DISCIPLINA</h3>
+        <p>Constância vence talento. O hábito de aparecer, treinar e repetir constrói resultados que a motivação sozinha não sustenta.</p>
+      </div>
+      <div class="pilar rv rv-d1">
+        <div class="glyph"><svg viewBox="0 0 24 24"><path d="M7 12 l4 4 L18 6"/><circle cx="12" cy="12" r="10"/></svg></div>
+        <h3>RESPEITO</h3>
+        <p>Ao mestre, ao parceiro de treino e a si mesmo. O tatame é uma escola de convivência antes de ser um campo de combate.</p>
+      </div>
+      <div class="pilar rv rv-d2">
+        <div class="glyph"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/></svg></div>
+        <h3>FOCO</h3>
+        <p>Cada posição, cada detalhe, cada respiração. O Jiu-Jitsu ensina a mente a permanecer presente sob pressão.</p>
+      </div>
+      <div class="pilar rv rv-d3">
+        <div class="glyph"><svg viewBox="0 0 24 24"><path d="M12 3 l2.6 5.4 L20.5 9.3 l-4.2 4.1 1 5.9 L12 16.6 6.7 19.3 l1-5.9 L3.5 9.3 9.4 8.4 Z"/></svg></div>
+        <h3>CONFIANÇA</h3>
+        <p>A segurança de quem sabe se defender transforma a postura diante da vida — das crianças aos adultos.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="programas">
+  <div class="wrap">
+    <p class="eyebrow rv">Treine com a gente</p>
+    <h2 class="rv rv-d1">Programas para <em>cada jornada</em></h2>
+    <p class="lead rv rv-d2">Do primeiro dia de tatame ao ritmo de competição, há uma turma esperando por você no CT Heishikan.</p>
+    <div class="prog-grid">
+      <article class="prog rv">
+        <div class="ph"><img src="img/turma-noite.jpg" alt="Turma adulta de Jiu-Jitsu do CT Heishikan"></div>
+        <div class="prog-body">
+          <span class="prog-tag">Adultos · GI</span>
+          <h3>Jiu-Jitsu Adulto</h3>
+          <p>Fundamentos, posições avançadas e sparring com metodologia progressiva. Para iniciantes e graduados.</p>
+          <a class="prog-link" href="https://wa.me/5547988224140?text=Ol%C3%A1!%20Tenho%20interesse%20na%20turma%20adulta." target="_blank" rel="noopener">Quero treinar <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M0 6 h14 M10 1 l5 5 -5 5"/></svg></a>
+        </div>
+      </article>
+      <article class="prog rv rv-d1">
+        <div class="ph"><img src="img/kids.jpg" alt="Turma infantil Jiu-Jitsu Kids do CT Heishikan"></div>
+        <div class="prog-body">
+          <span class="prog-tag">Kids · 4 a 12 anos</span>
+          <h3>Jiu-Jitsu Kids</h3>
+          <p>Coordenação motora, defesa pessoal e valores para a vida — num ambiente seguro, lúdico e disciplinado.</p>
+          <a class="prog-link" href="https://wa.me/5547988224140?text=Ol%C3%A1!%20Quero%20matricular%20meu%20filho(a)%20no%20Jiu-Jitsu%20Kids." target="_blank" rel="noopener">Matricular meu filho <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M0 6 h14 M10 1 l5 5 -5 5"/></svg></a>
+        </div>
+      </article>
+      <article class="prog rv rv-d2">
+        <div class="ph"><img src="img/turma-manha.jpg" alt="Alunos iniciantes perfilados no tatame"></div>
+        <div class="prog-body">
+          <span class="prog-tag">Iniciantes · Primeira vez</span>
+          <h3>Aula Experimental</h3>
+          <p>Nunca treinou? Venha sentir o tatame sem compromisso. Kimono emprestado e recepção de equipe.</p>
+          <a class="prog-link" href="https://wa.me/5547988224140?text=Ol%C3%A1!%20Quero%20agendar%20minha%20aula%20experimental%20gratuita." target="_blank" rel="noopener">Agendar agora <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M0 6 h14 M10 1 l5 5 -5 5"/></svg></a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="horarios" id="horarios">
+  <div class="wrap">
+    <p class="eyebrow rv">Planeje sua semana</p>
+    <h2 class="rv rv-d1">Horários de <em>treino</em></h2>
+    <div class="hor-grid">
+      <div class="hor-card rv">
+        <h3>JIU-JITSU KIDS</h3>
+        <p class="who">crianças de 4 a 12 anos</p>
+        <div class="hor-row"><span class="dia">Segundas e Quartas</span><span class="hora">09:00 · 18:00</span></div>
+        <div class="hor-row"><span class="dia">Terças e Quintas</span><span class="hora">18:00</span></div>
+      </div>
+      <div class="hor-card rv rv-d1">
+        <h3>JIU-JITSU ADULTO</h3>
+        <p class="who">a partir de 13 anos · todos os níveis</p>
+        <div class="hor-row"><span class="dia">Segunda a Sexta</span><span class="hora">Manhã e Noite</span></div>
+        <div class="hor-row"><span class="dia">Grade completa</span><span class="hora">Consulte no WhatsApp</span></div>
+      </div>
+    </div>
+    <p class="hor-note rv rv-d2"><i></i>Treinos no anexo à Academia Espaço Maior — R. Primo Ronchi, 90, Vila Nova, Jaraguá do Sul/SC. Primeira aula sem compromisso.</p>
+  </div>
+</section>
+<section id="galeria">
+  <div class="wrap">
+    <p class="eyebrow rv">Nossa família no tatame</p>
+    <h2 class="rv rv-d1">Uma equipe, <em>uma jornada</em></h2>
+    <div class="gal-grid">
+      <div class="gal w2 h2 rv"><img src="img/equipe-grande.jpg" alt="Equipe completa do CT Heishikan reunida no tatame" loading="lazy"><span data-cap></span></div>
+      <div class="gal rv rv-d1"><img src="img/turma-lineup.jpg" alt="Alunos perfilados após o treino" loading="lazy"></div>
+      <div class="gal rv rv-d2"><img src="img/selfie-alunos.jpg" alt="Professor Roger com alunos após o treino" loading="lazy"></div>
+      <div class="gal w2 rv rv-d1"><img src="img/hero-roger.jpg" alt="Professor Roger Santos entre os emblemas Jaraguá BJJ e Roger Santos Jiu-Jitsu" loading="lazy"></div>
+      <div class="gal rv rv-d2"><img src="img/kids.jpg" alt="Turma kids reunida com os professores" loading="lazy"></div>
+      <div class="gal rv rv-d3"><img src="img/turma-noite.jpg" alt="Turma da noite reunida para a foto oficial" loading="lazy"></div>
+    </div>
+  </div>
+</section>
+
+<section class="loja" id="loja">
+  <div class="wrap rv">
+    <svg class="kimono-ico" viewBox="0 0 64 64"><path d="M24 8 h16 l10 6 6 14 -8 4 -4 -8 v32 H20 V24 l-4 8 -8 -4 6 -14 Z"/><path d="M24 8 c2 6 14 6 16 0"/><path d="M20 44 h24"/></svg>
+    <p class="eyebrow" style="justify-content:center">Em breve</p>
+    <h2>Loja oficial <em>Heishikan</em></h2>
+    <p>Kimonos, rashguards e produtos oficiais da equipe estão a caminho. Deixe seu WhatsApp ou e-mail e seja avisado em primeira mão no lançamento.</p>
+    <form class="loja-form" onsubmit="return avisarLoja(event)">
+      <input type="text" id="lojaContato" placeholder="Seu WhatsApp ou e-mail" required>
+      <button class="btn btn-gold" type="submit">Quero ser avisado</button>
+    </form>
+    <p id="lojaMsg" style="margin-top:1.2rem;color:var(--gold-hi);font-size:.9rem;min-height:1.4em"></p>
+  </div>
+</section>
+
+<section id="contato">
+  <div class="wrap contato-grid">
+    <div>
+      <p class="eyebrow rv">Fale com a gente</p>
+      <h2 class="rv rv-d1">Seu lugar no tatame <em>está esperando</em></h2>
+      <div class="cont-list" style="margin-top:2rem">
+        <a class="cont-item rv" href="https://wa.me/5547988224140" target="_blank" rel="noopener">
+          <span class="ico"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.5 8.5 0 0 1-12.3 7.6L3 21l1.9-5.7A8.5 8.5 0 1 1 21 11.5Z"/></svg></span>
+          <span><span class="lbl">WhatsApp</span><br><span class="val">(47) 98822-4140</span></span>
+        </a>
+        <a class="cont-item rv rv-d1" href="https://instagram.com/heishikan_rogersantosbjj" target="_blank" rel="noopener">
+          <span class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r=".8" fill="currentColor"/></svg></span>
+          <span><span class="lbl">Instagram</span><br><span class="val">@heishikan_rogersantosbjj</span></span>
+        </a>
+        <a class="cont-item rv rv-d2" href="https://www.google.com/maps/search/?api=1&query=R.+Primo+Ronchi,+90,+Vila+Nova,+Jaragu%C3%A1+do+Sul" target="_blank" rel="noopener">
+          <span class="ico"><svg viewBox="0 0 24 24"><path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg></span>
+          <span><span class="lbl">Endereço</span><br><span class="val">R. Primo Ronchi, 90 · Vila Nova, Jaraguá do Sul/SC<br><small style="color:var(--mute)">Anexo à Academia Espaço Maior</small></span></span>
+        </a>
+      </div>
+    </div>
+    <div class="cont-figure rv rv-d1">
+      <img src="img/selfie-alunos.jpg" alt="Clima de treino no CT Heishikan" loading="lazy">
+    </div>
+  </div>
+</section>
+
+<section class="cta-final">
+  <div class="tri-bg" aria-hidden="true"><svg viewBox="0 0 100 88"><path d="M50 2 L98 86 L2 86 Z" fill="none" stroke="#D9A83C" stroke-width=".6"/></svg></div>
+  <div class="wrap">
+    <p class="eyebrow rv" style="justify-content:center">O primeiro passo é seu</p>
+    <h2 class="rv rv-d1">Amarre a faixa.<br><em>O resto a gente ensina.</em></h2>
+    <p class="lead rv rv-d2" style="margin-left:auto;margin-right:auto">Agende sua aula experimental gratuita e descubra por que o Jiu-Jitsu transforma corpos, mentes e famílias inteiras.</p>
+    <a class="btn btn-gold rv rv-d3" href="https://wa.me/5547988224140?text=Ol%C3%A1!%20Quero%20agendar%20minha%20aula%20experimental%20gratuita." target="_blank" rel="noopener">Começar agora pelo WhatsApp</a>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <img src="img/logo-heishikan.jpg" alt="Logo CT Heishikan">
+      <div>
+        <div class="fb-top">CT HEISHIKAN</div>
+        <div class="fb-sub">Roger Santos Brazilian Jiu-Jitsu</div>
+      </div>
+    </div>
+    <div class="foot-social">
+      <a href="https://instagram.com/heishikan_rogersantosbjj" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r=".8" fill="currentColor"/></svg></a>
+      <a href="https://wa.me/5547988224140" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.5 8.5 0 0 1-12.3 7.6L3 21l1.9-5.7A8.5 8.5 0 1 1 21 11.5Z"/></svg></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <span>© <span id="ano"></span> CT Heishikan · Roger Santos Jiu-Jitsu — Jaraguá do Sul/SC</span>
+    <span>Linhagem Jaraguá BJJ · Henrique Buda</span>
+  </div>
+</footer>
+
+<a class="wa-float" href="https://wa.me/5547988224140?text=Ol%C3%A1!%20Vim%20pelo%20site%20do%20CT%20Heishikan." target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
+  <svg viewBox="0 0 32 32"><path d="M16 3C9.4 3 4 8.4 4 15c0 2.6.8 5 2.2 7L4.5 28l6.2-1.6c1.9 1 4 1.6 5.3 1.6 6.6 0 12-5.4 12-12S22.6 3 16 3Zm0 21.8c-1.8 0-3.5-.5-5-1.3l-.4-.2-3.7 1 1-3.6-.2-.4A9.7 9.7 0 0 1 6.2 15c0-5.4 4.4-9.8 9.8-9.8s9.8 4.4 9.8 9.8-4.4 9.8-9.8 9.8Zm5.4-7.3c-.3-.1-1.7-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.4-1.5-.9-.8-1.5-1.8-1.6-2.1-.2-.3 0-.5.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.1-.3-.2-.6-.4Z"/></svg>
+</a>
+
+<script>
+(function(){
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* Nav */
+  const nav = document.getElementById('nav');
+  const burger = document.getElementById('burger');
+  const links = document.getElementById('navLinks');
+  burger.addEventListener('click', ()=>{burger.classList.toggle('open');links.classList.toggle('open')});
+  links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{burger.classList.remove('open');links.classList.remove('open')}));
+
+  /* Faixa de progresso */
+  const fill = document.getElementById('beltFill');
+  const label = document.getElementById('beltLabel');
+  const name = document.getElementById('beltName');
+  const belts = [[0,'BRANCA'],[20,'AZUL'],[42,'ROXA'],[64,'MARROM'],[86,'PRETA'],[97,'CORAL']];
+  function onScroll(){
+    const h = document.documentElement;
+    const p = h.scrollTop / (h.scrollHeight - h.clientHeight) * 100;
+    fill.style.width = p + '%';
+    nav.classList.toggle('scrolled', h.scrollTop > 40);
+    label.classList.toggle('show', p > 1 && p < 99.5);
+    let b = belts[0][1];
+    for (const [t, n] of belts) if (p >= t) b = n;
+    name.textContent = b;
+  }
+  addEventListener('scroll', onScroll, {passive:true}); onScroll();
+
+  /* Marquee: duplicar conteúdo */
+  const mq = document.getElementById('mqTrack');
+  mq.innerHTML += mq.innerHTML;
+
+  /* Reveal on scroll */
+  const io = new IntersectionObserver(es=>{
+    es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+  },{threshold:.14,rootMargin:'0px 0px -6% 0px'});
+  document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+
+  /* Contadores */
+  const cio = new IntersectionObserver(es=>{
+    es.forEach(e=>{
+      if(!e.isIntersecting) return;
+      const el = e.target, end = +el.dataset.count, suf = end >= 20 ? '+' : '';
+      cio.unobserve(el);
+      if(reduce){ el.textContent = end + suf; return; }
+      const t0 = performance.now(), dur = 1600;
+      (function tick(t){
+        const k = Math.min((t - t0)/dur, 1), ease = 1 - Math.pow(1-k, 3);
+        el.textContent = Math.round(end * ease) + (k === 1 ? suf : '');
+        if(k < 1) requestAnimationFrame(tick);
+      })(t0);
+    });
+  },{threshold:.6});
+  document.querySelectorAll('[data-count]').forEach(el=>cio.observe(el));
+
+  /* Loja: encaminha o interesse para o WhatsApp da equipe */
+  window.avisarLoja = function(ev){
+    ev.preventDefault();
+    const v = document.getElementById('lojaContato').value.trim();
+    if(!v) return false;
+    document.getElementById('lojaMsg').textContent = 'Perfeito! Abrindo o WhatsApp para confirmar seu interesse…';
+    open('https://wa.me/5547988224140?text=' + encodeURIComponent('Olá! Quero ser avisado do lançamento da loja Heishikan. Contato: ' + v), '_blank');
+    return false;
+  };
+
+  document.getElementById('ano').textContent = new Date().getFullYear();
+})();
+</script>
+</body>
+</html>
