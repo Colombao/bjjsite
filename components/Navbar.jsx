@@ -7,6 +7,8 @@ import { wa } from '@/lib/const';
 const LINKS = [
   { href: '#mestre', label: 'O Mestre' },
   { href: '#programas', label: 'Programas' },
+  { href: '#feminino', label: 'Feminino' },
+  { href: '#estrutura', label: 'Estrutura' },
   { href: '#horarios', label: 'Horários' },
   { href: '#galeria', label: 'Galeria' },
   { href: '#contato', label: 'Contato' },

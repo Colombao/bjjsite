@@ -21,7 +21,7 @@ export default function Home() {
       {/* ============ HERO ============ */}
       <header className="hero" id="inicio">
         <div className="hero-bg">
-          <Image className="hero-desk" src="/img/hero-roger.jpg" alt="Mestre Roger Santos no tatame do CT Heishikan" fill priority sizes="100vw" style={{ objectFit: 'cover', objectPosition: 'center 28%' }} />
+          <Image className="hero-desk" src="/img/hero-roger.jpg" alt="Mestre Roger Santos entre os emblemas do CT Heishikan" fill priority sizes="100vw" style={{ objectFit: 'cover', objectPosition: 'center 30%' }} />
           <Image className="hero-mob" src="/img/mestre-retrato.jpg" alt="Mestre Roger Santos no tatame do CT Heishikan" fill priority sizes="100vw" style={{ objectFit: 'cover', objectPosition: 'center 16%' }} />
         </div>
         <div className="hero-tri" aria-hidden="true">
@@ -77,7 +77,7 @@ export default function Home() {
             <p className="eyebrow rv">Quem conduz o tatame</p>
             <h2 className="rv rv-d1">Professor <em>Roger Santos</em></h2>
             <p className="rv rv-d2">À frente do CT Heishikan, o professor Roger Santos dedica sua vida a transmitir o Jiu-Jitsu brasileiro em sua forma mais completa: técnica apurada, defesa pessoal real e formação de caráter dentro e fora do tatame.</p>
-            <p className="rv rv-d2">A equipe integra a linhagem <strong>Jaraguá BJJ — Henrique Buda</strong>, unindo tradição e metodologia moderna em um ambiente acolhedor, onde iniciantes, competidores, crianças e famílias treinam lado a lado.</p>
+            <p className="rv rv-d2">A metodologia une a tradição da arte suave ao treino moderno, em um ambiente acolhedor onde iniciantes, competidores, crianças e famílias treinam lado a lado.</p>
             <blockquote className="mestre-quote rv rv-d3">“A faixa apenas cobre dois centímetros do seu quadril. O resto, você precisa conquistar todos os dias.”</blockquote>
             <div className="mestre-stats">
               <div className="stat rv rv-d1"><div className="num" data-count="20">0</div><div className="lbl">Anos de tatame</div></div>
@@ -135,7 +135,7 @@ export default function Home() {
               </div>
             </article>
             <article className="prog rv rv-d1">
-              <div className="ph"><Image src="/img/kids.jpg" alt="Turma infantil Jiu-Jitsu Kids do CT Heishikan" fill sizes="(max-width:1020px) 100vw, 33vw" /></div>
+              <div className="ph"><Image src="/img/kids-selfie.jpg" alt="Turma infantil Jiu-Jitsu Kids do CT Heishikan" fill sizes="(max-width:1020px) 100vw, 33vw" /></div>
               <div className="prog-body">
                 <span className="prog-tag">Kids · 4 a 12 anos</span>
                 <h3>Jiu-Jitsu Kids</h3>
@@ -152,6 +152,67 @@ export default function Home() {
                 <a className="prog-link" href={wa('Olá! Quero agendar minha aula experimental gratuita.')} target="_blank" rel="noopener noreferrer">Agendar agora <Arrow /></a>
               </div>
             </article>
+          </div>
+        </div>
+      </section>
+
+      {/* ============ TREINO FEMININO ============ */}
+      <section className="feminino" id="feminino">
+        <div className="wrap mestre-grid">
+          <div className="mestre-copy">
+            <p className="eyebrow rv">Só para elas</p>
+            <h2 className="rv rv-d1">Treino <em>Feminino</em></h2>
+            <p className="rv rv-d2">Uma turma exclusiva para mulheres, onde técnica, defesa pessoal e condicionamento caminham juntos — em um ambiente acolhedor, seguro e sem julgamentos.</p>
+            <p className="rv rv-d2">Da primeira aula à competição, cada aluna evolui no seu ritmo, com o acompanhamento próximo do professor Roger e o apoio de um grupo que treina — e cresce — junto.</p>
+            <div className="hero-actions rv rv-d3" style={{ marginTop: '2rem' }}>
+              <a className="btn btn-gold" href={wa('Olá! Quero participar do treino feminino do CT Heishikan.')} target="_blank" rel="noopener noreferrer">Quero treinar</a>
+              <a className="btn btn-ghost" href="#horarios">Ver horários</a>
+            </div>
+          </div>
+          <div className="mestre-figure rv rv-d1">
+            <div className="frame-edge" />
+            <div className="frame">
+              <Image src="/img/treino-feminino.jpg" alt="Turma feminina do CT Heishikan reunida no tatame com o professor Roger Santos" fill sizes="(max-width:880px) 100vw, 45vw" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============ ESTRUTURA ============ */}
+      <section className="infra" id="estrutura">
+        <div className="wrap">
+          <p className="eyebrow rv">A casa do Heishikan</p>
+          <h2 className="rv rv-d1">Estrutura completa <em>para treinar bem</em></h2>
+          <p className="lead rv rv-d2">Tatames amplos em dois ambientes, vestiários equipados e estacionamento na porta — tudo dentro do complexo da Academia Espaço Maior, na Vila Nova.</p>
+
+          <div className="infra-feats">
+            <div className="feat rv">
+              <svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="12" rx="1" /><path d="M3 13 h18 M9 7 v12 M15 7 v12" /></svg>
+              <div><b>TATAMES AMPLOS</b><span>Duas áreas de treino espaçosas, com iluminação natural e pé-direito alto.</span></div>
+            </div>
+            <div className="feat rv rv-d1">
+              <svg viewBox="0 0 24 24"><path d="M7 3 v4 a2 2 0 0 0 2 2 h0 a2 2 0 0 1 2 2 v10 M7 5 h6 a3 3 0 0 1 3 3" /><path d="M14 12 l2 2 M16 10 l2 2 M18 8 l2 2" /></svg>
+              <div><b>VESTIÁRIOS COM CHUVEIROS</b><span>Masculino e feminino, com chuveiros, pias e bancos para o pós-treino.</span></div>
+            </div>
+            <div className="feat rv rv-d2">
+              <svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="1" /><path d="M12 3 v18 M4 9 h16 M4 15 h16" /><path d="M9 6.5 h1.5 M14 6.5 h1.5" /></svg>
+              <div><b>ARMÁRIOS</b><span>Guarde seus pertences com tranquilidade enquanto treina.</span></div>
+            </div>
+            <div className="feat rv rv-d3">
+              <svg viewBox="0 0 24 24"><path d="M5 11 l2-5 a2 2 0 0 1 1.9-1.3 h6.2 A2 2 0 0 1 17 6 l2 5" /><rect x="3" y="11" width="18" height="6" rx="1" /><circle cx="7.5" cy="17" r="1.8" /><circle cx="16.5" cy="17" r="1.8" /></svg>
+              <div><b>ESTACIONAMENTO</b><span>Vagas na porta do tatame — chegue, estacione e treine sem estresse.</span></div>
+            </div>
+          </div>
+
+          <div className="gal-grid">
+            <div className="gal h2 cap-on rv" data-cap="Fachada · Academia Espaço Maior"><Image src="/img/fachada.jpg" alt="Fachada do complexo onde fica o CT Heishikan" fill sizes="(max-width:1020px) 50vw, 25vw" /></div>
+            <div className="gal w2 cap-on rv rv-d1" data-cap="Tatame · piso superior"><Image src="/img/tatame-superior.jpg" alt="Tatame amplo do piso superior" fill sizes="(max-width:1020px) 100vw, 50vw" /></div>
+            <div className="gal cap-on rv rv-d2" data-cap="Tatame · térreo"><Image src="/img/tatame-terreo.jpg" alt="Tatame do térreo com vista para a rua" fill sizes="(max-width:1020px) 50vw, 25vw" /></div>
+            <div className="gal cap-on rv rv-d1" data-cap="Entrada do dojo"><Image src="/img/porta-logo.jpg" alt="Porta de entrada com o emblema Roger Santos Jiu-Jitsu" fill sizes="(max-width:1020px) 50vw, 25vw" /></div>
+            <div className="gal w2 cap-on rv rv-d2" data-cap="Vista do tatame"><Image src="/img/vista.jpg" alt="Vista da janela do tatame para o rio e a ponte" fill sizes="(max-width:1020px) 100vw, 50vw" /></div>
+            <div className="gal w2 cap-on rv rv-d1" data-cap="Vestiários com chuveiros"><Image src="/img/chuveiros.jpg" alt="Chuveiros do vestiário" fill sizes="(max-width:1020px) 100vw, 50vw" /></div>
+            <div className="gal cap-on rv rv-d2" data-cap="Armários"><Image src="/img/vestiario.jpg" alt="Armários do vestiário" fill sizes="(max-width:1020px) 50vw, 25vw" /></div>
+            <div className="gal cap-on rv rv-d3" data-cap="Recepção do tatame"><Image src="/img/entrada.jpg" alt="Entrada do tatame térreo com estacionamento em frente" fill sizes="(max-width:1020px) 50vw, 25vw" /></div>
           </div>
         </div>
       </section>
@@ -188,8 +249,8 @@ export default function Home() {
             <div className="gal w2 h2 rv"><Image src="/img/equipe-grande.jpg" alt="Equipe completa do CT Heishikan reunida no tatame" fill sizes="(max-width:1020px) 100vw, 50vw" /></div>
             <div className="gal rv rv-d1"><Image src="/img/turma-lineup.jpg" alt="Alunos perfilados após o treino" fill sizes="(max-width:1020px) 50vw, 25vw" /></div>
             <div className="gal rv rv-d2"><Image src="/img/selfie-alunos.jpg" alt="Professor Roger com alunos após o treino" fill sizes="(max-width:1020px) 50vw, 25vw" /></div>
-            <div className="gal w2 rv rv-d1"><Image src="/img/hero-roger.jpg" alt="Professor Roger Santos entre os emblemas Jaraguá BJJ e Roger Santos Jiu-Jitsu" fill sizes="(max-width:1020px) 100vw, 50vw" /></div>
-            <div className="gal rv rv-d2"><Image src="/img/kids.jpg" alt="Turma kids reunida com os professores" fill sizes="(max-width:1020px) 50vw, 25vw" /></div>
+            <div className="gal w2 rv rv-d1"><Image src="/img/hero-roger.jpg" alt="Professor Roger Santos entre os emblemas do CT Heishikan" fill sizes="(max-width:1020px) 100vw, 50vw" /></div>
+            <div className="gal rv rv-d2"><Image src="/img/kids-selfie.jpg" alt="Turma kids reunida com os professores" fill sizes="(max-width:1020px) 50vw, 25vw" /></div>
             <div className="gal rv rv-d3"><Image src="/img/turma-noite.jpg" alt="Turma da noite reunida para a foto oficial" fill sizes="(max-width:1020px) 50vw, 25vw" /></div>
           </div>
         </div>
@@ -255,7 +316,7 @@ export default function Home() {
         </div>
         <div className="foot-base">
           <span>© {new Date().getFullYear()} CT Heishikan · Roger Santos Jiu-Jitsu — Jaraguá do Sul/SC</span>
-          <span>Linhagem Jaraguá BJJ · Henrique Buda</span>
+          <span>Disciplina · Respeito · Foco · Confiança</span>
         </div>
       </footer>
 
