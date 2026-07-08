@@ -395,6 +395,7 @@ footer{border-top:1px solid var(--line);background:#080706;padding:3.2rem clamp(
   .nav-links{display:none}
   .burger{display:block}
   .mestre-grid,.contato-grid{grid-template-columns:1fr}
+  .feminino .mestre-grid{grid-template-columns:1fr}
   .cont-figure{order:-1}
   .hor-grid{grid-template-columns:1fr}
   .mestre-figure .tri-badge{right:10px;bottom:-22px}
@@ -456,6 +457,7 @@ footer{border-top:1px solid var(--line);background:#080706;padding:3.2rem clamp(
   /* Galeria */
   .gal-grid{grid-template-columns:repeat(2,1fr);grid-auto-rows:44vw;gap:.65rem;margin-top:2.4rem}
   .gal.w2{grid-column:span 2}
+  .gal.h2{grid-row:span 1;grid-column:span 2}
 
   /* Loja */
   .loja-form{flex-direction:column;align-items:stretch}
