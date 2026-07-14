@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Sound, fmt, DEFAULT_MODES, PHASE_TXT } from './core';
+import { Sound, fmt, playAudio, DEFAULT_MODES, PHASE_TXT } from './core';
+import { dbLoad, dbSave } from './db';
 import SpotifyDial from './SpotifyDial';
 import RemoteBridge from './RemoteBridge';
 import './timer.css';
@@ -17,6 +18,7 @@ export default function TimerPage() {
   const [soundStart, setSoundStart] = useState('bell');
   const [soundEnd, setSoundEnd] = useState('buzzer');
   const [warnBeeps, setWarnBeeps] = useState(true);
+  const [customSounds, setCustomSounds] = useState({ start: null, end: null });
 
   // Estado ativo
   const [round, setRound] = useState(1);
@@ -33,33 +35,41 @@ export default function TimerPage() {
 
   const totalRef = useRef(10);
 
-  // Carrega/salva config no localStorage
+  const loaded = useRef(false);
+
+  // Carrega config: localStorage (rápido) + banco mockado (persiste entre navegadores)
   useEffect(() => {
+    const applyCfg = (saved) => {
+      if (!saved) return;
+      setNumRounds(saved.numRounds ?? 5);
+      setWorkMin(saved.workMin ?? 5);
+      setWorkSec(saved.workSec ?? 0);
+      setRestMin(saved.restMin ?? 1);
+      setRestSec(saved.restSec ?? 0);
+      setPrepSec(saved.prepSec ?? 10);
+      setSoundStart(saved.soundStart ?? 'bell');
+      setSoundEnd(saved.soundEnd ?? 'buzzer');
+      setWarnBeeps(saved.warnBeeps ?? true);
+    };
     try {
-      const saved = JSON.parse(localStorage.getItem('heishikan_timer_cfg') || 'null');
-      if (saved) {
-        setNumRounds(saved.numRounds ?? 5);
-        setWorkMin(saved.workMin ?? 5);
-        setWorkSec(saved.workSec ?? 0);
-        setRestMin(saved.restMin ?? 1);
-        setRestSec(saved.restSec ?? 0);
-        setPrepSec(saved.prepSec ?? 10);
-        setSoundStart(saved.soundStart ?? 'bell');
-        setSoundEnd(saved.soundEnd ?? 'buzzer');
-        setWarnBeeps(saved.warnBeeps ?? true);
-      }
+      applyCfg(JSON.parse(localStorage.getItem('heishikan_timer_cfg') || 'null'));
       const modes = JSON.parse(localStorage.getItem('heishikan_timer_modes') || 'null');
       if (Array.isArray(modes)) setCustomModes(modes);
     } catch {}
+    dbLoad().then((d) => {
+      if (d) {
+        if (d.cfg) applyCfg(d.cfg);
+        if (Array.isArray(d.modes)) setCustomModes(d.modes);
+        if (d.sounds) setCustomSounds({ start: d.sounds.start ?? null, end: d.sounds.end ?? null });
+      }
+      loaded.current = true;
+    });
   }, []);
 
   useEffect(() => {
-    try {
-      localStorage.setItem(
-        'heishikan_timer_cfg',
-        JSON.stringify({ numRounds, workMin, workSec, restMin, restSec, prepSec, soundStart, soundEnd, warnBeeps })
-      );
-    } catch {}
+    const cfg = { numRounds, workMin, workSec, restMin, restSec, prepSec, soundStart, soundEnd, warnBeeps };
+    try { localStorage.setItem('heishikan_timer_cfg', JSON.stringify(cfg)); } catch {}
+    if (loaded.current) dbSave({ cfg }, 'cfg');
   }, [numRounds, workMin, workSec, restMin, restSec, prepSec, soundStart, soundEnd, warnBeeps]);
 
   // Sincroniza saída do fullscreen (ESC)
@@ -80,12 +90,45 @@ export default function TimerPage() {
   const play = useCallback(
     (type) => {
       if (muted) return;
-      if (type === 'start') (soundStart === 'bell' ? Sound.bell() : Sound.buzzer());
-      else if (type === 'end') (soundEnd === 'bell' ? Sound.bell() : Sound.buzzer());
+      const pick = (sel, custom) => {
+        if (sel === 'custom' && custom) playAudio(custom);
+        else if (sel === 'bell') Sound.bell();
+        else Sound.buzzer();
+      };
+      if (type === 'start') pick(soundStart, customSounds.start);
+      else if (type === 'end') pick(soundEnd, customSounds.end);
       else Sound.beep();
     },
-    [muted, soundStart, soundEnd]
+    [muted, soundStart, soundEnd, customSounds]
   );
+
+  // Upload de som personalizado (mp3/wav até 1 MB)
+  const uploadSound = (slot) => (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    if (file.size > 700_000) {
+      alert('Arquivo muito grande — use um áudio de até 700 KB (sons de sino/sirene têm poucos segundos).');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const next = { ...customSounds, [slot]: reader.result };
+      setCustomSounds(next);
+      if (slot === 'start') setSoundStart('custom');
+      else setSoundEnd('custom');
+      dbSave({ sounds: next }, 'sounds');
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const removeSound = (slot) => {
+    const next = { ...customSounds, [slot]: null };
+    setCustomSounds(next);
+    if (slot === 'start' && soundStart === 'custom') setSoundStart('bell');
+    if (slot === 'end' && soundEnd === 'custom') setSoundEnd('buzzer');
+    dbSave({ sounds: next }, 'sounds');
+  };
 
   // Tick
   useEffect(() => {
@@ -147,6 +190,7 @@ export default function TimerPage() {
     setActiveMode(name);
     setNewModeName('');
     try { localStorage.setItem('heishikan_timer_modes', JSON.stringify(next)); } catch {}
+    dbSave({ modes: next }, 'modes');
   };
 
   const deleteMode = (name) => {
@@ -154,6 +198,7 @@ export default function TimerPage() {
     setCustomModes(next);
     if (activeMode === name) setActiveMode(null);
     try { localStorage.setItem('heishikan_timer_modes', JSON.stringify(next)); } catch {}
+    dbSave({ modes: next }, 'modes');
   };
 
   // Desmarca o modo ativo se a config for alterada manualmente
@@ -357,7 +402,20 @@ export default function TimerPage() {
               <select value={soundStart} onChange={(e) => setSoundStart(e.target.value)}>
                 <option value="bell">Sino (gongo)</option>
                 <option value="buzzer">Sirene eletrônica</option>
+                <option value="custom" disabled={!customSounds.start}>Personalizado</option>
               </select>
+              <div className="rt-upload-row">
+                <label className="rt-upload-btn">
+                  ⬆ {customSounds.start ? 'Trocar áudio' : 'Enviar áudio'}
+                  <input type="file" accept="audio/*" onChange={uploadSound('start')} />
+                </label>
+                {customSounds.start && (
+                  <>
+                    <button className="rt-upload-mini" onClick={() => playAudio(customSounds.start)} title="Testar">▶</button>
+                    <button className="rt-upload-mini rt-upload-mini--del" onClick={() => removeSound('start')} title="Remover">✕</button>
+                  </>
+                )}
+              </div>
             </div>
 
             <div className="rt-field">
@@ -365,7 +423,20 @@ export default function TimerPage() {
               <select value={soundEnd} onChange={(e) => setSoundEnd(e.target.value)}>
                 <option value="buzzer">Sirene eletrônica</option>
                 <option value="bell">Sino (gongo)</option>
+                <option value="custom" disabled={!customSounds.end}>Personalizado</option>
               </select>
+              <div className="rt-upload-row">
+                <label className="rt-upload-btn">
+                  ⬆ {customSounds.end ? 'Trocar áudio' : 'Enviar áudio'}
+                  <input type="file" accept="audio/*" onChange={uploadSound('end')} />
+                </label>
+                {customSounds.end && (
+                  <>
+                    <button className="rt-upload-mini" onClick={() => playAudio(customSounds.end)} title="Testar">▶</button>
+                    <button className="rt-upload-mini rt-upload-mini--del" onClick={() => removeSound('end')} title="Remover">✕</button>
+                  </>
+                )}
+              </div>
             </div>
 
             <div className="rt-check">

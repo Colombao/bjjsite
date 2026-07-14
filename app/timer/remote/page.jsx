@@ -16,6 +16,7 @@ const loadScript = (src) =>
 export default function RemotePage() {
   const [status, setStatus] = useState('connecting'); // no-id|connecting|connected|closed|error
   const [modes, setModes] = useState([]);
+  const [pls, setPls] = useState([]);
   const [name, setName] = useState('');
   const [url, setUrl] = useState('');
   const [toast, setToast] = useState('');
@@ -34,7 +35,12 @@ export default function RemotePage() {
           connRef.current = conn;
           conn.on('open', () => setStatus('connected'));
           conn.on('data', (msg) => {
-            if (msg?.kind === 'hello' && Array.isArray(msg.modes)) setModes(msg.modes);
+            if (msg?.kind === 'hello') {
+              if (Array.isArray(msg.modes)) setModes(msg.modes);
+              if (Array.isArray(msg.playlists)) setPls(msg.playlists);
+            } else if (msg?.kind === 'playlists' && Array.isArray(msg.names)) {
+              setPls(msg.names);
+            }
           });
           conn.on('close', () => setStatus('closed'));
           conn.on('error', () => setStatus('error'));
@@ -49,6 +55,11 @@ export default function RemotePage() {
 
   const ctrl = (action, extra = {}) => {
     send({ kind: 'ctrl', action, ...extra });
+    flash('Comando enviado ✓');
+  };
+
+  const music = (action, extra = {}) => {
+    send({ kind: 'music', action, ...extra });
     flash('Comando enviado ✓');
   };
 
@@ -114,6 +125,30 @@ export default function RemotePage() {
               </div>
             </div>
           )}
+
+          <div className="rt-card">
+            <h3>Música</h3>
+            <div className="rm-grid rm-grid--2">
+              <button className="rt-btn rt-btn--gold" onClick={() => music('toggle')}>
+                ⏯ Tocar / Pausar
+              </button>
+              <button className="rt-btn" onClick={() => music('restart')}>
+                ⏮ Reiniciar faixa
+              </button>
+            </div>
+            {pls.length > 0 && (
+              <div className="rt-modes">
+                {pls.map((p) => (
+                  <button key={p} className="rt-mode-btn" onClick={() => music('playlist', { name: p })}>
+                    <strong>♫ {p}</strong>
+                  </button>
+                ))}
+              </div>
+            )}
+            <p className="rt-scan-tip">
+              Toca/pausa o player da TV. Para pular faixas, use o app do Spotify.
+            </p>
+          </div>
 
           <div className="rt-card">
             <h3>Enviar Playlist</h3>

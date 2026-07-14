@@ -122,6 +122,25 @@
 .rt-check span{font-size:.66rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--mute)}
 .rt-check input{width:18px;height:18px;accent-color:var(--gold);cursor:pointer}
 
+/* Upload de som personalizado */
+.rt-upload-row{display:flex;gap:.45rem;align-items:stretch;margin-top:.45rem}
+.rt-upload-row input[type=file]{display:none}
+.rt-upload-btn{
+  flex:1;text-align:center;padding:.5rem .7rem;cursor:pointer;
+  background:var(--panel-2);color:var(--gold);
+  border:1px dashed var(--line);border-radius:2px;
+  font-size:.64rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  transition:border-color .3s,color .3s;
+}
+.rt-upload-btn:hover{border-color:var(--gold);color:var(--gold-hi)}
+.rt-upload-mini{
+  width:36px;background:var(--panel-2);color:var(--bone);
+  border:1px solid var(--line);border-radius:2px;cursor:pointer;
+  transition:border-color .3s,color .3s;
+}
+.rt-upload-mini:hover{border-color:var(--gold)}
+.rt-upload-mini--del:hover{color:#E36B6B;border-color:#E36B6B}
+
 /* ---------- Modos de treino ---------- */
 .rt-modes{display:flex;flex-direction:column;gap:.5rem}
 .rt-mode-row{display:flex;gap:.5rem;align-items:stretch}

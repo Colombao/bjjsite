@@ -45,6 +45,15 @@ export const Sound = {
   },
 };
 
+/* Toca um som personalizado (dataURL de áudio enviado pelo usuário) */
+export const playAudio = (dataUrl) => {
+  try {
+    const a = new Audio(dataUrl);
+    a.volume = 0.9;
+    a.play();
+  } catch {}
+};
+
 export const fmt = (s) =>
   `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
 

@@ -27,8 +27,21 @@ export default function RemoteBridge({ modeNames = [] }) {
   const connsRef = useRef([]);
   const qrRef = useRef(null);
   const modesRef = useRef(modeNames);
+  const playlistsRef = useRef([]);
 
   useEffect(() => { modesRef.current = modeNames; }, [modeNames]);
+
+  // Recebe a lista de playlists do SpotifyDial e repassa aos celulares conectados
+  useEffect(() => {
+    const onPl = (e) => {
+      playlistsRef.current = e.detail?.names || [];
+      connsRef.current.forEach((c) => {
+        try { c.send({ kind: 'playlists', names: playlistsRef.current }); } catch {}
+      });
+    };
+    window.addEventListener('rt-playlists', onPl);
+    return () => window.removeEventListener('rt-playlists', onPl);
+  }, []);
 
   const start = async () => {
     setShow(true);
@@ -49,7 +62,7 @@ export default function RemoteBridge({ modeNames = [] }) {
         connsRef.current.push(conn);
         conn.on('open', () => {
           setStatus('connected');
-          conn.send({ kind: 'hello', modes: modesRef.current });
+          conn.send({ kind: 'hello', modes: modesRef.current, playlists: playlistsRef.current });
         });
         conn.on('data', (msg) => {
           if (!msg || typeof msg !== 'object') return;
@@ -57,6 +70,8 @@ export default function RemoteBridge({ modeNames = [] }) {
             window.dispatchEvent(new CustomEvent('rt-remote-ctrl', { detail: msg }));
           } else if (msg.kind === 'playlist') {
             window.dispatchEvent(new CustomEvent('rt-remote-playlist', { detail: msg }));
+          } else if (msg.kind === 'music') {
+            window.dispatchEvent(new CustomEvent('rt-remote-music', { detail: msg }));
           }
         });
         conn.on('close', () => {

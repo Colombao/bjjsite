@@ -1,6 +1,26 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { dbLoad, dbSave } from './db';
+
+/* API de iframe do Spotify — permite play/pause/trocar playlist via código */
+let embedApiPromise = null;
+const getEmbedApi = () => {
+  if (window.__spotifyEmbedApi) return Promise.resolve(window.__spotifyEmbedApi);
+  if (!embedApiPromise) {
+    embedApiPromise = new Promise((res) => {
+      window.onSpotifyIframeApiReady = (api) => {
+        window.__spotifyEmbedApi = api;
+        res(api);
+      };
+      const s = document.createElement('script');
+      s.src = 'https://open.spotify.com/embed/iframe-api/v1';
+      s.async = true;
+      document.head.appendChild(s);
+    });
+  }
+  return embedApiPromise;
+};
 
 /* Extrai tipo e id de links/URIs do Spotify:
    https://open.spotify.com/playlist/XXX  |  spotify:playlist:XXX
@@ -31,18 +51,74 @@ export default function SpotifyDial() {
   const videoRef = useRef(null);
   const streamRef = useRef(null);
   const loopRef = useRef(null);
+  const embedRef = useRef(null);
+  const ctrlRef = useRef(null);
 
   useEffect(() => {
     try {
       const saved = JSON.parse(localStorage.getItem('heishikan_timer_playlists') || 'null');
       if (Array.isArray(saved) && saved.length) setPlaylists(saved);
     } catch {}
+    dbLoad().then((d) => {
+      if (Array.isArray(d?.playlists) && d.playlists.length) setPlaylists(d.playlists);
+    });
   }, []);
 
   const persist = (next) => {
     setPlaylists(next);
     try { localStorage.setItem('heishikan_timer_playlists', JSON.stringify(next)); } catch {}
+    dbSave({ playlists: next }, 'playlists');
   };
+
+  // Avisa o RemoteBridge quais playlists existem (para listar no celular)
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent('rt-playlists', {
+      detail: { names: playlists.map((p) => p.name) },
+    }));
+  }, [playlists]);
+
+  // Player controlável: cria/troca o controller quando a playlist muda
+  useEffect(() => {
+    if (!current) return;
+    let cancelled = false;
+    (async () => {
+      const api = await getEmbedApi();
+      if (cancelled) return;
+      const uri = `spotify:${current.type}:${current.id}`;
+      if (ctrlRef.current) {
+        ctrlRef.current.loadUri(uri);
+        ctrlRef.current.play?.();
+      } else if (embedRef.current) {
+        api.createController(
+          embedRef.current,
+          { uri, width: '100%', height: 152 },
+          (controller) => { ctrlRef.current = controller; }
+        );
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [current]);
+
+  const closePlayer = () => {
+    try { ctrlRef.current?.destroy(); } catch {}
+    ctrlRef.current = null;
+    setCurrent(null);
+  };
+
+  // Comandos de música vindos do celular
+  useEffect(() => {
+    const onMusic = (e) => {
+      const { action, name } = e.detail || {};
+      if (action === 'toggle') ctrlRef.current?.togglePlay();
+      else if (action === 'restart') ctrlRef.current?.restart?.();
+      else if (action === 'playlist') {
+        const p = playlists.find((x) => x.name === name);
+        if (p) setCurrent(p);
+      }
+    };
+    window.addEventListener('rt-remote-music', onMusic);
+    return () => window.removeEventListener('rt-remote-music', onMusic);
+  });
 
   const addFromUrl = (url, name) => {
     const parsed = parseSpotify(url);
@@ -127,7 +203,7 @@ export default function SpotifyDial() {
 
   const removePlaylist = (id) => {
     persist(playlists.filter((p) => p.id !== id));
-    if (current?.id === id) setCurrent(null);
+    if (current?.id === id) closePlayer();
   };
 
   return (
@@ -137,17 +213,9 @@ export default function SpotifyDial() {
         <div className="rt-player">
           <div className="rt-player-head">
             <span>♫ {current.name}</span>
-            <button onClick={() => setCurrent(null)} title="Fechar player">✕</button>
+            <button onClick={closePlayer} title="Fechar player">✕</button>
           </div>
-          <iframe
-            title={`Spotify — ${current.name}`}
-            src={`https://open.spotify.com/embed/${current.type}/${current.id}?utm_source=generator&theme=0`}
-            width="100%"
-            height="152"
-            frameBorder="0"
-            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-            loading="lazy"
-          />
+          <div ref={embedRef} />
         </div>
       )}
 
@@ -174,6 +242,16 @@ export default function SpotifyDial() {
             >
               + Nova playlist
             </button>
+            <button
+              className="rt-dial-item"
+              onClick={() => window.open('https://accounts.spotify.com/login', '_blank')}
+              title="Faça login para tocar músicas completas (sem prévia de 30s)"
+            >
+              🔑 Entrar no Spotify
+            </button>
+            <p className="rt-scan-tip" style={{ margin: 0 }}>
+              Logado no Spotify neste navegador, as músicas tocam completas.
+            </p>
           </div>
         )}
 
