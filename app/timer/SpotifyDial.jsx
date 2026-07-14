@@ -39,6 +39,13 @@ export default function SpotifyDial() {
   const [current, setCurrent] = useState(null);
   const [playlists, setPlaylists] = useState(DEFAULT_PLAYLISTS);
 
+  // Mini player ("tocando agora")
+  const [mini, setMini] = useState(false);
+  const [paused, setPaused] = useState(true);
+  const [track, setTrack] = useState('');
+  const autoMinRef = useRef(false);
+  const trackCacheRef = useRef({});
+
   // Modal de adicionar
   const [modal, setModal] = useState(false);
   const [newName, setNewName] = useState('');
@@ -77,10 +84,28 @@ export default function SpotifyDial() {
     }));
   }, [playlists]);
 
+  // Nome da música atual via oEmbed (não precisa de login/token)
+  const resolveTrack = useCallback(async (uri) => {
+    const m = String(uri || '').match(/(track|episode)[/:]([A-Za-z0-9]+)/);
+    if (!m) return;
+    const id = m[2];
+    const cached = trackCacheRef.current[id];
+    if (cached) { setTrack(cached); return; }
+    try {
+      const r = await fetch(`https://open.spotify.com/oembed?url=https://open.spotify.com/${m[1]}/${id}`);
+      const j = await r.json();
+      if (j?.title) {
+        trackCacheRef.current[id] = j.title;
+        setTrack(j.title);
+      }
+    } catch {}
+  }, []);
+
   // Player controlável: cria/troca o controller quando a playlist muda
   useEffect(() => {
     if (!current) return;
     let cancelled = false;
+    setTrack('');
     (async () => {
       const api = await getEmbedApi();
       if (cancelled) return;
@@ -92,17 +117,36 @@ export default function SpotifyDial() {
         api.createController(
           embedRef.current,
           { uri, width: '100%', height: 152 },
-          (controller) => { ctrlRef.current = controller; }
+          (controller) => {
+            ctrlRef.current = controller;
+            controller.addListener('playback_update', (e) => {
+              const d = e?.data || {};
+              setPaused(!!d.isPaused);
+              if (d.playingURI) resolveTrack(d.playingURI);
+              // Começou a tocar → recolhe o player sozinho para não tampar o timer
+              if (!d.isPaused && !autoMinRef.current) {
+                autoMinRef.current = true;
+                setMini(true);
+              }
+            });
+            controller.addListener('playback_started', (e) => {
+              if (e?.data?.playingURI) resolveTrack(e.data.playingURI);
+            });
+          }
         );
       }
     })();
     return () => { cancelled = true; };
-  }, [current]);
+  }, [current, resolveTrack]);
 
   const closePlayer = () => {
     try { ctrlRef.current?.destroy(); } catch {}
     ctrlRef.current = null;
     setCurrent(null);
+    setMini(false);
+    setPaused(true);
+    setTrack('');
+    autoMinRef.current = false;
   };
 
   // Comandos de música vindos do celular
@@ -208,15 +252,33 @@ export default function SpotifyDial() {
 
   return (
     <>
-      {/* Player embutido — fica montado para a música não parar */}
+      {/* Player embutido — fica montado (invisível quando minimizado) para a música não parar */}
       {current && (
-        <div className="rt-player">
+        <div className={`rt-player ${mini ? 'rt-player--min' : ''}`}>
           <div className="rt-player-head">
             <span>♫ {current.name}</span>
-            <button onClick={closePlayer} title="Fechar player">✕</button>
+            <div className="rt-player-actions">
+              <button onClick={() => setMini(true)} title="Minimizar player">—</button>
+              <button onClick={closePlayer} title="Fechar player">✕</button>
+            </div>
           </div>
           <div ref={embedRef} />
         </div>
+      )}
+
+      {/* Mini "tocando agora" — só nome da playlist + música, sem tampar o timer */}
+      {current && mini && (
+        <button className="rt-nowplaying" onClick={() => setMini(false)} title="Abrir player">
+          <span className={`rt-np-disc ${paused ? 'rt-np-disc--paused' : ''}`} aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+              <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.5 17.3a.75.75 0 0 1-1.03.25c-2.82-1.72-6.37-2.11-10.55-1.16a.75.75 0 1 1-.33-1.46c4.57-1.05 8.5-.6 11.66 1.33.35.22.46.68.25 1.04zm1.47-3.27a.94.94 0 0 1-1.29.31c-3.23-1.98-8.16-2.56-11.98-1.4a.94.94 0 1 1-.55-1.8c4.37-1.32 9.8-.68 13.51 1.6.44.27.58.85.31 1.29zm.13-3.4C15.24 8.33 8.85 8.12 5.15 9.24a1.13 1.13 0 1 1-.65-2.15c4.25-1.29 11.28-1.04 15.72 1.6a1.13 1.13 0 0 1-1.12 1.94z" />
+            </svg>
+          </span>
+          <span className="rt-np-text">
+            <span className="rt-np-playlist">{current.name}</span>
+            <span className="rt-np-track">{track || (paused ? 'Pausado' : 'Tocando…')}</span>
+          </span>
+        </button>
       )}
 
       {/* Speed dial */}

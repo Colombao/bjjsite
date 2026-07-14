@@ -330,8 +330,41 @@
 }
 .rt-player-head button:hover{color:#E36B6B}
 .rt-player iframe{display:block;border:0}
+.rt-player{transition:opacity .3s var(--ease),transform .3s var(--ease),visibility .3s}
+/* Minimizado: some da tela mas continua montado (a música não para) */
+.rt-player--min{opacity:0;visibility:hidden;pointer-events:none;transform:translateY(14px)}
+.rt-player-actions{display:flex;align-items:center;gap:.1rem}
+
+/* Mini "tocando agora" */
+.rt-nowplaying{
+  position:fixed;left:1.4rem;bottom:1.4rem;z-index:2190;
+  display:flex;align-items:center;gap:.65rem;
+  max-width:min(320px,calc(100vw - 2.8rem));
+  background:rgba(17,16,13,.88);border:1px solid var(--line);border-radius:999px;
+  padding:.4rem .95rem .4rem .45rem;cursor:pointer;
+  box-shadow:var(--shadow);backdrop-filter:blur(8px);
+  transition:border-color .3s;text-align:left;
+}
+.rt-nowplaying:hover{border-color:#1DB954}
+.rt-np-disc{
+  width:32px;height:32px;flex:0 0 32px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  color:#1ed760;animation:rt-np-spin 2.6s linear infinite;
+}
+.rt-np-disc--paused{animation-play-state:paused;color:var(--mute)}
+@keyframes rt-np-spin{to{transform:rotate(360deg)}}
+.rt-np-text{display:flex;flex-direction:column;min-width:0;line-height:1.3}
+.rt-np-playlist{
+  font-size:.56rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:#1ed760;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.rt-np-track{
+  font-family:var(--font-archivo),sans-serif;font-size:.74rem;color:var(--bone);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
 @media(max-width:640px){
   .rt-player{bottom:5.6rem}
+  .rt-nowplaying{bottom:5.6rem}
 }
 
 /* ---------- Modo TV ---------- */
