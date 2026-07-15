@@ -43,7 +43,7 @@ export default function SpotifyDial() {
   const [mini, setMini] = useState(false);
   const [paused, setPaused] = useState(true);
   const [track, setTrack] = useState('');
-  const autoMinRef = useRef(false);
+  const prevPausedRef = useRef(true);
   const trackCacheRef = useRef({});
 
   // Modal de adicionar
@@ -121,13 +121,13 @@ export default function SpotifyDial() {
             ctrlRef.current = controller;
             controller.addListener('playback_update', (e) => {
               const d = e?.data || {};
-              setPaused(!!d.isPaused);
+              const isPaused = !!d.isPaused;
+              setPaused(isPaused);
               if (d.playingURI) resolveTrack(d.playingURI);
-              // Começou a tocar → recolhe o player sozinho para não tampar o timer
-              if (!d.isPaused && !autoMinRef.current) {
-                autoMinRef.current = true;
-                setMini(true);
-              }
+              // Sempre que começa/volta a tocar (clique local OU controle remoto),
+              // recolhe o player para a pill e não tampa o timer
+              if (!isPaused && prevPausedRef.current) setMini(true);
+              prevPausedRef.current = isPaused;
             });
             controller.addListener('playback_started', (e) => {
               if (e?.data?.playingURI) resolveTrack(e.data.playingURI);
@@ -146,7 +146,7 @@ export default function SpotifyDial() {
     setMini(false);
     setPaused(true);
     setTrack('');
-    autoMinRef.current = false;
+    prevPausedRef.current = true;
   };
 
   // Comandos de música vindos do celular

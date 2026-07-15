@@ -33,6 +33,9 @@ export default function TimerPage() {
   const [activeMode, setActiveMode] = useState(null);
   const [newModeName, setNewModeName] = useState('');
 
+  // Textos da tela (título e frase de cada fase) — personalizáveis
+  const [texts, setTexts] = useState(PHASE_TXT);
+
   const totalRef = useRef(10);
 
   const loaded = useRef(false);
@@ -51,20 +54,43 @@ export default function TimerPage() {
       setSoundEnd(saved.soundEnd ?? 'buzzer');
       setWarnBeeps(saved.warnBeeps ?? true);
     };
+    // Garante que textos salvos incompletos sempre tenham os padrões como base
+    const mergeTexts = (t) =>
+      Object.fromEntries(
+        Object.keys(PHASE_TXT).map((k) => [k, { ...PHASE_TXT[k], ...(t?.[k] || {}) }])
+      );
     try {
       applyCfg(JSON.parse(localStorage.getItem('heishikan_timer_cfg') || 'null'));
       const modes = JSON.parse(localStorage.getItem('heishikan_timer_modes') || 'null');
       if (Array.isArray(modes)) setCustomModes(modes);
+      const savedTexts = JSON.parse(localStorage.getItem('heishikan_timer_texts') || 'null');
+      if (savedTexts) setTexts(mergeTexts(savedTexts));
     } catch {}
     dbLoad().then((d) => {
       if (d) {
         if (d.cfg) applyCfg(d.cfg);
         if (Array.isArray(d.modes)) setCustomModes(d.modes);
         if (d.sounds) setCustomSounds({ start: d.sounds.start ?? null, end: d.sounds.end ?? null });
+        if (d.texts) setTexts(mergeTexts(d.texts));
       }
       loaded.current = true;
     });
   }, []);
+
+  const updateText = (key, field, value) => {
+    setTexts((prev) => {
+      const next = { ...prev, [key]: { ...prev[key], [field]: value } };
+      try { localStorage.setItem('heishikan_timer_texts', JSON.stringify(next)); } catch {}
+      if (loaded.current) dbSave({ texts: next }, 'texts');
+      return next;
+    });
+  };
+
+  const resetTexts = () => {
+    setTexts(PHASE_TXT);
+    try { localStorage.removeItem('heishikan_timer_texts'); } catch {}
+    if (loaded.current) dbSave({ texts: PHASE_TXT }, 'texts');
+  };
 
   useEffect(() => {
     const cfg = { numRounds, workMin, workSec, restMin, restSec, prepSec, soundStart, soundEnd, warnBeeps };
@@ -253,7 +279,7 @@ export default function TimerPage() {
   });
 
   const pct = ((totalRef.current - timeLeft) / (totalRef.current || 1)) * 100;
-  const txt = PHASE_TXT[phase] || PHASE_TXT.prepare;
+  const txt = texts[phase] || texts.prepare;
   const phaseMod = phase === 'work' ? 'work' : phase === 'rest' ? 'rest' : 'prepare';
 
   const modeBtn = (m) => (
@@ -294,9 +320,12 @@ export default function TimerPage() {
         <section className={`rt-main rt-main--${phaseMod}`}>
           <div className="rt-main-top">
             <span className="rt-brand-sub">Roger Santos Jiu-Jitsu</span>
-            <span className="rt-round-badge">
-              {phase === 'finished' ? 'Concluído' : `Round ${round} de ${numRounds}`}
-            </span>
+            <div className="rt-main-top-right">
+              {activeMode && <span className="rt-mode-tag" title="Modo de treino ativo">{activeMode}</span>}
+              <span className="rt-round-badge">
+                {phase === 'finished' ? 'Concluído' : `Round ${round} de ${numRounds}`}
+              </span>
+            </div>
           </div>
 
           <div className="rt-core">
@@ -395,6 +424,37 @@ export default function TimerPage() {
           </div>
 
           <div className="rt-card">
+            <h3>Textos da Tela</h3>
+
+            {[
+              ['prepare', 'Preparação'],
+              ['work', 'Combate'],
+              ['rest', 'Descanso'],
+              ['finished', 'Treino concluído'],
+            ].map(([key, label]) => (
+              <div className="rt-field" key={key}>
+                <label>{label}</label>
+                <div className="rt-text-pair">
+                  <input
+                    type="text" className="rt-text-input" maxLength={40}
+                    placeholder={`Título (ex: ${PHASE_TXT[key].title})`}
+                    value={texts[key].title}
+                    onChange={(e) => updateText(key, 'title', e.target.value)}
+                  />
+                  <input
+                    type="text" className="rt-text-input" maxLength={90}
+                    placeholder={`Frase (ex: ${PHASE_TXT[key].hint})`}
+                    value={texts[key].hint}
+                    onChange={(e) => updateText(key, 'hint', e.target.value)}
+                  />
+                </div>
+              </div>
+            ))}
+
+            <button className="rt-btn" onClick={resetTexts}>↺ Restaurar textos padrão</button>
+          </div>
+
+          <div className="rt-card">
             <h3>Alertas Sonoros</h3>
 
             <div className="rt-field">
@@ -468,6 +528,7 @@ export default function TimerPage() {
           </div>
 
           <div className="rt-tv-core">
+            {activeMode && <span className="rt-tv-modename">{activeMode}</span>}
             <span className={`rt-phase-label rt-phase-label--${phaseMod}`} style={{ fontSize: 'clamp(.9rem,2.5vw,1.6rem)' }}>
               {txt.title}
             </span>

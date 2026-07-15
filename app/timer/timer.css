@@ -55,6 +55,12 @@
   font-size:.66rem;font-weight:700;letter-spacing:.24em;text-transform:uppercase;
   padding:.4rem .9rem;border:1px solid var(--gold);color:var(--gold);border-radius:2px;
 }
+.rt-main-top-right{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;justify-content:flex-end}
+.rt-mode-tag{
+  font-size:.6rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  padding:.4rem .8rem;border:1px dashed var(--line);color:var(--mute);border-radius:999px;
+  max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
 
 .rt-core{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:1.2rem;padding:2.5rem 0}
 .rt-phase-label{
@@ -111,6 +117,16 @@
 }
 .rt-field input:focus,.rt-field select:focus{border-color:var(--gold)}
 .rt-field select{text-align:left;cursor:pointer}
+/* Textos da tela (inputs de texto livre) */
+.rt-text-pair{display:flex;flex-direction:column;gap:.45rem}
+.rt-text-input{
+  width:100%;padding:.6rem .8rem;
+  background:var(--panel-2);color:var(--bone);
+  border:1px solid var(--line);border-radius:2px;
+  font-family:var(--font-archivo),sans-serif;font-size:.82rem;
+  outline:none;transition:border-color .3s;
+}
+.rt-text-input:focus{border-color:var(--gold)}
 .rt-row2{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
 .rt-stepper{display:flex;gap:.5rem;align-items:stretch}
 .rt-stepper button{
@@ -375,6 +391,11 @@
 }
 .rt-tv-head{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding-bottom:1rem;border-bottom:1px solid var(--line)}
 .rt-tv-core{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:1.5rem}
+.rt-tv-modename{
+  font-size:clamp(.62rem,1.3vw,.9rem);font-weight:700;letter-spacing:.34em;
+  text-transform:uppercase;color:var(--mute);
+  padding:.45rem 1.1rem;border:1px dashed var(--line);border-radius:999px;
+}
 .rt-tv-clock{
   font-family:var(--font-cinzel),serif;font-weight:800;
   font-variant-numeric:tabular-nums;line-height:.95;
