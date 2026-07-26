@@ -1,0 +1,463 @@
+.placar-container {
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+}
+
+.placar-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.placar-header h1 {
+  margin: 0;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #1a1a1a;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.placar-header p {
+  margin: 10px 0 0;
+  color: #666;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ============ DISPLAY DO PLACAR ============ */
+.placar-display {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  margin-bottom: 30px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  align-items: center;
+}
+
+.atleta-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.atleta-section.atletaA {
+  flex-direction: column;
+}
+
+.atleta-section.atletaB {
+  flex-direction: column-reverse;
+}
+
+.atleta-info {
+  text-align: center;
+}
+
+.atleta-info .nome {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 5px;
+}
+
+.atleta-info .team {
+  font-size: 0.85rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ============ GRID DE PONTOS ============ */
+.pontos-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 300px;
+}
+
+.ponto-box {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 3rem;
+  font-weight: 800;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.ponto-box.p2 {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+}
+
+.ponto-box.vantagem {
+  background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
+}
+
+.ponto-box.penalidade {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+.ponto-box .valor {
+  display: block;
+  line-height: 1;
+}
+
+/* ============ STATUS BAR ============ */
+.status-bar {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+  padding-top: 20px;
+  border-top: 2px solid #e5e5e5;
+}
+
+.tempo-display,
+.status-display {
+  padding: 20px;
+  border-radius: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+.tempo-display {
+  background: #1a1a1a;
+  color: white;
+  font-size: 2rem;
+  font-family: 'Courier New', monospace;
+}
+
+.status-display {
+  background: #ef4444;
+  color: white;
+  font-size: 1.3rem;
+}
+
+/* ============ CONTROLES ============ */
+.controles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.secao-controle {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.secao-controle.full {
+  grid-column: 1 / -1;
+}
+
+.secao-controle h3 {
+  margin: 0 0 15px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #e5e5e5;
+}
+
+/* ============ INPUTS ============ */
+.inputs-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.input-group label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.input-text {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  text-transform: uppercase;
+}
+
+.input-text:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* ============ SCORE CONTROLS ============ */
+.score-controls {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.score-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.score-group label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-group {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.btn-minus,
+.btn-plus {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: #e5e5e5;
+  color: #1a1a1a;
+}
+
+.btn-minus:hover,
+.btn-plus:hover {
+  background: #d1d5db;
+  transform: scale(1.05);
+}
+
+.btn-minus:active,
+.btn-plus:active {
+  transform: scale(0.95);
+}
+
+.score-display {
+  font-size: 1.5rem;
+  font-weight: 800;
+  text-align: center;
+  color: #1a1a1a;
+  padding: 8px 0;
+}
+
+/* ============ TEMPO CONTROLS ============ */
+.tempo-controls {
+  margin-bottom: 15px;
+}
+
+.tempo-controls label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.input-time {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  font-family: 'Courier New', monospace;
+  color: #1a1a1a;
+  text-align: center;
+}
+
+.input-time:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* ============ STATUS CONTROLS ============ */
+.status-controls {
+  margin-bottom: 15px;
+}
+
+.status-controls label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.btn-status-group {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.btn-status {
+  padding: 10px 12px;
+  border: 2px solid #d1d5db;
+  border-radius: 6px;
+  background: white;
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-status:hover {
+  border-color: #3b82f6;
+  color: #3b82f6;
+}
+
+.btn-status.active {
+  background: #ef4444;
+  border-color: #ef4444;
+  color: white;
+}
+
+/* ============ RESET BUTTON ============ */
+.btn-reset {
+  width: 100%;
+  padding: 12px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-reset:hover {
+  background: #dc2626;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.btn-reset:active {
+  transform: translateY(0);
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 768px) {
+  .placar-container {
+    padding: 15px;
+  }
+
+  .placar-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .placar-display {
+    grid-template-columns: 1fr;
+    padding: 20px;
+    gap: 20px;
+  }
+
+  .ponto-box {
+    font-size: 2.5rem;
+  }
+
+  .pontos-grid {
+    max-width: 100%;
+  }
+
+  .controles {
+    grid-template-columns: 1fr;
+  }
+
+  .score-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .tempo-display {
+    font-size: 1.5rem;
+  }
+
+  .status-display {
+    font-size: 1rem;
+  }
+
+  .status-bar {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .placar-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .placar-display {
+    padding: 15px;
+  }
+
+  .atleta-info .nome {
+    font-size: 1.1rem;
+  }
+
+  .ponto-box {
+    font-size: 2rem;
+  }
+
+  .tempo-display {
+    font-size: 1.3rem;
+  }
+
+  .btn-group {
+    gap: 6px;
+  }
+
+  .btn-minus,
+  .btn-plus {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+
+  .score-display {
+    font-size: 1.2rem;
+  }
+}

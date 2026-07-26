@@ -1,0 +1,146 @@
+.menu-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+}
+
+.menu-content {
+  text-align: center;
+  max-width: 600px;
+  width: 100%;
+}
+
+.menu-content h1 {
+  font-size: 3rem;
+  font-weight: 900;
+  color: white;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.menu-content > p {
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 40px;
+  font-weight: 500;
+}
+
+.menu-buttons {
+  display: grid;
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.menu-btn {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 20px;
+  align-items: center;
+  background: white;
+  border-radius: 16px;
+  padding: 30px;
+  text-decoration: none;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  text-align: left;
+}
+
+.menu-btn:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.menu-btn:active {
+  transform: translateY(-4px);
+}
+
+.btn-icon {
+  font-size: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-text h2 {
+  font-size: 1.5rem;
+  color: #1a1a1a;
+  margin: 0 0 4px;
+  font-weight: 700;
+}
+
+.btn-text p {
+  margin: 0;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.display-btn {
+  border-left: 5px solid #3b82f6;
+}
+
+.display-btn:hover {
+  background: #f0f4ff;
+}
+
+.control-btn {
+  border-left: 5px solid #ef4444;
+}
+
+.control-btn:hover {
+  background: #fef2f2;
+}
+
+/* ============ INFO ============ */
+.menu-info {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 20px;
+  color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.menu-info p {
+  margin: 8px 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.menu-info strong {
+  font-weight: 600;
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 600px) {
+  .menu-content h1 {
+    font-size: 2rem;
+  }
+
+  .menu-content > p {
+    font-size: 1rem;
+    margin-bottom: 30px;
+  }
+
+  .menu-btn {
+    grid-template-columns: 60px 1fr;
+    padding: 20px;
+    gap: 15px;
+  }
+
+  .btn-icon {
+    font-size: 2.5rem;
+  }
+
+  .btn-text h2 {
+    font-size: 1.2rem;
+  }
+
+  .btn-text p {
+    font-size: 0.85rem;
+  }
+}

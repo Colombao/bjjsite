@@ -1,0 +1,254 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background: #c0c0c0;
+}
+
+.display-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #c0c0c0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  overflow: hidden;
+  padding: 20px;
+  gap: 20px;
+}
+
+.loading {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: #666;
+}
+
+.display-header {
+  text-align: center;
+}
+
+.display-header h1 {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #1a1a1a;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-decoration-thickness: 3px;
+  text-underline-offset: 8px;
+}
+
+.display-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  justify-content: center;
+}
+
+/* ============ ATLETA ROW ============ */
+.atleta-row {
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  gap: 0;
+  align-items: stretch;
+  height: 180px;
+  margin-bottom: 0;
+}
+
+.atleta-row:first-child .atleta-header {
+  background: #0052cc;
+  color: white;
+}
+
+.atleta-row:first-child .atleta-header .nome {
+  color: white;
+}
+
+.atleta-row:first-child .atleta-header .team {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.atleta-row:last-child .atleta-header .nome {
+  color: #1a1a1a;
+}
+
+.atleta-row:last-child .atleta-header .team {
+  color: #1a1a1a;
+}
+
+/* ============ ATLETA HEADER (nome/team) ============ */
+.atleta-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px 25px;
+  background: #f0f0f0;
+  border-right: 2px solid #ddd;
+}
+
+.atleta .nome {
+  font-size: 2rem;
+  font-weight: 900;
+  color: #1a1a1a;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+  line-height: 1.1;
+}
+
+.atleta .team {
+  font-size: 0.9rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+/* ============ PONTOS ROW (3 colunas) ============ */
+.pontos-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  height: 100%;
+}
+
+.ponto {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 2px solid white;
+  font-weight: 900;
+}
+
+.ponto:last-child {
+  border-right: none;
+}
+
+.ponto.p2 {
+  background: #22c55e;
+}
+
+.ponto.vantagem {
+  background: #eab308;
+}
+
+.ponto.penalidade {
+  background: #ef4444;
+}
+
+.ponto .valor {
+  font-size: 4rem;
+  color: white;
+  text-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+  line-height: 1;
+}
+
+/* ============ STATUS FOOTER ============ */
+.status-footer {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 15px;
+  height: 120px;
+}
+
+.tempo {
+  background: #1a1a1a;
+  color: white;
+  font-size: 3.5rem;
+  font-weight: 900;
+  font-family: 'Courier New', monospace;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  text-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.status {
+  background: #ef4444;
+  color: white;
+  font-size: 2.2rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 1200px) {
+  .atleta-row {
+    grid-template-columns: 280px 1fr;
+    height: 140px;
+  }
+
+  .atleta .nome {
+    font-size: 1.6rem;
+  }
+
+  .ponto .valor {
+    font-size: 3rem;
+  }
+
+  .tempo {
+    font-size: 2.8rem;
+  }
+
+  .status {
+    font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .display-container {
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .display-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .atleta-row {
+    grid-template-columns: 150px 1fr;
+    height: 100px;
+  }
+
+  .atleta .nome {
+    font-size: 1rem;
+    margin-bottom: 2px;
+  }
+
+  .atleta .team {
+    font-size: 0.7rem;
+  }
+
+  .ponto .valor {
+    font-size: 2rem;
+  }
+
+  .tempo {
+    font-size: 2rem;
+  }
+
+  .status {
+    font-size: 1.2rem;
+  }
+
+  .status-footer {
+    height: 80px;
+    gap: 10px;
+  }
+}
