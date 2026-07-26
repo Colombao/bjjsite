@@ -1,10 +1,18 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import QRCode from 'qrcode.react';
 import '../display.css';
 
 export default function PlacarDisplay() {
   const [match, setMatch] = useState(null);
+  const [showQR, setShowQR] = useState(true);
+  const [controlUrl, setControlUrl] = useState('');
+
+  useEffect(() => {
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+    setControlUrl(`${baseUrl}/placar/control`);
+  }, []);
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -86,6 +94,27 @@ export default function PlacarDisplay() {
         <div className="tempo">{match.tempo}</div>
         <div className="status">{match.statusLuta}</div>
       </div>
+
+      {/* QR CODE MODAL */}
+      {showQR && controlUrl && (
+        <div className="qr-overlay">
+          <div className="qr-modal">
+            <h2>Escanear no Celular</h2>
+            <div className="qr-container">
+              <QRCode
+                value={controlUrl}
+                size={256}
+                level="H"
+                includeMargin={true}
+              />
+            </div>
+            <p className="qr-url">{controlUrl}</p>
+            <button onClick={() => setShowQR(false)} className="qr-close">
+              ✕ Fechar
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
