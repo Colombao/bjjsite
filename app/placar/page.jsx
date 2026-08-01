@@ -8,30 +8,30 @@ export default function PlacarMenu() {
     <div className="menu-container">
       <div className="menu-content">
         <h1>BJJ Placar</h1>
-        <p>Escolha o modo</p>
+        <p>Sessão ao vivo entre TV e celular</p>
 
         <div className="menu-buttons">
           <Link href="/placar/display" className="menu-btn display-btn">
             <div className="btn-icon">📺</div>
             <div className="btn-text">
               <h2>Tela de Exibição</h2>
-              <p>Para a TV (full-screen)</p>
+              <p>Abra na TV — mostra o QR da sessão</p>
             </div>
           </Link>
 
-          <Link href="/placar/control" className="menu-btn control-btn">
+          <div className="menu-btn control-btn menu-btn--disabled">
             <div className="btn-icon">📱</div>
             <div className="btn-text">
               <h2>Controle Remoto</h2>
-              <p>Para o celular</p>
+              <p>Escaneie o QR da TV no celular</p>
             </div>
-          </Link>
+          </div>
         </div>
 
         <div className="menu-info">
-          <p><strong>TV:</strong> Abra /placar/display</p>
-          <p><strong>Celular:</strong> Abra /placar/control</p>
-          <p>Os dados sincronizam automaticamente entre os dispositivos.</p>
+          <p><strong>1.</strong> Abra <code>/placar/display</code> na TV</p>
+          <p><strong>2.</strong> Escaneie o QR com o celular</p>
+          <p><strong>3.</strong> Mude nomes e pontos — a TV atualiza na hora</p>
         </div>
       </div>
     </div>
