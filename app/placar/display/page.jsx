@@ -1,60 +1,75 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import QRCode from 'qrcode.react';
+import { useEffect, useReducer, useCallback } from 'react';
+import RemoteBridge from '../RemoteBridge';
+import { DEFAULT_STATE, applyCtrl, tickTempo } from '../state';
 import '../display.css';
 
-export default function PlacarDisplay() {
-  const [match, setMatch] = useState(null);
-  const [showQR, setShowQR] = useState(true);
-  const [controlUrl, setControlUrl] = useState('');
+const initial = { match: DEFAULT_STATE, running: false, showQR: true };
 
-  useEffect(() => {
-    const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
-    setControlUrl(`${baseUrl}/placar/control`);
-  }, []);
-
-  useEffect(() => {
-    const handleStorageChange = () => {
-      const data = localStorage.getItem('bjj-placar');
-      if (data) {
-        setMatch(JSON.parse(data));
-      }
-    };
-
-    handleStorageChange();
-    window.addEventListener('storage', handleStorageChange);
-
-    const interval = setInterval(handleStorageChange, 500);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      clearInterval(interval);
-    };
-  }, []);
-
-  if (!match) {
-    return (
-      <div className="display-container">
-        <div className="loading">Aguardando dados...</div>
-      </div>
-    );
+function reducer(state, action) {
+  switch (action.type) {
+    case 'remote': {
+      const next = applyCtrl(state.match, state.running, action.msg);
+      return { ...state, match: next.match, running: next.running };
+    }
+    case 'tick': {
+      if (!state.running) return state;
+      const t = tickTempo(state.match.tempo);
+      if (t.done) return { ...state, running: false };
+      return {
+        ...state,
+        match: { ...state.match, tempo: t.tempo },
+      };
+    }
+    case 'showQR':
+      return { ...state, showQR: action.value };
+    default:
+      return state;
   }
+}
+
+export default function PlacarDisplay() {
+  const [state, dispatch] = useReducer(reducer, initial);
+  const { match, running, showQR } = state;
+
+  useEffect(() => {
+    const onCtrl = (e) => dispatch({ type: 'remote', msg: e.detail || {} });
+    window.addEventListener('pc-remote-ctrl', onCtrl);
+    return () => window.removeEventListener('pc-remote-ctrl', onCtrl);
+  }, []);
+
+  useEffect(() => {
+    if (!running) return undefined;
+    const id = setInterval(() => dispatch({ type: 'tick' }), 1000);
+    return () => clearInterval(id);
+  }, [running]);
+
+  const onShowModalChange = useCallback((v) => {
+    dispatch({ type: 'showQR', value: v });
+  }, []);
 
   return (
     <div className="display-container">
       <div className="display-header">
         <h1>PLACAR JUJITSU</h1>
+        <div className="display-header-actions">
+          <RemoteBridge
+            match={match}
+            running={running}
+            autoStart
+            showModal={showQR}
+            onShowModalChange={onShowModalChange}
+          />
+        </div>
       </div>
 
       <div className="display-main">
-        {/* ATLETA A ROW */}
         <div className="atleta-row">
           <div className="atleta-header">
             <div className="nome">{match.atletaA.nome}</div>
             <div className="team">{match.atletaA.team}</div>
           </div>
-
           <div className="pontos-row">
             <div className="ponto p2">
               <span className="valor">{match.atletaA.pontos}</span>
@@ -68,13 +83,11 @@ export default function PlacarDisplay() {
           </div>
         </div>
 
-        {/* ATLETA B ROW */}
         <div className="atleta-row">
           <div className="atleta-header">
             <div className="nome">{match.atletaB.nome}</div>
             <div className="team">{match.atletaB.team}</div>
           </div>
-
           <div className="pontos-row">
             <div className="ponto p2">
               <span className="valor">{match.atletaB.pontos}</span>
@@ -89,32 +102,10 @@ export default function PlacarDisplay() {
         </div>
       </div>
 
-      {/* STATUS BAR */}
       <div className="status-footer">
-        <div className="tempo">{match.tempo}</div>
+        <div className={`tempo ${running ? 'tempo--running' : ''}`}>{match.tempo}</div>
         <div className="status">{match.statusLuta}</div>
       </div>
-
-      {/* QR CODE MODAL */}
-      {showQR && controlUrl && (
-        <div className="qr-overlay">
-          <div className="qr-modal">
-            <h2>Escanear no Celular</h2>
-            <div className="qr-container">
-              <QRCode
-                value={controlUrl}
-                size={256}
-                level="H"
-                includeMargin={true}
-              />
-            </div>
-            <p className="qr-url">{controlUrl}</p>
-            <button onClick={() => setShowQR(false)} className="qr-close">
-              ✕ Fechar
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
