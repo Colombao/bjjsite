@@ -41,7 +41,7 @@ export default function Navbar() {
     <>
       <nav className={scrolled ? 'scrolled' : ''}>
         <a className="nav-brand" href="#inicio" onClick={close}>
-          <Image src="/img/logo-heishikan.jpg" alt="Logo CT Heishikan" width={44} height={44} />
+          <Image src="/img/logo-heishikan.png" alt="Logo CT Heishikan" width={44} height={44} />
           <span className="nb-txt">
             <span className="nb-top">CT HEISHIKAN</span>
             <br />
@@ -79,7 +79,7 @@ export default function Navbar() {
       <aside id="drawer" className={`drawer ${open ? 'open' : ''}`} aria-hidden={!open}>
         <div className="drawer-head">
           <div className="db">
-            <Image src="/img/logo-heishikan.jpg" alt="" width={40} height={40} />
+            <Image src="/img/logo-heishikan.png" alt="" width={40} height={40} />
             <div>
               <div className="t1">CT HEISHIKAN</div>
               <div className="t2">Roger Santos BJJ</div>

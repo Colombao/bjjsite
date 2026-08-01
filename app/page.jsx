@@ -129,7 +129,7 @@ export default function Home() {
             </div>
             <div className="tri-badge">
               <Image
-                src="/img/logo-heishikan.jpg"
+                src="/img/logo-heishikan.png"
                 alt="Emblema CT Heishikan"
                 width={86}
                 height={86}
@@ -137,7 +137,7 @@ export default function Home() {
                   width: "78%",
                   height: "78%",
                   borderRadius: "50%",
-                  objectFit: "cover",
+                  objectFit: "contain",
                 }}
               />
             </div>
@@ -786,7 +786,7 @@ export default function Home() {
         <div className="foot-grid">
           <div className="foot-brand">
             <Image
-              src="/img/logo-heishikan.jpg"
+              src="/img/logo-heishikan.png"
               alt="Logo CT Heishikan"
               width={52}
               height={52}
