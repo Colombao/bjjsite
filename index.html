@@ -74,7 +74,7 @@ nav.scrolled{
   border-bottom-color:var(--line);
 }
 .nav-brand{display:flex;align-items:center;gap:.75rem}
-.nav-brand img{width:44px;height:44px;border-radius:50%;border:1px solid var(--line)}
+.nav-brand img{width:44px;height:44px;border-radius:50%;object-fit:contain;background:transparent}
 .nav-brand .nb-txt{line-height:1.15}
 .nav-brand .nb-top{font-family:'Cinzel',serif;font-weight:700;font-size:.95rem;letter-spacing:.14em;color:var(--gold)}
 .nav-brand .nb-sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.85rem;color:var(--mute)}
@@ -229,7 +229,7 @@ h2 em{font-style:normal;color:var(--gold)}
   background:var(--ink);border:1px solid var(--line);display:grid;place-items:center;
   box-shadow:var(--shadow);
 }
-.mestre-figure .tri-badge img{width:78%;height:78%;border-radius:50%;aspect-ratio:1;object-fit:cover}
+.mestre-figure .tri-badge img{width:78%;height:78%;border-radius:50%;aspect-ratio:1;object-fit:contain}
 .mestre-figure .frame-edge{position:absolute;inset:0;border:1px solid var(--line);transform:translate(18px,18px);z-index:-1}
 .mestre-copy p{margin-bottom:1.15rem;color:#CFC7B4}
 .mestre-quote{
@@ -363,7 +363,7 @@ h2 em{font-style:normal;color:var(--gold)}
 footer{border-top:1px solid var(--line);background:#080706;padding:3.2rem clamp(1.4rem,5vw,3.5rem) 2rem}
 .foot-grid{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;gap:2rem;flex-wrap:wrap;align-items:center}
 .foot-brand{display:flex;align-items:center;gap:.9rem}
-.foot-brand img{width:52px;height:52px;border-radius:50%;border:1px solid var(--line)}
+.foot-brand img{width:52px;height:52px;border-radius:50%;object-fit:contain;background:transparent}
 .foot-brand .fb-top{font-family:'Cinzel',serif;font-weight:700;letter-spacing:.14em;color:var(--gold)}
 .foot-brand .fb-sub{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--mute);font-size:.9rem}
 .foot-social{display:flex;gap:1rem}
@@ -430,7 +430,7 @@ footer{border-top:1px solid var(--line);background:#080706;padding:3.2rem clamp(
 
 <nav id="nav">
   <a class="nav-brand" href="#inicio">
-    <img src="img/logo-heishikan.jpg" alt="Logo CT Heishikan">
+    <img src="img/logo-heishikan.png" alt="Logo CT Heishikan">
     <span class="nb-txt">
       <span class="nb-top">CT HEISHIKAN</span><br>
       <span class="nb-sub">Roger Santos BJJ</span>
@@ -485,7 +485,7 @@ footer{border-top:1px solid var(--line);background:#080706;padding:3.2rem clamp(
     <div class="mestre-figure rv">
       <div class="frame-edge"></div>
       <div class="frame"><img src="img/mestre-retrato.jpg" alt="Professor Roger Santos, faixa preta de Brazilian Jiu-Jitsu"></div>
-      <div class="tri-badge"><img src="img/logo-heishikan.jpg" alt="Emblema CT Heishikan"></div>
+      <div class="tri-badge"><img src="img/logo-heishikan.png" alt="Emblema CT Heishikan"></div>
     </div>
     <div class="mestre-copy">
       <p class="eyebrow rv">Quem conduz o tatame</p>
@@ -657,7 +657,7 @@ footer{border-top:1px solid var(--line);background:#080706;padding:3.2rem clamp(
 <footer>
   <div class="foot-grid">
     <div class="foot-brand">
-      <img src="img/logo-heishikan.jpg" alt="Logo CT Heishikan">
+      <img src="img/logo-heishikan.png" alt="Logo CT Heishikan">
       <div>
         <div class="fb-top">CT HEISHIKAN</div>
         <div class="fb-sub">Roger Santos Brazilian Jiu-Jitsu</div>
