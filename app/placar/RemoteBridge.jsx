@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 
 /* Ponte TV ⇄ celular via WebRTC (PeerJS), igual ao timer.
    A TV (/placar/display) hospeda a sessão; o celular abre
@@ -37,10 +38,13 @@ export default function RemoteBridge({
 
   const [status, setStatus] = useState('off'); // off|starting|waiting|connected|error
   const [remoteUrl, setRemoteUrl] = useState('');
+  const [mounted, setMounted] = useState(false);
   const peerRef = useRef(null);
   const connsRef = useRef([]);
   const qrRef = useRef(null);
   const stateRef = useRef({ match, running });
+
+  useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => {
     stateRef.current = { match, running };
@@ -110,7 +114,10 @@ export default function RemoteBridge({
   }, [autoStart, start]);
 
   useEffect(() => {
-    if (show && remoteUrl && qrRef.current && window.QRCode) {
+    if (!show || !remoteUrl || !window.QRCode) return undefined;
+    let cancelled = false;
+    const draw = () => {
+      if (cancelled || !qrRef.current) return false;
       qrRef.current.innerHTML = '';
       new window.QRCode(qrRef.current, {
         text: remoteUrl,
@@ -119,8 +126,20 @@ export default function RemoteBridge({
         colorDark: '#0B0A08',
         colorLight: '#F2EBDD',
       });
+      return true;
+    };
+    // Portal pode montar um frame depois — tenta de novo se o ref ainda não existir
+    if (!draw()) {
+      const id = requestAnimationFrame(() => {
+        if (!draw()) setTimeout(draw, 50);
+      });
+      return () => {
+        cancelled = true;
+        cancelAnimationFrame(id);
+      };
     }
-  }, [show, remoteUrl]);
+    return () => { cancelled = true; };
+  }, [show, remoteUrl, mounted]);
 
   useEffect(() => () => peerRef.current?.destroy(), []);
 
@@ -131,29 +150,13 @@ export default function RemoteBridge({
     error: 'Erro de conexão. Recarregue a TV e tente novamente.',
   }[status];
 
-  return (
-    <>
-      <button
-        className="pc-remote-btn"
-        onClick={() => {
-          setShow(true);
-          start();
-        }}
-        title="Controle pelo celular"
-      >
-        📱 Controle
-      </button>
-
-      {status === 'connected' && !show && (
-        <span className="pc-remote-pill pc-remote-pill--ok">Celular conectado</span>
-      )}
-
-      {show && (
+  const modal = show && mounted
+    ? createPortal(
         <div
           className="qr-overlay"
           onClick={(e) => e.target === e.currentTarget && setShow(false)}
         >
-          <div className="qr-modal">
+          <div className="qr-modal" role="dialog" aria-modal="true" aria-label="Controle pelo celular">
             <h2>Controle pelo Celular</h2>
             {remoteUrl ? (
               <>
@@ -181,8 +184,29 @@ export default function RemoteBridge({
               {status === 'connected' ? 'Continuar' : '✕ Fechar'}
             </button>
           </div>
-        </div>
+        </div>,
+        document.body
+      )
+    : null;
+
+  return (
+    <>
+      <button
+        className="pc-remote-btn"
+        onClick={() => {
+          setShow(true);
+          start();
+        }}
+        title="Controle pelo celular"
+      >
+        📱 Controle
+      </button>
+
+      {status === 'connected' && !show && (
+        <span className="pc-remote-pill pc-remote-pill--ok">Celular conectado</span>
       )}
+
+      {modal}
     </>
   );
 }
