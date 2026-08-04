@@ -43,12 +43,19 @@ Package: `com.heishikan.arena`
 2. `adb connect IP_DA_TV:5555`  
 3. `adb install -r dist/heishikan-arena-v1.0.0.apk`
 
+### iPhone — o que funciona agora
+
+IPA nativo **não** é gerado no Linux (precisa Mac da Expo/EAS + Apple Developer).
+
+**Hoje no iPhone:** abra o site no Safari → `/apps` → Compartilhar → **Adicionar à Tela de Início**.
+
 ### Build na nuvem (EAS)
 
 ```bash
 npm i -g eas-cli && eas login
 eas build -p android --profile preview   # APK
-eas build -p ios --profile production    # iOS (Apple Developer)
+eas build -p ios --profile production    # iOS (Apple Developer US$ 99/ano)
+eas submit -p ios                        # TestFlight / App Store
 ```
 
 ## Telas

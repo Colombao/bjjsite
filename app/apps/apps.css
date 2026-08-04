@@ -158,6 +158,23 @@
   font-size: 0.92rem;
 }
 
+.apps-ios {
+  margin-bottom: 8px;
+}
+
+.apps-ios-title {
+  margin: 0 0 10px;
+  color: var(--apps-accent);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+.apps-ios ol {
+  margin: 0 0 12px;
+}
+
 .apps-back {
   text-align: center;
   margin: 0;

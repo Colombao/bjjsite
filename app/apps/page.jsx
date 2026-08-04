@@ -8,6 +8,7 @@ export default function AppsHubPage() {
   const [canInstall, setCanInstall] = useState(false);
   const [deferred, setDeferred] = useState(null);
   const [installedHint, setInstalledHint] = useState('');
+  const [isIOS, setIsIOS] = useState(false);
 
   useEffect(() => {
     const onBip = (e) => {
@@ -17,12 +18,13 @@ export default function AppsHubPage() {
     };
     window.addEventListener('beforeinstallprompt', onBip);
 
-    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    setIsIOS(ios);
     const isStandalone =
       window.matchMedia('(display-mode: standalone)').matches ||
       window.navigator.standalone === true;
-    if (isIOS && !isStandalone) {
-      setInstalledHint('No iPhone: toque em Compartilhar → “Adicionar à Tela de Início”.');
+    if (ios && !isStandalone) {
+      setInstalledHint('Use o Safari (não o Chrome) para instalar no iPhone.');
     }
     if (isStandalone) setInstalledHint('App instalado neste aparelho ✓');
 
@@ -70,16 +72,38 @@ export default function AppsHubPage() {
 
       <section className="apps-install">
         <h2>Instalar no aparelho</h2>
-        <ol>
-          <li>
-            <strong>Web app (rápido):</strong> abra esta página no Chrome/Safari e adicione à
-            tela inicial — funciona offline básico.
-          </li>
-          <li>
-            <strong>App nativo (Expo):</strong> pasta <code>bjj-tv-app</code> no repositório —
-            gera APK Android / iOS / Android TV com EAS Build.
-          </li>
-        </ol>
+
+        {isIOS ? (
+          <div className="apps-ios">
+            <p className="apps-ios-title">iPhone / iPad (Safari)</p>
+            <ol>
+              <li>Abra esta página no <strong>Safari</strong></li>
+              <li>Toque em <strong>Compartilhar</strong> (quadrado com seta)</li>
+              <li>Escolha <strong>Adicionar à Tela de Início</strong></li>
+              <li>Confirme — o ícone Heishikan abre em tela cheia</li>
+            </ol>
+            <p className="apps-hint">
+              App nativo da App Store exige conta Apple Developer (US$ 99/ano) + build EAS.
+              Enquanto isso, o atalho Safari é o caminho no iPhone.
+            </p>
+          </div>
+        ) : (
+          <ol>
+            <li>
+              <strong>Android (rápido):</strong> use o botão abaixo ou o menu do Chrome →
+              “Instalar app” / “Adicionar à tela inicial”.
+            </li>
+            <li>
+              <strong>APK nativo:</strong> instale <code>heishikan-arena-v1.0.0.apk</code> no
+              celular ou TV.
+            </li>
+            <li>
+              <strong>iPhone:</strong> abra <code>/apps</code> no Safari → Compartilhar →
+              Adicionar à Tela de Início.
+            </li>
+          </ol>
+        )}
+
         {canInstall ? (
           <button type="button" className="apps-install-btn" onClick={install}>
             Instalar Heishikan Arena
