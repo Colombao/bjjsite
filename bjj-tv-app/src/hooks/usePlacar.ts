@@ -1,36 +1,34 @@
 import { useState } from 'react';
 
-export interface Atleta {
+export type Atleta = {
   nome: string;
   team: string;
   pontos: number;
   vantagem: number;
   penalidade: number;
-}
+};
 
-interface PlacarState {
+export type StatusLuta = 'INÍCIO' | 'DURANTE' | 'FINAL';
+
+export type PlacarState = {
   atletaA: Atleta;
   atletaB: Atleta;
-  statusLuta: 'INÍCIO' | 'DURANTE' | 'FINAL';
-}
+  statusLuta: StatusLuta;
+};
 
-export const usePlacar = () => {
+const initialAtleta = (nome: string, team: string): Atleta => ({
+  nome,
+  team,
+  pontos: 0,
+  vantagem: 0,
+  penalidade: 0,
+});
+
+export function usePlacar() {
   const [placar, setPlacar] = useState<PlacarState>({
-    atletaA: {
-      nome: 'ATLETA A',
-      team: 'BJJ TEAM A',
-      pontos: 0,
-      vantagem: 0,
-      penalidade: 0,
-    },
-    atletaB: {
-      nome: 'ATLETA B',
-      team: 'BJJ TEAM B',
-      pontos: 0,
-      vantagem: 0,
-      penalidade: 0,
-    },
-    statusLuta: 'FINAL',
+    atletaA: initialAtleta('ATLETA A', 'EQUIPE A'),
+    atletaB: initialAtleta('ATLETA B', 'EQUIPE B'),
+    statusLuta: 'INÍCIO',
   });
 
   const updateAtleta = (
@@ -38,69 +36,41 @@ export const usePlacar = () => {
     field: keyof Atleta,
     value: string | number
   ) => {
-    setPlacar((prev) => {
-      if (typeof value === 'number') {
-        return {
-          ...prev,
-          [athlete]: {
-            ...prev[athlete],
-            [field]: Math.max(0, value),
-          },
-        };
-      }
-      return {
-        ...prev,
-        [athlete]: {
-          ...prev[athlete],
-          [field]: value,
-        },
-      };
-    });
+    setPlacar((prev) => ({
+      ...prev,
+      [athlete]: {
+        ...prev[athlete],
+        [field]: typeof value === 'number' ? Math.max(0, value) : value,
+      },
+    }));
   };
 
-  const updateStatus = (status: 'INÍCIO' | 'DURANTE' | 'FINAL') => {
+  const bump = (
+    athlete: 'atletaA' | 'atletaB',
+    field: 'pontos' | 'vantagem' | 'penalidade',
+    delta: number
+  ) => {
+    setPlacar((prev) => ({
+      ...prev,
+      [athlete]: {
+        ...prev[athlete],
+        [field]: Math.max(0, prev[athlete][field] + delta),
+      },
+      statusLuta: prev.statusLuta === 'INÍCIO' ? 'DURANTE' : prev.statusLuta,
+    }));
+  };
+
+  const updateStatus = (status: StatusLuta) => {
     setPlacar((prev) => ({ ...prev, statusLuta: status }));
   };
 
   const reset = () => {
     setPlacar({
-      atletaA: {
-        nome: 'ATLETA A',
-        team: 'BJJ TEAM A',
-        pontos: 0,
-        vantagem: 0,
-        penalidade: 0,
-      },
-      atletaB: {
-        nome: 'ATLETA B',
-        team: 'BJJ TEAM B',
-        pontos: 0,
-        vantagem: 0,
-        penalidade: 0,
-      },
-      statusLuta: 'FINAL',
+      atletaA: initialAtleta(placar.atletaA.nome, placar.atletaA.team),
+      atletaB: initialAtleta(placar.atletaB.nome, placar.atletaB.team),
+      statusLuta: 'INÍCIO',
     });
   };
 
-  const addPonto = (athlete: 'atletaA' | 'atletaB', value: number) => {
-    updateAtleta(athlete, 'pontos', placar[athlete].pontos + value);
-  };
-
-  const addVantagem = (athlete: 'atletaA' | 'atletaB', value: number) => {
-    updateAtleta(athlete, 'vantagem', placar[athlete].vantagem + value);
-  };
-
-  const addPenalidade = (athlete: 'atletaA' | 'atletaB', value: number) => {
-    updateAtleta(athlete, 'penalidade', placar[athlete].penalidade + value);
-  };
-
-  return {
-    placar,
-    updateAtleta,
-    updateStatus,
-    reset,
-    addPonto,
-    addVantagem,
-    addPenalidade,
-  };
-};
+  return { placar, updateAtleta, bump, updateStatus, reset };
+}

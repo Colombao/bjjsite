@@ -48,6 +48,18 @@ public/img/       → fotos da equipe
 - **Textos e números do mestre** → seção "O MESTRE" em `app/page.jsx`
 - **Cores e fontes** → variáveis `:root` em `app/globals.css`
 
+## Timer & Placar (TV + celular)
+
+| Caminho | Uso |
+|---------|-----|
+| `/apps` | Hub para instalar (PWA) e abrir Timer/Placar |
+| `/timer` | Timer de rounds — TV + controle remoto via QR |
+| `/placar/display` | Placar CBJJ em tela cheia na TV |
+| `/placar/control` | Controle no celular |
+
+**App nativo (iPhone, Android, Android TV):** pasta `bjj-tv-app/` (Expo).  
+Veja `bjj-tv-app/README.md` para Expo Go, APK e build EAS.
+
 ## Próximo passo: e-commerce
 
 Caminho sugerido quando a loja for lançada:
@@ -56,3 +68,4 @@ Caminho sugerido quando a loja for lançada:
   um CMS/banco (Sanity, Supabase) quando o catálogo crescer
 - Pagamento: Stripe ou Mercado Pago (checkout transparente)
 - O design system atual (globals.css) já cobre botões, cards e formulários
+

@@ -1,5 +1,6 @@
 import './globals.css';
 import { Cinzel, Cormorant_Garamond, Archivo } from 'next/font/google';
+import PwaRegister from '../components/PwaRegister';
 
 const cinzel = Cinzel({
   subsets: ['latin'],
@@ -25,6 +26,16 @@ export const metadata = {
   title: 'CT Heishikan — Roger Santos Jiu-Jitsu | Jaraguá do Sul',
   description:
     'CT Heishikan — Roger Santos Brazilian Jiu-Jitsu em Jaraguá do Sul. Turmas para adultos e crianças. Disciplina, respeito, foco e confiança. Agende sua aula experimental.',
+  manifest: '/manifest.webmanifest',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'Heishikan Arena',
+  },
+  icons: {
+    apple: '/img/logo-heishikan.png',
+    icon: '/img/logo-heishikan.png',
+  },
   openGraph: {
     title: 'CT Heishikan — Roger Santos Jiu-Jitsu',
     description:
@@ -47,6 +58,7 @@ export default function RootLayout({ children }) {
     <html lang="pt-BR">
       <body className={`${cinzel.variable} ${cormorant.variable} ${archivo.variable}`}>
         {children}
+        <PwaRegister />
       </body>
     </html>
   );

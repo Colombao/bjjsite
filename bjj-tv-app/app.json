@@ -1,6 +1,59 @@
 {
-  "name": "bjj-tv-app",
-  "displayName": "BJJ Placar TV",
-  "version": "1.0.0",
-  "description": "App de placar jiu-jitsu para Android TV com timer integrado"
+  "expo": {
+    "name": "Heishikan Arena",
+    "slug": "heishikan-arena",
+    "version": "1.0.0",
+    "orientation": "default",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "scheme": "heishikan",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0B0A08"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.heishikan.arena",
+      "infoPlist": {
+        "UIRequiresFullScreen": false,
+        "UISupportedInterfaceOrientations": [
+          "UIInterfaceOrientationPortrait",
+          "UIInterfaceOrientationLandscapeLeft",
+          "UIInterfaceOrientationLandscapeRight"
+        ]
+      }
+    },
+    "android": {
+      "package": "com.heishikan.arena",
+      "adaptiveIcon": {
+        "backgroundColor": "#0B0A08",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "permissions": [],
+      "intentFilters": [
+        {
+          "action": "android.intent.action.MAIN",
+          "category": [
+            "android.intent.category.LAUNCHER",
+            "android.intent.category.LEANBACK_LAUNCHER"
+          ]
+        }
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-screen-orientation"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "replace-with-eas-project-id"
+      }
+    }
+  }
 }

@@ -1,0 +1,173 @@
+.apps-hub {
+  --apps-bg: #0b0a08;
+  --apps-text: #f2ede4;
+  --apps-muted: #a39b8c;
+  --apps-accent: #c45c26;
+  --apps-panel: #1c1914;
+  --apps-border: #2e2a22;
+
+  position: relative;
+  min-height: 100dvh;
+  padding: 48px 20px 64px;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(196, 92, 38, 0.28), transparent 55%),
+    linear-gradient(180deg, #12100c 0%, var(--apps-bg) 40%);
+  color: var(--apps-text);
+  font-family: var(--font-archivo), system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+.apps-glow {
+  display: none;
+}
+
+.apps-header {
+  max-width: 720px;
+  margin: 0 auto 36px;
+  text-align: center;
+}
+
+.apps-brand {
+  margin: 0 0 12px;
+  font-family: var(--font-cinzel), serif;
+  font-size: clamp(2rem, 6vw, 3.2rem);
+  font-weight: 800;
+  letter-spacing: 0.28em;
+  line-height: 1.05;
+}
+
+.apps-header h1 {
+  margin: 0 0 12px;
+  font-family: var(--font-archivo), sans-serif;
+  font-size: clamp(1.15rem, 3vw, 1.45rem);
+  font-weight: 600;
+  color: var(--apps-muted);
+}
+
+.apps-lead {
+  margin: 0 auto;
+  max-width: 36rem;
+  color: var(--apps-muted);
+  line-height: 1.55;
+  font-size: 1.02rem;
+}
+
+.apps-grid {
+  display: grid;
+  gap: 14px;
+  max-width: 920px;
+  margin: 0 auto 36px;
+}
+
+@media (min-width: 720px) {
+  .apps-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.apps-card {
+  display: block;
+  padding: 22px 20px;
+  background: var(--apps-panel);
+  border: 1px solid var(--apps-border);
+  border-radius: 14px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.apps-card:hover {
+  border-color: var(--apps-accent);
+  transform: translateY(-2px);
+}
+
+.apps-card--soft {
+  opacity: 0.95;
+}
+
+.apps-eyebrow {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--apps-accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.apps-card h2 {
+  margin: 0 0 8px;
+  font-size: 1.55rem;
+  font-weight: 800;
+}
+
+.apps-card p {
+  margin: 0;
+  color: var(--apps-muted);
+  line-height: 1.45;
+  font-size: 0.95rem;
+}
+
+.apps-install {
+  max-width: 720px;
+  margin: 0 auto 28px;
+  padding: 22px 20px;
+  border: 1px solid var(--apps-border);
+  border-radius: 14px;
+  background: rgba(22, 20, 17, 0.7);
+}
+
+.apps-install h2 {
+  margin: 0 0 12px;
+  font-size: 1.1rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.apps-install ol {
+  margin: 0 0 16px;
+  padding-left: 1.2rem;
+  color: var(--apps-muted);
+  line-height: 1.55;
+}
+
+.apps-install code {
+  color: var(--apps-text);
+  font-size: 0.9em;
+}
+
+.apps-install-btn {
+  appearance: none;
+  border: none;
+  border-radius: 10px;
+  padding: 14px 20px;
+  background: var(--apps-accent);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.apps-install-btn:hover {
+  filter: brightness(1.08);
+}
+
+.apps-hint {
+  margin: 14px 0 0;
+  color: var(--apps-muted);
+  font-size: 0.92rem;
+}
+
+.apps-back {
+  text-align: center;
+  margin: 0;
+}
+
+.apps-back a {
+  color: var(--apps-muted);
+  text-decoration: none;
+}
+
+.apps-back a:hover {
+  color: var(--apps-text);
+}

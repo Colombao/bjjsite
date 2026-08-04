@@ -1,155 +1,68 @@
-# BJJ Placar TV App
+# Heishikan Arena — Timer & Placar
 
-Aplicativo React Native para Android TV com placar jiu-jitsu (padrão CBJJ) + timer integrado.
+App **Expo** (React Native) do CT Heishikan para:
 
-## Características
+- **Android** (celular / tablet)
+- **iPhone / iPad**
+- **Android TV** (APK sideload + launcher Leanback)
+- **Web** (preview no navegador)
 
-- ⏱️ Timer integrado (start/pause/reset)
-- 📊 Placar com pontos, vantagem e penalidade
-- 🎮 Navegação com controle remoto (d-pad)
-- 📱 Offline-first (sem dependência de internet)
-- 📺 Otimizado para TV (full-screen, botões grandes, foco visual)
-- 🏃 Performance: ~60fps em Android TV
+Reaproveita a lógica do timer de rounds e do placar CBJJ do site.
 
-## Stack
-
-- React Native 0.72+
-- TypeScript
-- Android TV native
-
-## Setup
-
-### Pré-requisitos
-
-- Node.js 16+
-- Android SDK 28+
-- Android Studio (recomendado)
-- JDK 11+
-
-### Instalação
+## Como testar agora
 
 ```bash
-# Clone ou navegue ao diretório
 cd bjj-tv-app
-
-# Instale dependências
 npm install
-
-# Para development no Android TV
-npm run android
-
-# Para emulador
-npx react-native run-android --variant=release
+npm start
 ```
 
-## Desenvolvimento
+- Celular: instale o app **Expo Go** e escaneie o QR
+- Emulador Android: `npm run android`
+- iOS Simulator (macOS): `npm run ios`
+- Navegador: `npm run web`
 
-### Estrutura
+## Build de loja / TV (EAS)
 
-```
-src/
-├── components/        # Componentes reutilizáveis
-│   ├── Timer.tsx
-│   ├── Placar.tsx
-│   └── TVControls.tsx
-├── screens/          # Telas principais
-│   └── TVScreen.tsx
-├── hooks/            # Lógica de estado
-│   ├── useTimer.ts
-│   └── usePlacar.ts
-└── styles/
-    └── tvStyles.ts   # Estilos TV-optimized
-```
-
-### Controle Remoto (D-Pad)
-
-| Botão | Ação |
-|-------|------|
-| **↑** | Foco anterior |
-| **↓** | Foco próximo |
-| **←** | Decrementar valor |
-| **→** | Incrementar valor |
-| **OK/Enter** | Selecionar/Executar |
-| **Back** | Nada (bloqueado) |
-
-## Build & Deploy
-
-### APK Release
+1. Crie conta em [expo.dev](https://expo.dev)
+2. No projeto:
 
 ```bash
-# Gera APK release
-npm run build:apk
-
-# APK está em: android/app/build/outputs/apk/release/app-release.apk
+npm i -g eas-cli
+eas login
+eas build:configure
 ```
 
-### Instalação na TV
+3. Builds:
 
 ```bash
-# Via ADB (Android Debug Bridge)
-adb connect <TV_IP>:5555
-adb install android/app/build/outputs/apk/release/app-release.apk
+# APK Android (celular + TV sideload)
+eas build -p android --profile preview
+
+# iOS (precisa Apple Developer)
+eas build -p ios --profile production
+
+# AAB para Play Store
+eas build -p android --profile production
 ```
 
-### Obter IP da TV
+### Instalar na Android TV
 
-Settings → About → Status → IP Address
+1. Ative **Depuração USB / rede** na TV  
+2. `adb connect IP_DA_TV:5555`  
+3. `adb install caminho/do/app.apk`
 
-## Controles
+## Telas
 
-### Timer
-- **+/−**: Adiciona/remove 1 minuto
-- **OK**: Start/pause
-- **Reset**: Volta para 5:00
+| Tela | Uso |
+|------|-----|
+| Home | Escolhe Timer ou Placar |
+| Timer | Rounds + preparação/descanso, modos rápidos |
+| Placar | Pontos / vantagem / penalidade + timer de luta |
 
-### Placar
-- **+/−**: Incrementa/decrementa pontos, vantagem ou penalidade
-- Cores CBJJ:
-  - Verde = Pontos (2)
-  - Amarelo = Vantagem (4)
-  - Vermelho = Penalidade
+Na TV, o layout fica em landscape com números grandes. No celular, o placar mostra painel de controle (botão **Ctrl/Tela** alterna).
 
-### Status da Luta
-- **INÍCIO**: Antes de começar
-- **DURANTE**: Luta em progresso
-- **FINAL**: Luta finalizada
+## Relação com o site
 
-## Performance
-
-- Tamanho APK: ~50MB
-- RAM utilizada: ~100-150MB
-- CPU: <10% (idle)
-
-## Troubleshooting
-
-### TV não conecta
-```bash
-# Verifique a conexão
-adb devices
-
-# Force reconnect
-adb disconnect
-adb connect <IP>:5555
-```
-
-### App travado ou lento
-```bash
-# Clear app data
-adb shell pm clear com.bjjtvapp
-
-# Reinstale
-npm run build:apk
-adb install -r android/app/build/outputs/apk/release/app-release.apk
-```
-
-## Next Steps
-
-- [ ] Implementar persistência (AsyncStorage)
-- [ ] Adicionar temas (claro/escuro)
-- [ ] Histórico de lutas
-- [ ] Suporte a múltiplas categorias de peso
-- [ ] Geração de relatórios
-
-## Licença
-
-MIT
+O site Next.js continua com `/timer` e `/placar` (TV + controle remoto via QR).  
+Este app é a versão **nativa instalável**. O PWA do site (`/apps`) cobre instalação rápida no celular sem App Store.
