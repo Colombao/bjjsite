@@ -22,35 +22,34 @@ npm start
 - iOS Simulator (macOS): `npm run ios`
 - Navegador: `npm run web`
 
-## Build de loja / TV (EAS)
+## Build APK local (recomendado para TV)
 
-1. Crie conta em [expo.dev](https://expo.dev)
-2. No projeto:
-
-```bash
-npm i -g eas-cli
-eas login
-eas build:configure
-```
-
-3. Builds:
+Precisa do Android SDK instalado (`ANDROID_HOME`).
 
 ```bash
-# APK Android (celular + TV sideload)
-eas build -p android --profile preview
-
-# iOS (precisa Apple Developer)
-eas build -p ios --profile production
-
-# AAB para Play Store
-eas build -p android --profile production
+cd bjj-tv-app
+npm install
+CI=1 npx expo prebuild --platform android
+# Ajuste o AndroidManifest para Leanback (TV) se necessário
+bash scripts/build-apk.sh
 ```
+
+APK gerado em: `dist/heishikan-arena-v1.0.0.apk`  
+Package: `com.heishikan.arena`
 
 ### Instalar na Android TV
 
 1. Ative **Depuração USB / rede** na TV  
 2. `adb connect IP_DA_TV:5555`  
-3. `adb install caminho/do/app.apk`
+3. `adb install -r dist/heishikan-arena-v1.0.0.apk`
+
+### Build na nuvem (EAS)
+
+```bash
+npm i -g eas-cli && eas login
+eas build -p android --profile preview   # APK
+eas build -p ios --profile production    # iOS (Apple Developer)
+```
 
 ## Telas
 

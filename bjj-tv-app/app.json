@@ -32,17 +32,9 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "permissions": [],
-      "intentFilters": [
-        {
-          "action": "android.intent.action.MAIN",
-          "category": [
-            "android.intent.category.LAUNCHER",
-            "android.intent.category.LEANBACK_LAUNCHER"
-          ]
-        }
-      ]
+      "permissions": []
     },
+
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro"
