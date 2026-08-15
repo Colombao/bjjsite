@@ -317,9 +317,9 @@ export default function TimerPage() {
       {/* Cabeçalho */}
       <header className="rt-header">
         <div className="rt-brand">
-          <img src="/img/logo-heishikan.png" alt="CT Heishikan" />
+          <img src="/img/logo-heishikan.png" alt="CT Heishikan Aurum" />
           <div>
-            <div className="rt-brand-top">CT HEISHIKAN</div>
+            <div className="rt-brand-top">CT HEISHIKAN AURUM</div>
             <div className="rt-brand-sub">Cronômetro de Rounds</div>
           </div>
         </div>
@@ -535,9 +535,9 @@ export default function TimerPage() {
         <div className="rt-tv">
           <div className="rt-tv-head">
             <div className="rt-brand">
-              <img src="/img/logo-heishikan.png" alt="CT Heishikan" />
+              <img src="/img/logo-heishikan.png" alt="CT Heishikan Aurum" />
               <div>
-                <div className="rt-brand-top">CT HEISHIKAN</div>
+                <div className="rt-brand-top">CT HEISHIKAN AURUM</div>
                 <div className="rt-brand-sub">Modo TV — Tatame</div>
               </div>
             </div>

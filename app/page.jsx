@@ -31,7 +31,7 @@ export default function Home() {
           <Image
             className="hero-desk"
             src="/img/hero-roger.jpg"
-            alt="Mestre Roger Santos entre os emblemas do CT Heishikan"
+            alt="Mestre Roger Santos entre os emblemas do CT Heishikan Aurum"
             fill
             priority
             sizes="100vw"
@@ -40,7 +40,7 @@ export default function Home() {
           <Image
             className="hero-mob"
             src="/img/mestre-retrato.jpg"
-            alt="Mestre Roger Santos no tatame do CT Heishikan"
+            alt="Mestre Roger Santos no tatame do CT Heishikan Aurum"
             fill
             priority
             sizes="100vw"
@@ -69,7 +69,7 @@ export default function Home() {
             <span className="l2">LEVADA A SÉRIO.</span>
           </h1>
           <p className="hero-sub">
-            No CT Heishikan, o Jiu-Jitsu brasileiro é ensinado como se vive: com
+            No CT Heishikan Aurum, o Jiu-Jitsu brasileiro é ensinado como se vive: com
             disciplina, respeito, foco e confiança — do primeiro nó na faixa
             branca à jornada rumo à faixa preta.
           </p>
@@ -77,7 +77,7 @@ export default function Home() {
             <a
               className="btn btn-gold"
               href={wa(
-                "Olá! Quero agendar uma aula experimental no CT Heishikan."
+                "Olá! Quero agendar uma aula experimental no CT Heishikan Aurum."
               )}
               target="_blank"
               rel="noopener noreferrer"
@@ -107,7 +107,7 @@ export default function Home() {
               <i />
               <b>OSS</b>
               <i />
-              <span>CT HEISHIKAN</span>
+              <span>CT HEISHIKAN AURUM</span>
               <i />
             </div>
           ))}
@@ -130,7 +130,7 @@ export default function Home() {
             <div className="tri-badge">
               <Image
                 src="/img/logo-heishikan.png"
-                alt="Emblema CT Heishikan"
+                alt="Emblema CT Heishikan Aurum"
                 width={86}
                 height={86}
                 style={{
@@ -148,7 +148,7 @@ export default function Home() {
               Professor <em>Roger Santos</em>
             </h2>
             <p className="rv rv-d2">
-              À frente do CT Heishikan, o professor Roger Santos dedica sua vida
+              À frente do CT Heishikan Aurum, o professor Roger Santos dedica sua vida
               a transmitir o Jiu-Jitsu brasileiro em sua forma mais completa:
               técnica apurada, defesa pessoal real e formação de caráter dentro
               e fora do tatame.
@@ -260,14 +260,14 @@ export default function Home() {
           </h2>
           <p className="lead rv rv-d2">
             Do primeiro dia de tatame ao ritmo de competição, há uma turma
-            esperando por você no CT Heishikan.
+            esperando por você no CT Heishikan Aurum.
           </p>
           <div className="prog-grid">
             <article className="prog rv">
               <div className="ph">
                 <Image
                   src="/img/turma-noite.jpg"
-                  alt="Turma adulta de Jiu-Jitsu do CT Heishikan"
+                  alt="Turma adulta de Jiu-Jitsu do CT Heishikan Aurum"
                   fill
                   sizes="(max-width:1020px) 100vw, 33vw"
                 />
@@ -293,7 +293,7 @@ export default function Home() {
               <div className="ph">
                 <Image
                   src="/img/kids-selfie.jpg"
-                  alt="Turma infantil Jiu-Jitsu Kids do CT Heishikan"
+                  alt="Turma infantil Jiu-Jitsu Kids do CT Heishikan Aurum"
                   fill
                   sizes="(max-width:1020px) 100vw, 33vw"
                 />
@@ -374,7 +374,7 @@ export default function Home() {
               <a
                 className="btn btn-gold"
                 href={wa(
-                  "Olá! Quero participar do treino feminino do CT Heishikan."
+                  "Olá! Quero participar do treino feminino do CT Heishikan Aurum."
                 )}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -391,7 +391,7 @@ export default function Home() {
             <div className="frame">
               <Image
                 src="/img/treino-feminino.jpg"
-                alt="Turma feminina do CT Heishikan reunida no tatame com o professor Roger Santos"
+                alt="Turma feminina do CT Heishikan Aurum reunida no tatame com o professor Roger Santos"
                 fill
                 sizes="(max-width:880px) 100vw, 45vw"
               />
@@ -477,7 +477,7 @@ export default function Home() {
             >
               <Image
                 src="/img/fachada.jpg"
-                alt="Fachada do complexo onde fica o CT Heishikan"
+                alt="Fachada do complexo onde fica o CT Heishikan Aurum"
                 fill
                 sizes="(max-width:1020px) 50vw, 25vw"
               />
@@ -600,7 +600,7 @@ export default function Home() {
             <div className="gal w2 h2 rv">
               <Image
                 src="/img/equipe-grande.jpg"
-                alt="Equipe completa do CT Heishikan reunida no tatame"
+                alt="Equipe completa do CT Heishikan Aurum reunida no tatame"
                 fill
                 sizes="(max-width:1020px) 100vw, 50vw"
               />
@@ -624,7 +624,7 @@ export default function Home() {
             <div className="gal w2 rv rv-d1">
               <Image
                 src="/img/hero-roger.jpg"
-                alt="Professor Roger Santos entre os emblemas do CT Heishikan"
+                alt="Professor Roger Santos entre os emblemas do CT Heishikan Aurum"
                 fill
                 sizes="(max-width:1020px) 100vw, 50vw"
               />
@@ -734,7 +734,7 @@ export default function Home() {
           <div className="cont-figure rv rv-d1">
             <Image
               src="/img/selfie-alunos.jpg"
-              alt="Clima de treino no CT Heishikan"
+              alt="Clima de treino no CT Heishikan Aurum"
               fill
               sizes="(max-width:880px) 100vw, 40vw"
             />
@@ -787,12 +787,12 @@ export default function Home() {
           <div className="foot-brand">
             <Image
               src="/img/logo-heishikan.png"
-              alt="Logo CT Heishikan"
+              alt="Logo CT Heishikan Aurum"
               width={52}
               height={52}
             />
             <div>
-              <div className="fb-top">CT HEISHIKAN</div>
+              <div className="fb-top">CT HEISHIKAN AURUM</div>
               <div className="fb-sub">Roger Santos Brazilian Jiu-Jitsu</div>
             </div>
           </div>
@@ -823,7 +823,7 @@ export default function Home() {
         </div>
         <div className="foot-base">
           <span>
-            © {new Date().getFullYear()} CT Heishikan · Roger Santos Jiu-Jitsu —
+            © {new Date().getFullYear()} CT Heishikan Aurum · Roger Santos Jiu-Jitsu —
             Jaraguá do Sul/SC
           </span>
           <span>Disciplina · Respeito · Foco · Confiança</span>
@@ -833,7 +833,7 @@ export default function Home() {
       {/* ============ WHATSAPP FLUTUANTE ============ */}
       <a
         className="wa-float"
-        href={wa("Olá! Vim pelo site do CT Heishikan.")}
+        href={wa("Olá! Vim pelo site do CT Heishikan Aurum.")}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Falar no WhatsApp"

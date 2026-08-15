@@ -41,9 +41,9 @@ export default function Navbar() {
     <>
       <nav className={scrolled ? 'scrolled' : ''}>
         <a className="nav-brand" href="#inicio" onClick={close}>
-          <Image src="/img/logo-heishikan.png" alt="Logo CT Heishikan" width={44} height={44} />
+          <Image src="/img/logo-heishikan.png" alt="Logo CT Heishikan Aurum" width={44} height={44} />
           <span className="nb-txt">
-            <span className="nb-top">CT HEISHIKAN</span>
+            <span className="nb-top">CT HEISHIKAN AURUM</span>
             <br />
             <span className="nb-sub">Roger Santos BJJ</span>
           </span>
@@ -55,7 +55,7 @@ export default function Navbar() {
           ))}
           <a
             className="nav-cta"
-            href={wa('Olá! Quero agendar uma aula experimental no CT Heishikan.')}
+            href={wa('Olá! Quero agendar uma aula experimental no CT Heishikan Aurum.')}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -81,7 +81,7 @@ export default function Navbar() {
           <div className="db">
             <Image src="/img/logo-heishikan.png" alt="" width={40} height={40} />
             <div>
-              <div className="t1">CT HEISHIKAN</div>
+              <div className="t1">CT HEISHIKAN AURUM</div>
               <div className="t2">Roger Santos BJJ</div>
             </div>
           </div>
@@ -102,7 +102,7 @@ export default function Navbar() {
         <div className="drawer-cta">
           <a
             className="btn btn-gold"
-            href={wa('Olá! Quero agendar uma aula experimental no CT Heishikan.')}
+            href={wa('Olá! Quero agendar uma aula experimental no CT Heishikan Aurum.')}
             target="_blank"
             rel="noopener noreferrer"
             onClick={close}

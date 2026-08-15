@@ -88,9 +88,13 @@ if exist "%IPFILE%" set /p LASTIP=<"%IPFILE%"
 
 echo.
 echo  [3/4] Conectando na TV.
-echo        Na TV: Ajustes ^> Sistema ^> Sobre ^> clique 7x em "Versao"
-echo        depois Ajustes ^> Opcoes do desenvolvedor ^> Depuracao USB: ATIVADA
-echo        O IP esta em Ajustes ^> Rede.
+echo        Antes, ligue a depuracao na TV:
+echo          Android TV: Config ^> Preferencias do dispositivo ^> Sobre
+echo          Google TV : Config ^> Sistema ^> Sobre
+echo          clique 7x em "Versao de compilacao", volte, e em
+echo          Opcoes do desenvolvedor ligue DEPURACAO USB
+echo          (se existir "Depuracao pela rede", ligue tambem)
+echo        IP: Config ^> Rede e Internet ^> clique na sua rede.
 echo.
 if defined LASTIP (
   set /p "IP=       IP da TV [Enter usa !LASTIP!]: "

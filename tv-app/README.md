@@ -1,6 +1,6 @@
 # Tatame TV — app para Android TV
 
-App de tatame do **CT Heishikan**: cronômetro de rounds + placar CBJJ,
+App de tatame do **CT Heishikan Aurum**: cronômetro de rounds + placar CBJJ,
 feito para rodar na TV e ser operado **só com o controle remoto**.
 
 Dois modos:
@@ -64,6 +64,38 @@ O arquivo sai em `app/build/outputs/apk/release/app-release.apk`.
 
 ## Instalar na TV
 
+## Ligar a depuração na TV (só na primeira vez)
+
+O caminho muda conforme o lançador da TV. Descubra pela tela inicial:
+
+**Android TV clássico** (fileiras horizontais, logo "Android TV"):
+
+1. Configurações (engrenagem, canto superior direito)
+2. **Preferências do dispositivo → Sobre**
+3. Desça até **Versão de compilação** e aperte **OK 7 vezes**
+   → aparece "Agora você é um desenvolvedor"
+4. Volte uma tela: **Preferências do dispositivo → Opções do desenvolvedor**
+5. Ligue **Depuração USB**. Se existir **Depuração pela rede** (ou *ADB pela
+   rede* / *Depuração sem fio*), ligue também.
+
+**Google TV** (abas "Para você / Programas / Filmes / Apps"):
+
+1. Configurações → **Sistema → Sobre**
+2. Aperte **OK 7 vezes** em **Versão do Android TV OS**
+3. Volte: **Sistema → Opções do desenvolvedor** → **Depuração USB** ligada
+
+**O IP da TV:** Configurações → **Rede e Internet** → clique na rede conectada.
+Também aparece em Sobre → Status.
+
+Na primeira conexão a TV mostra um aviso pedindo autorização — marque
+**"Sempre permitir deste computador"** e confirme. Sem isso o `adb` fica
+travado em *unauthorized*.
+
+> Em TVs de marcas menores a depuração pela rede às vezes vem desativada de
+> fábrica e não tem como ligar. Se o `adb connect` não passar, use o pendrive
+> (Opção B mais abaixo) — esse caminho funciona em qualquer Android TV e não
+> precisa de modo desenvolvedor.
+
 ### Jeito mais fácil: `instalar-na-tv.bat`
 
 Dê dois cliques em **`instalar-na-tv.bat`** (nesta pasta). Ele baixa o `adb`
@@ -100,7 +132,7 @@ Instale o **Downloader** pela Play Store da TV e digite a URL do APK
 publicado em *Releases*. É o caminho mais rápido se você não tem cabo.
 
 Depois de instalado, o app aparece na tela inicial da TV com o banner
-do CT Heishikan.
+do CT Heishikan Aurum.
 
 ## Controles
 

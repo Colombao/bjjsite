@@ -22,11 +22,11 @@ const archivo = Archivo({
 });
 
 export const metadata = {
-  title: 'CT Heishikan — Roger Santos Jiu-Jitsu | Jaraguá do Sul',
+  title: 'CT Heishikan Aurum — Roger Santos Jiu-Jitsu | Jaraguá do Sul',
   description:
-    'CT Heishikan — Roger Santos Brazilian Jiu-Jitsu em Jaraguá do Sul. Turmas para adultos e crianças. Disciplina, respeito, foco e confiança. Agende sua aula experimental.',
+    'CT Heishikan Aurum — Roger Santos Brazilian Jiu-Jitsu em Jaraguá do Sul. Turmas para adultos e crianças. Disciplina, respeito, foco e confiança. Agende sua aula experimental.',
   openGraph: {
-    title: 'CT Heishikan — Roger Santos Jiu-Jitsu',
+    title: 'CT Heishikan Aurum — Roger Santos Jiu-Jitsu',
     description:
       'Jiu-Jitsu brasileiro em Jaraguá do Sul/SC. Turmas adulto e kids. Agende sua aula experimental.',
     locale: 'pt_BR',

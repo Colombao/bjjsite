@@ -89,9 +89,9 @@ export default function RemotePage() {
   return (
     <main className="rm-page">
       <header className="rt-brand" style={{ justifyContent: 'center' }}>
-        <img src="/img/logo-heishikan.png" alt="CT Heishikan" />
+        <img src="/img/logo-heishikan.png" alt="CT Heishikan Aurum" />
         <div>
-          <div className="rt-brand-top">CT HEISHIKAN</div>
+          <div className="rt-brand-top">CT HEISHIKAN AURUM</div>
           <div className="rt-brand-sub">Controle Remoto do Timer</div>
         </div>
       </header>

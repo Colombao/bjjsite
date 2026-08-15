@@ -1,5 +1,5 @@
 export const metadata = {
-  title: 'Cronômetro — CT Heishikan',
+  title: 'Cronômetro — CT Heishikan Aurum',
   robots: { index: false, follow: false },
 };
 
