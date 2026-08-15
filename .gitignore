@@ -7,3 +7,6 @@ out
 # pacotes/backups gerados durante o desenvolvimento do Tatame TV
 _tatame-tv-pacote.zip
 next.config.mjs.bak
+
+# arquivos aposentados na limpeza (pode apagar a pasta a vontade)
+_to_delete/

@@ -29,16 +29,22 @@ npm start
 
 ```
 app/
-  layout.jsx      → fontes (next/font), metadata e SEO
-  page.jsx        → todas as seções da landing page
-  globals.css     → design system (cores, tipografia, animações)
+  layout.jsx        → fontes (next/font), metadata e SEO
+  page.jsx          → todas as seções da landing page
+  globals.css       → design system (cores, tipografia, animações)
+  timer/            → /timer — cronômetro de rounds (web)
+  placar/           → /placar — placar CBJJ: display (TV) + control (celular)
+  api/timer-data/   → persistência do timer (Upstash em produção, JSON em dev)
 components/
-  Navbar.jsx      → navegação + drawer mobile
-  BeltProgress.jsx→ barra de progresso "graduação de faixa"
-  RevealInit.jsx  → animações de entrada por scroll
-  Loja.jsx        → captura de interessados na loja (em breve)
-lib/const.js      → WhatsApp, Instagram e endereço em um só lugar
-public/img/       → fotos da equipe
+  Navbar.jsx        → navegação + drawer mobile
+  BeltProgress.jsx  → barra de progresso "graduação de faixa"
+  RevealInit.jsx    → animações de entrada por scroll
+  Loja.jsx          → captura de interessados na loja (em breve)
+lib/const.js        → WhatsApp, Instagram e endereço em um só lugar
+public/img/         → imagens publicadas no site
+public/tv/          → app Tatame TV servido em /tv (arquivo único)
+tv-app/             → projeto Android TV que empacota o /tv num APK
+originais/          → fotos em alta que NÃO vão pro site (acervo)
 ```
 
 ## Onde editar

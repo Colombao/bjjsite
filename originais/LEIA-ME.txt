@@ -1,0 +1,6 @@
+Fotos originais em alta resolucao.
+
+Estas imagens NAO sao servidas pelo site - o Next.js so publica o que esta
+em public/. Guarde-as aqui para gerar novos cortes quando precisar.
+
+As versoes usadas no site (menores, otimizadas) ficam em public/img/.
