@@ -1,0 +1,80 @@
+# Gera o APK do Tatame TV na nuvem do GitHub.
+# Você NÃO precisa instalar Android Studio nem SDK no seu PC.
+#
+# Como usar:
+#   1. Faça push deste repositório para o GitHub
+#   2. Aba "Actions" → "APK Tatame TV" → "Run workflow"
+#   3. Quando terminar (~4 min), baixe o arquivo em "Artifacts"
+#
+# Para gerar um link de download direto (útil para baixar na própria TV):
+#   git tag tv-v1.0 && git push origin tv-v1.0
+#   → o APK aparece em "Releases" com URL pública
+
+name: APK Tatame TV
+
+on:
+  # roda quando você clicar em "Run workflow" na aba Actions
+  workflow_dispatch:
+  # ou automaticamente ao criar uma tag de versão (git tag tv-v1.0)
+  push:
+    tags:
+      - 'tv-v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Compilar APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@v4
+
+      - name: Preparar Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Preparar Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Cache do Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ hashFiles('tv-app/**/*.gradle', 'tv-app/gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: gradle-
+
+      - name: Compilar o APK
+        working-directory: tv-app
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleRelease --no-daemon --stacktrace
+
+      - name: Renomear o arquivo
+        working-directory: tv-app
+        run: |
+          mkdir -p ../out
+          cp app/build/outputs/apk/release/app-release.apk ../out/tatame-tv.apk
+          ls -la ../out
+
+      - name: Publicar o APK (Artifacts)
+        uses: actions/upload-artifact@v4
+        with:
+          name: tatame-tv-apk
+          path: out/tatame-tv.apk
+          retention-days: 90
+
+      - name: Publicar Release com link direto (só em tags tv-v*)
+        if: startsWith(github.ref, 'refs/tags/tv-v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ github.ref_name }}" out/tatame-tv.apk \
+            --title "Tatame TV ${{ github.ref_name }}" \
+            --notes "APK do Tatame TV — CT Heishikan. Instale na Android TV com: adb install -r tatame-tv.apk"

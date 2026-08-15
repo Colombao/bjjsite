@@ -3,3 +3,7 @@ node_modules
 out
 .env*
 .DS_Store
+
+# pacotes/backups gerados durante o desenvolvimento do Tatame TV
+_tatame-tv-pacote.zip
+next.config.mjs.bak
