@@ -1,0 +1,19 @@
+/* Isola as rotas /placar do layout escuro da landing */
+html:has(.display-container),
+html:has(.display-container) body,
+html:has(.control-container),
+html:has(.control-container) body,
+html:has(.menu-container),
+html:has(.menu-container) body {
+  background: #c0c0c0;
+  overflow: hidden;
+  height: 100%;
+  max-width: none;
+}
+
+html:has(.control-container),
+html:has(.control-container) body,
+html:has(.menu-container),
+html:has(.menu-container) body {
+  overflow: auto;
+}

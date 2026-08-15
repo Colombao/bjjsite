@@ -95,6 +95,24 @@
   background: #fef2f2;
 }
 
+.menu-btn--disabled {
+  opacity: 0.85;
+  cursor: default;
+}
+
+.menu-btn--disabled:hover {
+  transform: none;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  background: white;
+}
+
+.menu-info code {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+
 /* ============ INFO ============ */
 .menu-info {
   background: rgba(255, 255, 255, 0.1);

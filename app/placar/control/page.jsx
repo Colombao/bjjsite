@@ -1,251 +1,215 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { DEFAULT_STATE } from '../state';
 import '../control.css';
 
-const DEFAULT_STATE = {
-  atletaA: {
-    nome: 'ATLETA A',
-    team: 'BJJ TEAM A',
-    pontos: 0,
-    vantagem: 0,
-    penalidade: 0,
-  },
-  atletaB: {
-    nome: 'ATLETA B',
-    team: 'BJJ TEAM B',
-    pontos: 0,
-    vantagem: 0,
-    penalidade: 0,
-  },
-  tempo: '5:00',
-  statusLuta: 'FINAL',
-};
+const PEER_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.2/peerjs.min.js';
+
+const loadScript = (src) =>
+  new Promise((res, rej) => {
+    if (document.querySelector(`script[src="${src}"]`)) return res();
+    const s = document.createElement('script');
+    s.src = src;
+    s.onload = res;
+    s.onerror = rej;
+    document.head.appendChild(s);
+  });
 
 export default function PlacarControl() {
+  const [status, setStatus] = useState('connecting'); // no-id|connecting|connected|closed|error
   const [match, setMatch] = useState(DEFAULT_STATE);
-  const [isRunning, setIsRunning] = useState(false);
-  const [hydrated, setHydrated] = useState(false);
+  const [running, setRunning] = useState(false);
+  const [toast, setToast] = useState('');
+  const connRef = useRef(null);
+  const focusedRef = useRef(null);
 
   useEffect(() => {
-    setHydrated(true);
-    const saved = localStorage.getItem('bjj-placar');
-    if (saved) {
-      try {
-        setMatch(JSON.parse(saved));
-      } catch (e) {
-        localStorage.setItem('bjj-placar', JSON.stringify(DEFAULT_STATE));
-      }
-    } else {
-      localStorage.setItem('bjj-placar', JSON.stringify(DEFAULT_STATE));
+    const id = typeof window !== 'undefined' ? window.location.hash.slice(1) : '';
+    if (!id) {
+      setStatus('no-id');
+      return undefined;
     }
+    let peer;
+    (async () => {
+      try {
+        await loadScript(PEER_SRC);
+        peer = new window.Peer();
+        peer.on('open', () => {
+          const conn = peer.connect(id, { reliable: true });
+          connRef.current = conn;
+          conn.on('open', () => setStatus('connected'));
+          conn.on('data', (msg) => {
+            if (!msg || typeof msg !== 'object') return;
+            if (msg.kind === 'hello' || msg.kind === 'state') {
+              if (msg.match) {
+                setMatch((prev) => {
+                  // Não sobrescreve o campo que o usuário está digitando
+                  const f = focusedRef.current;
+                  if (!f) return msg.match;
+                  const next = { ...msg.match };
+                  if (f.athlete && f.field) {
+                    next[f.athlete] = {
+                      ...next[f.athlete],
+                      [f.field]: prev[f.athlete]?.[f.field],
+                    };
+                  }
+                  return next;
+                });
+              }
+              if (typeof msg.running === 'boolean') setRunning(msg.running);
+            }
+          });
+          conn.on('close', () => setStatus('closed'));
+          conn.on('error', () => setStatus('error'));
+        });
+        peer.on('error', () => setStatus('error'));
+      } catch {
+        setStatus('error');
+      }
+    })();
+    return () => peer?.destroy();
   }, []);
 
-  useEffect(() => {
-    if (hydrated) {
-      localStorage.setItem('bjj-placar', JSON.stringify(match));
-      window.dispatchEvent(new Event('storage'));
-    }
-  }, [match, hydrated]);
+  const send = (msg) => {
+    try {
+      connRef.current?.send(msg);
+    } catch {}
+  };
 
-  const updateAtleta = (athlete, field, value) => {
-    setMatch(prev => ({
+  const ctrl = (action, extra = {}) => {
+    send({ kind: 'ctrl', action, ...extra });
+  };
+
+  const flash = (t) => {
+    setToast(t);
+    setTimeout(() => setToast(''), 1800);
+  };
+
+  const addScore = (athlete, field, delta) => {
+    // otimista
+    setMatch((prev) => ({
       ...prev,
       [athlete]: {
         ...prev[athlete],
-        [field]: typeof value === 'string' ? value : Math.max(0, value),
+        [field]: Math.max(0, prev[athlete][field] + delta),
       },
     }));
+    ctrl('score', { athlete, field, delta });
+    flash('Ponto enviado ✓');
   };
 
-  const addScore = (athlete, field, amount) => {
-    setMatch(prev => ({
+  const setField = (athlete, field, value) => {
+    setMatch((prev) => ({
       ...prev,
-      [athlete]: {
-        ...prev[athlete],
-        [field]: Math.max(0, prev[athlete][field] + amount),
-      },
+      [athlete]: { ...prev[athlete], [field]: value },
     }));
+    ctrl('set', { athlete, field, value });
   };
 
-  const updateStatus = (status) => {
-    setMatch(prev => ({ ...prev, statusLuta: status }));
-  };
+  const statusTxt = {
+    'no-id': 'Escaneie o QR code da TV para abrir o controle com a sessão.',
+    connecting: 'Conectando à TV…',
+    connected: '✓ Conectado à TV — alterações aparecem na hora',
+    closed: 'Conexão encerrada. Escaneie o QR de novo na TV.',
+    error: 'Não foi possível conectar. Escaneie o QR de novo na TV.',
+  }[status];
 
-  const reset = () => {
-    setMatch(DEFAULT_STATE);
-    setIsRunning(false);
-  };
+  const on = status === 'connected';
 
-  useEffect(() => {
-    if (!isRunning) return;
+  const AthleteBlock = ({ id, title }) => (
+    <section className={`athlete-control ${id === 'atletaA' ? 'athlete-a' : 'athlete-b'}`}>
+      <h2>{title}</h2>
 
-    const interval = setInterval(() => {
-      setMatch(prev => {
-        const [mins, secs] = prev.tempo.split(':').map(Number);
-        let newSecs = secs - 1;
-        let newMins = mins;
+      <div className="input-group">
+        <label>Nome</label>
+        <input
+          type="text"
+          value={match[id].nome}
+          disabled={!on}
+          maxLength={30}
+          className="input-text"
+          onFocus={() => { focusedRef.current = { athlete: id, field: 'nome' }; }}
+          onBlur={() => { focusedRef.current = null; }}
+          onChange={(e) => setField(id, 'nome', e.target.value)}
+        />
+      </div>
 
-        if (newSecs < 0) {
-          newSecs = 59;
-          newMins--;
-          if (newMins < 0) {
-            setIsRunning(false);
-            return prev;
-          }
-        }
+      <div className="input-group">
+        <label>Time</label>
+        <input
+          type="text"
+          value={match[id].team}
+          disabled={!on}
+          maxLength={30}
+          className="input-text"
+          onFocus={() => { focusedRef.current = { athlete: id, field: 'team' }; }}
+          onBlur={() => { focusedRef.current = null; }}
+          onChange={(e) => setField(id, 'team', e.target.value)}
+        />
+      </div>
 
-        return {
-          ...prev,
-          tempo: `${String(newMins).padStart(2, '0')}:${String(newSecs).padStart(2, '0')}`,
-        };
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [isRunning]);
-
-  const setTimerMinutes = (mins) => {
-    setMatch(prev => ({
-      ...prev,
-      tempo: `${String(mins).padStart(2, '0')}:00`,
-    }));
-    setIsRunning(false);
-  };
-
-  if (!hydrated) return null;
+      <div className="score-control">
+        {[
+          ['pontos', 'Pontos'],
+          ['vantagem', 'Vantagem'],
+          ['penalidade', 'Penalidade'],
+        ].map(([field, label]) => (
+          <div className="score-item" key={field}>
+            <span className="label">{label}</span>
+            <div className="button-group">
+              <button
+                disabled={!on}
+                onClick={() => addScore(id, field, -1)}
+                className="btn-minus"
+              >
+                −
+              </button>
+              <span className="value">{match[id][field]}</span>
+              <button
+                disabled={!on}
+                onClick={() => addScore(id, field, 1)}
+                className="btn-plus"
+              >
+                +
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
 
   return (
     <div className="control-container">
       <div className="control-header">
-        <h1>Controle Remoto</h1>
-        <p>Abra {typeof window !== 'undefined' ? window.location.origin : ''}/placar/display na TV</p>
+        <h1>Controle do Placar</h1>
+        <p className={`conn-status ${on ? 'conn-status--ok' : ''}`}>{statusTxt}</p>
+        {!on && status === 'no-id' && (
+          <p className="conn-help">
+            Na TV abra <strong>/placar/display</strong> e escaneie o QR code da sessão.
+          </p>
+        )}
       </div>
 
-      <div className="control-content">
-        {/* ATLETA A */}
-        <section className="athlete-control">
-          <h2>Atleta A</h2>
+      <div className={`control-content ${!on ? 'control-content--dim' : ''}`}>
+        <AthleteBlock id="atletaA" title="Atleta A" />
+        <AthleteBlock id="atletaB" title="Atleta B" />
 
-          <div className="input-group">
-            <label>Nome</label>
-            <input
-              type="text"
-              value={match.atletaA.nome}
-              onChange={(e) => updateAtleta('atletaA', 'nome', e.target.value)}
-              className="input-text"
-              maxLength={30}
-            />
-          </div>
-
-          <div className="input-group">
-            <label>Time</label>
-            <input
-              type="text"
-              value={match.atletaA.team}
-              onChange={(e) => updateAtleta('atletaA', 'team', e.target.value)}
-              className="input-text"
-              maxLength={30}
-            />
-          </div>
-
-          <div className="score-control">
-            <div className="score-item">
-              <span className="label">Pontos</span>
-              <div className="button-group">
-                <button onClick={() => addScore('atletaA', 'pontos', -1)} className="btn-minus">−</button>
-                <span className="value">{match.atletaA.pontos}</span>
-                <button onClick={() => addScore('atletaA', 'pontos', 1)} className="btn-plus">+</button>
-              </div>
-            </div>
-
-            <div className="score-item">
-              <span className="label">Vantagem</span>
-              <div className="button-group">
-                <button onClick={() => addScore('atletaA', 'vantagem', -1)} className="btn-minus">−</button>
-                <span className="value">{match.atletaA.vantagem}</span>
-                <button onClick={() => addScore('atletaA', 'vantagem', 1)} className="btn-plus">+</button>
-              </div>
-            </div>
-
-            <div className="score-item">
-              <span className="label">Penalidade</span>
-              <div className="button-group">
-                <button onClick={() => addScore('atletaA', 'penalidade', -1)} className="btn-minus">−</button>
-                <span className="value">{match.atletaA.penalidade}</span>
-                <button onClick={() => addScore('atletaA', 'penalidade', 1)} className="btn-plus">+</button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ATLETA B */}
-        <section className="athlete-control">
-          <h2>Atleta B</h2>
-
-          <div className="input-group">
-            <label>Nome</label>
-            <input
-              type="text"
-              value={match.atletaB.nome}
-              onChange={(e) => updateAtleta('atletaB', 'nome', e.target.value)}
-              className="input-text"
-              maxLength={30}
-            />
-          </div>
-
-          <div className="input-group">
-            <label>Time</label>
-            <input
-              type="text"
-              value={match.atletaB.team}
-              onChange={(e) => updateAtleta('atletaB', 'team', e.target.value)}
-              className="input-text"
-              maxLength={30}
-            />
-          </div>
-
-          <div className="score-control">
-            <div className="score-item">
-              <span className="label">Pontos</span>
-              <div className="button-group">
-                <button onClick={() => addScore('atletaB', 'pontos', -1)} className="btn-minus">−</button>
-                <span className="value">{match.atletaB.pontos}</span>
-                <button onClick={() => addScore('atletaB', 'pontos', 1)} className="btn-plus">+</button>
-              </div>
-            </div>
-
-            <div className="score-item">
-              <span className="label">Vantagem</span>
-              <div className="button-group">
-                <button onClick={() => addScore('atletaB', 'vantagem', -1)} className="btn-minus">−</button>
-                <span className="value">{match.atletaB.vantagem}</span>
-                <button onClick={() => addScore('atletaB', 'vantagem', 1)} className="btn-plus">+</button>
-              </div>
-            </div>
-
-            <div className="score-item">
-              <span className="label">Penalidade</span>
-              <div className="button-group">
-                <button onClick={() => addScore('atletaB', 'penalidade', -1)} className="btn-minus">−</button>
-                <span className="value">{match.atletaB.penalidade}</span>
-                <button onClick={() => addScore('atletaB', 'penalidade', 1)} className="btn-plus">+</button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* TIMER E STATUS */}
         <section className="timer-control">
           <h2>Luta</h2>
 
           <div className="timer-display">
             <div className="time-value">{match.tempo}</div>
             <div className="time-buttons">
-              {[3, 5, 8, 10].map(min => (
+              {[3, 5, 8, 10].map((min) => (
                 <button
                   key={min}
-                  onClick={() => setTimerMinutes(min)}
+                  disabled={!on}
+                  onClick={() => {
+                    ctrl('timerSet', { minutes: min });
+                    flash(`${min} min ✓`);
+                  }}
                   className={`time-btn ${match.tempo === `${String(min).padStart(2, '0')}:00` ? 'active' : ''}`}
                 >
                   {min}min
@@ -256,33 +220,50 @@ export default function PlacarControl() {
 
           <div className="control-buttons">
             <button
-              onClick={() => setIsRunning(!isRunning)}
-              className={`btn-large ${isRunning ? 'btn-pause' : 'btn-play'}`}
+              disabled={!on}
+              onClick={() => {
+                ctrl('startPause');
+                flash(running ? 'Pausado ✓' : 'Iniciado ✓');
+              }}
+              className={`btn-large ${running ? 'btn-pause' : 'btn-play'}`}
             >
-              {isRunning ? '⏸ Pausar' : '▶ Iniciar'}
+              {running ? '⏸ Pausar' : '▶ Iniciar'}
             </button>
           </div>
 
           <div className="status-buttons">
             <label>Status</label>
             <div className="button-group-status">
-              {['INÍCIO', 'DURANTE', 'FINAL'].map(status => (
+              {['INÍCIO', 'DURANTE', 'FINAL'].map((s) => (
                 <button
-                  key={status}
-                  onClick={() => updateStatus(status)}
-                  className={`status-btn ${match.statusLuta === status ? 'active' : ''}`}
+                  key={s}
+                  disabled={!on}
+                  onClick={() => {
+                    ctrl('status', { value: s });
+                    flash(`Status: ${s}`);
+                  }}
+                  className={`status-btn ${match.statusLuta === s ? 'active' : ''}`}
                 >
-                  {status}
+                  {s}
                 </button>
               ))}
             </div>
           </div>
 
-          <button onClick={reset} className="btn-reset">
+          <button
+            disabled={!on}
+            onClick={() => {
+              ctrl('reset');
+              flash('Zerado ✓');
+            }}
+            className="btn-reset"
+          >
             Zerar Tudo
           </button>
         </section>
       </div>
+
+      {toast && <div className="pc-toast">{toast}</div>}
     </div>
   );
 }

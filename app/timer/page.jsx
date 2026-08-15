@@ -27,6 +27,7 @@ export default function TimerPage() {
   const [running, setRunning] = useState(false);
   const [muted, setMuted] = useState(false);
   const [tvMode, setTvMode] = useState(false);
+  const [wallClock, setWallClock] = useState('');
 
   // Modos
   const [customModes, setCustomModes] = useState([]);
@@ -155,6 +156,24 @@ export default function TimerPage() {
     if (slot === 'end' && soundEnd === 'custom') setSoundEnd('buzzer');
     dbSave({ sounds: next }, 'sounds');
   };
+
+  // Horário atual (relógio de parede) — útil no tatame / modo TV
+  useEffect(() => {
+    const tick = () => {
+      setWallClock(
+        new Date().toLocaleTimeString('pt-BR', {
+          timeZone: 'America/Sao_Paulo',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false,
+        })
+      );
+    };
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, []);
 
   // Tick
   useEffect(() => {
@@ -298,7 +317,7 @@ export default function TimerPage() {
       {/* Cabeçalho */}
       <header className="rt-header">
         <div className="rt-brand">
-          <img src="/img/logo-heishikan.jpg" alt="CT Heishikan" />
+          <img src="/img/logo-heishikan.png" alt="CT Heishikan" />
           <div>
             <div className="rt-brand-top">CT HEISHIKAN</div>
             <div className="rt-brand-sub">Cronômetro de Rounds</div>
@@ -322,6 +341,9 @@ export default function TimerPage() {
             <span className="rt-brand-sub">Roger Santos Jiu-Jitsu</span>
             <div className="rt-main-top-right">
               {activeMode && <span className="rt-mode-tag" title="Modo de treino ativo">{activeMode}</span>}
+              <time className="rt-wallclock" dateTime={wallClock} aria-label="Horário atual">
+                {wallClock}
+              </time>
               <span className="rt-round-badge">
                 {phase === 'finished' ? 'Concluído' : `Round ${round} de ${numRounds}`}
               </span>
@@ -513,13 +535,16 @@ export default function TimerPage() {
         <div className="rt-tv">
           <div className="rt-tv-head">
             <div className="rt-brand">
-              <img src="/img/logo-heishikan.jpg" alt="CT Heishikan" />
+              <img src="/img/logo-heishikan.png" alt="CT Heishikan" />
               <div>
                 <div className="rt-brand-top">CT HEISHIKAN</div>
                 <div className="rt-brand-sub">Modo TV — Tatame</div>
               </div>
             </div>
             <div className="rt-actions">
+              <time className="rt-wallclock rt-wallclock--tv" dateTime={wallClock} aria-label="Horário atual">
+                {wallClock}
+              </time>
               <button className="rt-btn" onClick={() => setMuted((m) => !m)}>
                 {muted ? '🔇' : '🔊'}
               </button>
