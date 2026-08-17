@@ -6,11 +6,9 @@
     <uses-feature android:name="android.software.leanback"    android:required="false" />
 
     <!--
-      O timer e o placar funcionam offline (vêm de assets/index.html).
-      A internet só é usada quando você toca uma playlist do Spotify.
+      Nenhuma permissão de rede: o app é 100% offline.
+      A música vem do app do Spotify da TV, aberto por intent.
     -->
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <!-- necessário no Android 11+ para conseguir abrir o app do Spotify da TV -->
     <queries>

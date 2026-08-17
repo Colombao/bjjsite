@@ -14,11 +14,12 @@ Dois modos:
 
 Mais:
 
-- **Playlists do Spotify** — as mesmas do `/timer` do site. Toca dentro do app
-  ou abre no app do Spotify da TV
-- Teclado na tela para digitar nome do atleta, equipe e link de playlist
+- **Música pelo Spotify da TV** — um botão abre o app do Spotify, você escolhe
+  a playlist lá e volta com VOLTAR; a música segue tocando por trás do timer
+- Usa o **teclado nativo da TV** para digitar (com ditado por voz, se o seu
+  controle tiver microfone)
 - A TV não apaga sozinha durante o treino
-- Timer e placar funcionam **offline**; a internet só é usada pelo Spotify
+- **100% offline** — o app não declara nenhuma permissão de rede
 
 ## Como o app é feito
 
@@ -148,16 +149,27 @@ abrir o teclado (ele pede o nome e depois a equipe).
 
 ## Sobre o Spotify
 
-O app usa o mesmo player de embed do site. Sem estar logado, o Spotify toca
-**prévias de 30 segundos** — é uma limitação do próprio Spotify, não do app.
+O app **não** tem player embutido. A tentativa anterior usava o player de embed
+do Spotify, que sem login só toca prévias de 30 segundos e ainda pesava na
+WebView da TV.
 
-Por isso cada playlist tem um botão **TV**: ele entrega a playlist ao app do
-Spotify instalado na TV, onde ela toca completa. É o caminho recomendado para
-o som do tatame.
+Agora é assim: **♫ Música → Abrir o Spotify da TV**. Você escolhe a playlist na
+interface real do Spotify (onde estão todas as da sua conta), dá play e volta
+para o timer com VOLTAR. A música continua tocando por trás, completa.
 
-Para adicionar uma playlist: **♫ Música → ＋ Nova playlist**. Cole o link
-(`https://open.spotify.com/playlist/...`) ou digite só o ID da playlist — o
-teclado da tela tem maiúsculas, minúsculas e os símbolos de link.
+Se você tem playlists que usa sempre, salve atalhos em **♫ Música →
+＋ Salvar atalho** (cole o link ou só o ID). O atalho pula direto para aquela
+playlist dentro do app do Spotify, sem navegar pelos menus dele.
+
+## Sobre o teclado
+
+Para digitar nome de atleta, equipe, nome de modo ou link de playlist, o app
+abre um campo de texto e chama o **teclado da própria TV** — com sugestão de
+palavra e ditado por voz. A grade de letras que existia antes era lenta na TV.
+
+No campo: **◀ ▶** andam com o cursor, **▲ ▼** saem para os botões,
+**OK** confirma, **VOLTAR** cancela. O botão **⌨ Teclado** reabre o teclado da
+TV se você fechou sem terminar.
 
 ## Estrutura
 
@@ -166,7 +178,7 @@ tv-app/
 ├── app/
 │   ├── build.gradle
 │   └── src/main/
-│       ├── AndroidManifest.xml          ← LEANBACK_LAUNCHER + internet (Spotify)
+│       ├── AndroidManifest.xml          ← LEANBACK_LAUNCHER, zero permissões
 │       ├── assets/index.html            ← O APP INTEIRO ESTÁ AQUI
 │       ├── java/.../MainActivity.java   ← WebView + tela ligada + botão Voltar
 │       └── res/

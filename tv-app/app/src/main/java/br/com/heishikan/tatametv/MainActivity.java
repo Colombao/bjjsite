@@ -3,13 +3,17 @@ package br.com.heishikan.tatametv;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
@@ -76,10 +80,61 @@ public class MainActivity extends Activity {
             }
         });
 
+        // ponte usada pela página: teclado do sistema e app do Spotify
+        web.addJavascriptInterface(new TvBridge(), "TV");
+
         web.loadUrl("file:///android_asset/index.html");
         setContentView(web);
 
         web.requestFocus();
+    }
+
+    /**
+     * O que a WebView não consegue fazer sozinha.
+     * Seguro de expor porque a página vem de assets locais, não da internet.
+     */
+    private class TvBridge {
+
+        /** Abre o teclado da TV. Sem isso, focar um input via JS não levanta o IME. */
+        @JavascriptInterface
+        public void showKeyboard() {
+            runOnUiThread(() -> {
+                if (web == null) return;
+                web.requestFocus();
+                InputMethodManager imm =
+                        (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) imm.showSoftInput(web, InputMethodManager.SHOW_IMPLICIT);
+            });
+        }
+
+        @JavascriptInterface
+        public void hideKeyboard() {
+            runOnUiThread(() -> {
+                if (web == null) return;
+                InputMethodManager imm =
+                        (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) imm.hideSoftInputFromWindow(web.getWindowToken(), 0);
+            });
+        }
+
+        /** Abre o app do Spotify da TV, onde estão as playlists da conta. */
+        @JavascriptInterface
+        public void openSpotify() {
+            runOnUiThread(() -> {
+                PackageManager pm = getPackageManager();
+                String[] pacotes = { "com.spotify.tv.android", "com.spotify.music" };
+                for (String pkg : pacotes) {
+                    Intent i = pm.getLeanbackLaunchIntentForPackage(pkg);
+                    if (i == null) i = pm.getLaunchIntentForPackage(pkg);
+                    if (i != null) {
+                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(i);
+                        return;
+                    }
+                }
+                toastOnPage("O app do Spotify não está instalado nesta TV");
+            });
+        }
     }
 
     /** Entrega um link "spotify:playlist:..." ao app do Spotify da TV. */
@@ -89,10 +144,7 @@ public class MainActivity extends Activity {
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(i);
         } catch (ActivityNotFoundException e) {
-            if (web != null) {
-                web.evaluateJavascript(
-                        "window.toast && window.toast('O app do Spotify não está instalado nesta TV')", null);
-            }
+            toastOnPage("O app do Spotify não está instalado nesta TV");
         }
     }
 
@@ -159,17 +211,17 @@ public class MainActivity extends Activity {
                             finish();
                         } else {
                             lastBackPress = now;
-                            toastOnPage();
+                            toastOnPage("Pressione VOLTAR de novo para sair");
                         }
                     }
                 });
     }
 
     /** Aproveita o "toast" que já existe na página, em vez de criar um do Android. */
-    private void toastOnPage() {
+    private void toastOnPage(String msg) {
         if (web == null) return;
-        web.evaluateJavascript(
-                "window.toast && window.toast('Pressione VOLTAR de novo para sair')", null);
+        String seguro = msg.replace("\\", "\\\\").replace("'", "\\'");
+        web.evaluateJavascript("window.toast && window.toast('" + seguro + "')", null);
     }
 
     @Override
