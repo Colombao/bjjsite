@@ -1,745 +1,220 @@
 /* ============================================================
-   CT HEISHIKAN — CONTROLE DO PLACAR CBJJ (LAYOUT TV INTERATIVO)
+   CT HEISHIKAN — CONTROLE DO PLACAR CBJJ (CLONE EXATO DA TV)
    ============================================================ */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #c0c0c0;
+}
 
 .control-container {
   min-height: 100vh;
   min-height: 100dvh;
-  background: #0d0c0a;
-  color: #f2ebdd;
-  padding: 12px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  box-sizing: border-box;
+  background: #c0c0c0;
+  color: #1a1a1a;
+  padding: 10px 12px 24px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
   display: flex;
   flex-direction: column;
+  max-width: 960px;
+  margin: 0 auto;
 }
 
 /* ============ TOAST ============ */
 .control-toast {
   position: fixed;
-  top: 16px;
+  top: 14px;
   left: 50%;
   transform: translateX(-50%);
-  background: #d9a83c;
-  color: #120e05;
+  background: #1a1a1a;
+  color: #ffd700;
   font-weight: 800;
-  padding: 8px 20px;
+  padding: 8px 22px;
   border-radius: 999px;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
   z-index: 9999;
   font-size: 0.95rem;
   letter-spacing: 0.5px;
+  border: 1px solid rgba(255, 215, 0, 0.4);
   animation: slideDownToast 0.25s ease-out;
+  pointer-events: none;
 }
 
 @keyframes slideDownToast {
-  from { opacity: 0; transform: translate(-50%, -12px); }
+  from { opacity: 0; transform: translate(-50%, -10px); }
   to { opacity: 1; transform: translate(-50%, 0); }
 }
 
-/* ============ CABEÇALHO ============ */
+/* ============ CABEÇALHO CLONE DA TV ============ */
 .control-header {
-  max-width: 900px;
-  margin: 0 auto 12px auto;
-  width: 100%;
-}
-
-.control-brand {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  padding: 8px 12px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(217, 168, 60, 0.25);
-  border-radius: 12px;
+  padding: 6px 4px 12px;
+  gap: 12px;
 }
 
-.control-brand img {
-  border-radius: 8px;
-  flex-shrink: 0;
-}
-
-.control-brand h1 {
-  font-size: 1.15rem;
+.control-header-left .header-title {
+  font-size: 1.35rem;
   font-weight: 900;
-  color: #d9a83c;
-  margin: 0;
-  letter-spacing: 0.8px;
+  color: #1a1a1a;
+  letter-spacing: 1px;
   text-transform: uppercase;
+  text-decoration: underline;
+  text-decoration-thickness: 3px;
+  text-underline-offset: 4px;
+  white-space: nowrap;
 }
 
-.conn-status {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #8c8370;
-  margin: 2px 0 0 0;
-}
-
-.conn-status--ok {
-  color: #4cc46a;
+.control-header-center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .ctrl-wallclock {
   font-family: monospace;
   font-size: 1.3rem;
   font-weight: 800;
-  color: #d9a83c;
-  background: rgba(0, 0, 0, 0.5);
-  border: 1.5px solid rgba(217, 168, 60, 0.45);
+  color: #1a1a1a;
+  background: rgba(255, 255, 255, 0.85);
+  border: 2px solid #bbb;
   border-radius: 999px;
-  padding: 4px 14px;
+  padding: 3px 14px;
   letter-spacing: 1px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  white-space: nowrap;
+}
+
+.control-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   flex-shrink: 0;
 }
 
-/* ============ ABAS ============ */
-.control-tabs {
-  display: flex;
-  gap: 8px;
-  margin-top: 10px;
-}
-
-.tab-btn {
-  flex: 1;
-  padding: 9px 14px;
-  border-radius: 9px;
-  border: 1px solid rgba(217, 168, 60, 0.2);
-  background: #191714;
-  color: #9c937f;
-  font-size: 0.9rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.tab-btn--active {
-  background: #d9a83c;
-  color: #120e05;
-  border-color: #f0c566;
-  box-shadow: 0 2px 10px rgba(217, 168, 60, 0.3);
-}
-
-/* ============ BARRA DE VOZ COMPACTA ============ */
-.voice-bar {
-  max-width: 900px;
-  margin: 0 auto 12px auto;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  background: #161412;
-  border: 1px solid rgba(217, 168, 60, 0.25);
-  border-radius: 12px;
-  padding: 10px 14px;
-}
-
-.voice-bar-left {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.btn-voice-toggle {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 10px 14px;
-  background: #24201a;
-  border: 1.5px solid rgba(217, 168, 60, 0.35);
-  border-radius: 10px;
-  color: #f2ebdd;
-  font-size: 0.9rem;
-  font-weight: 800;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-voice-toggle .mic-icon {
-  font-size: 1.2rem;
-}
-
-.btn-voice-toggle.listening {
-  background: #b91c1c;
-  border-color: #ef4444;
-  color: #ffffff;
-  box-shadow: 0 0 16px rgba(239, 68, 68, 0.5);
-  animation: pulseVoice 1.4s infinite;
-}
-
-@keyframes pulseVoice {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.02); }
-}
-
-.toggle-continuous {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: #9c937f;
-  cursor: pointer;
-  user-select: none;
-}
-
-.toggle-continuous input {
-  accent-color: #d9a83c;
-  width: 16px;
-  height: 16px;
-}
-
-.voice-live-card {
-  background: rgba(0, 0, 0, 0.45);
-  border-radius: 8px;
-  padding: 8px 12px;
-  font-size: 0.85rem;
-}
-
-.transcript-line {
-  color: #d9a83c;
-  font-style: italic;
-  margin-bottom: 4px;
-}
-
-.last-cmd-line {
-  color: #4cc46a;
-  font-weight: 800;
-}
-
-/* ============================================================
-   O PLACAR INTERATIVO ESTILO TV (CONFORME A IMAGEM)
-   ============================================================ */
-.tv-scoreboard {
-  max-width: 900px;
-  margin: 0 auto;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  background: #1c1a17;
-  border: 2px solid rgba(217, 168, 60, 0.35);
-  border-radius: 14px;
-  padding: 8px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-  user-select: none;
-}
-
-/* ============ LINHAS DOS ATLETAS (A e B) ============ */
-.tv-sb-row {
-  display: grid;
-  grid-template-columns: 32% repeat(3, 1fr);
-  gap: 6px;
-  min-height: 130px;
-  border-radius: 10px;
-  overflow: hidden;
-  transition: transform 0.15s, box-shadow 0.15s;
-}
-
-.tv-sb-row.highlight {
-  box-shadow: 0 0 18px #d9a83c;
-  transform: scale(1.01);
-}
-
-/* ============ CAIXA DO NOME ============ */
-.tv-cell-name {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 10px 10px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  border-radius: 8px;
-  transition: filter 0.15s;
-}
-
-.tv-cell-name:active {
-  filter: brightness(0.9);
-}
-
-/* Atleta A: Azul */
-.tv-cell-name--a {
-  background: #0033cc;
-  color: #ffffff;
-}
-
-/* Atleta B: Branco / Cinza claro */
-.tv-cell-name--b {
-  background: #f0f0f0;
-  color: #111111;
-}
-
-.name-box {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.nome-val {
-  font-size: 1.15rem;
-  font-weight: 900;
-  line-height: 1.2;
-  text-transform: uppercase;
-  word-break: break-word;
-}
-
-.team-val {
+.conn-badge {
   font-size: 0.72rem;
   font-weight: 700;
-  opacity: 0.85;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.edit-badge {
-  align-self: flex-start;
-  font-size: 0.65rem;
-  font-weight: 800;
-  padding: 3px 7px;
+  padding: 5px 10px;
   border-radius: 999px;
-  background: rgba(0, 0, 0, 0.25);
-  color: inherit;
-  margin-top: 4px;
+  background: #e5e5e5;
+  color: #666;
+  white-space: nowrap;
 }
 
-/* ============ QUADROS DE PONTOS (VERDE / AMARELO / VERMELHO) ============ */
-.tv-cell-score {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  padding: 6px 4px;
+.conn-badge--ok {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.btn-header-spotify {
+  background: #1db954;
+  color: #04220f;
+  border: none;
   border-radius: 8px;
-  position: relative;
-}
-
-/* Verde: Pontos */
-.tv-cell-score--pts {
-  background: #00a859;
-  color: #ffffff;
-}
-
-/* Amarelo: Vantagem */
-.tv-cell-score--adv {
-  background: #ffb800;
-  color: #ffffff;
-}
-
-/* Vermelho: Punição */
-.tv-cell-score--pen {
-  background: #e63946;
-  color: #ffffff;
-}
-
-/* Área central onde fica o número grande (toque adiciona ponto) */
-.score-touch-area {
-  flex: 1;
-  width: 100%;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  padding: 4px 0;
+  gap: 4px;
+  transition: transform 0.15s;
 }
 
-.score-touch-area:active {
+.btn-header-spotify:active {
   transform: scale(0.95);
 }
 
-.score-num {
-  font-size: clamp(2.4rem, 6vw, 3.8rem);
-  font-weight: 900;
-  line-height: 1;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
-  font-variant-numeric: tabular-nums;
+.btn-header-spotify.active {
+  background: #15803d;
+  color: #fff;
 }
 
-/* Pílulas de botões na parte de baixo do quadro */
-.score-pill-row {
-  display: flex;
-  gap: 3px;
-  width: 100%;
-  justify-content: center;
-}
-
-.pill-btn {
-  flex: 1;
-  padding: 6px 2px;
-  border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  background: rgba(0, 0, 0, 0.25);
-  color: #ffffff;
-  font-size: 0.85rem;
-  font-weight: 900;
-  cursor: pointer;
-  transition: background 0.15s, transform 0.1s;
-}
-
-.pill-btn:active {
-  background: rgba(255, 255, 255, 0.4);
-  transform: scale(0.92);
-}
-
-.pill-btn--sub {
-  background: rgba(0, 0, 0, 0.45);
-  border-color: rgba(255, 255, 255, 0.2);
-  color: #ffd1d1;
-}
-
-.pill-btn--sub:disabled {
-  opacity: 0.3;
-  pointer-events: none;
-}
-
-/* ============ LINHA DE RODAPÉ (TEMPO E BOTÃO INICIAR) ============ */
-.tv-sb-foot {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px;
-  min-height: 70px;
-}
-
-.tv-cell-time {
-  background: #181818;
-  color: #ffffff;
-  border: 1.5px solid rgba(255, 255, 255, 0.12);
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  padding: 8px;
-  transition: border-color 0.15s;
-}
-
-.tv-cell-time:active {
-  border-color: #d9a83c;
-}
-
-.time-val {
-  font-family: monospace;
-  font-size: clamp(1.8rem, 5vw, 2.6rem);
-  font-weight: 900;
-  line-height: 1;
-  letter-spacing: 1px;
-}
-
-.time-hint {
-  font-size: 0.68rem;
-  font-weight: 700;
-  color: #8c8370;
-  margin-top: 2px;
-  text-transform: uppercase;
-}
-
-/* Botão de Status / Iniciar */
-.tv-cell-status {
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  padding: 8px;
-  color: #ffffff;
-  transition: transform 0.1s, filter 0.15s;
-}
-
-.tv-cell-status:active {
-  transform: scale(0.97);
-}
-
-.tv-cell-status.status--stopped {
-  background: #e63946;
-}
-
-.tv-cell-status.status--running {
-  background: #00a859;
-}
-
-.status-label {
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 1px;
-  opacity: 0.9;
-  text-transform: uppercase;
-}
-
-.status-btn-text {
-  font-size: 1.25rem;
-  font-weight: 900;
-  margin-top: 2px;
-  letter-spacing: 0.5px;
-}
-
-/* ============ BARRA DE AÇÕES RÁPIDAS ============ */
-.quick-actions-bar {
-  max-width: 900px;
-  margin: 10px auto 0 auto;
-  width: 100%;
-  display: flex;
-  gap: 8px;
-}
-
-.quick-action-btn {
-  flex: 1;
-  padding: 10px 12px;
+/* ============ GAVETA SPOTIFY ============ */
+.spotify-drawer {
   background: #191714;
-  border: 1px solid rgba(217, 168, 60, 0.25);
-  border-radius: 9px;
   color: #f2ebdd;
-  font-size: 0.85rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 12px;
+  border: 1px solid rgba(217, 168, 60, 0.3);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  animation: slideDownToast 0.2s ease-out;
 }
 
-.quick-action-btn:active {
-  background: #d9a83c;
-  color: #120e05;
-}
-
-.quick-action-btn--reset {
-  color: #ef4444;
-  border-color: rgba(239, 68, 68, 0.35);
-}
-
-.quick-action-btn--reset:active {
-  background: #ef4444;
-  color: #ffffff;
-}
-
-/* ============================================================
-   MODAIS (EDIÇÃO DE ATLETA E TEMPO)
-   ============================================================ */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(4px);
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-  animation: fadeInModal 0.2s ease-out;
-}
-
-@keyframes fadeInModal {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.modal-card {
-  background: #191714;
-  border: 2px solid #d9a83c;
-  border-radius: 14px;
-  width: 100%;
-  max-width: 440px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
-  overflow: hidden;
-}
-
-.modal-header {
+.spotify-card-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 16px;
-  border-bottom: 1px solid rgba(217, 168, 60, 0.2);
-  background: #201d19;
+  margin-bottom: 10px;
 }
 
-.modal-header h2 {
-  font-size: 1.1rem;
-  font-weight: 800;
+.spotify-card-head h3 {
+  font-size: 1rem;
   color: #d9a83c;
   margin: 0;
 }
 
-.modal-close {
-  background: none;
+.spotify-card-close {
+  background: transparent;
   border: none;
-  color: #9c937f;
+  color: #888;
   font-size: 1.2rem;
   cursor: pointer;
-  padding: 4px;
+  padding: 2px 6px;
 }
 
-.modal-body {
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.form-group label {
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: #9c937f;
-  text-transform: uppercase;
-}
-
-.form-input {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1.5px solid rgba(217, 168, 60, 0.3);
-  border-radius: 8px;
-  background: #11100e;
-  color: #f2ebdd;
-  font-size: 1rem;
-  font-weight: 700;
-  box-sizing: border-box;
-}
-
-.form-input:focus {
-  outline: none;
-  border-color: #f0c566;
-  box-shadow: 0 0 0 3px rgba(217, 168, 60, 0.25);
-}
-
-.modal-desc {
-  font-size: 0.9rem;
-  color: #9c937f;
-  margin: 0;
-}
-
-.time-select-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-}
-
-.time-pick-btn {
-  padding: 12px 6px;
-  background: #24201a;
-  border: 1px solid rgba(217, 168, 60, 0.25);
-  border-radius: 8px;
-  color: #f2ebdd;
-  font-weight: 800;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.time-pick-btn:hover,
-.time-pick-btn.active {
-  background: #d9a83c;
-  color: #120e05;
-  border-color: #f0c566;
-}
-
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  padding: 12px 16px;
-  border-top: 1px solid rgba(217, 168, 60, 0.15);
-  background: #201d19;
-}
-
-.btn-modal-cancel {
-  padding: 9px 16px;
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 8px;
-  color: #9c937f;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.btn-modal-save {
-  padding: 9px 20px;
-  background: #d9a83c;
-  border: none;
-  border-radius: 8px;
-  color: #120e05;
-  font-weight: 900;
-  font-size: 0.95rem;
-  cursor: pointer;
-  box-shadow: 0 2px 10px rgba(217, 168, 60, 0.35);
-}
-
-/* ============================================================
-   ABA SPOTIFY
-   ============================================================ */
-.spotify-panel {
-  max-width: 900px;
-  margin: 0 auto;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.spotify-card {
-  background: #161412;
-  border: 1px solid rgba(217, 168, 60, 0.25);
-  border-radius: 12px;
-  padding: 16px;
-}
-
-.spotify-card h3 {
-  font-size: 1.05rem;
-  font-weight: 800;
-  color: #f0c566;
-  margin: 0 0 4px 0;
+.spotify-card + .spotify-card {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .spotify-sub {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: #9c937f;
-  margin: 0 0 12px 0;
+  margin-bottom: 8px;
 }
 
 .preset-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
   gap: 8px;
 }
 
 .preset-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(217, 168, 60, 0.2);
+  border-radius: 8px;
+  padding: 8px 10px;
+  color: #e6dfcf;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 14px;
-  background: #201c17;
-  border: 1px solid rgba(217, 168, 60, 0.2);
-  border-radius: 10px;
-  color: #f2ebdd;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-  text-align: left;
+  gap: 6px;
+  transition: all 0.15s;
 }
 
-.preset-btn:hover {
+.preset-btn:active {
   background: #1db954;
-  border-color: #1ed760;
-  color: #ffffff;
+  color: #04220f;
+  border-color: #1db954;
 }
 
 .preset-icon {
-  font-size: 1rem;
-  color: #1ed760;
-}
-
-.preset-btn:hover .preset-icon {
-  color: #ffffff;
+  color: #1db954;
+  font-size: 0.75rem;
 }
 
 .spotify-custom-form {
@@ -747,59 +222,586 @@
   gap: 8px;
 }
 
-.spotify-custom-form .input-text {
+.input-text {
   flex: 1;
-  padding: 10px 14px;
-  border: 1px solid rgba(217, 168, 60, 0.25);
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(217, 168, 60, 0.3);
   border-radius: 8px;
-  background: #11100e;
-  color: #f2ebdd;
-  font-size: 0.9rem;
+  padding: 8px 12px;
+  color: #fff;
+  font-size: 0.85rem;
+  outline: none;
 }
 
 .btn-send-spotify {
-  padding: 10px 18px;
   background: #1db954;
+  color: #04220f;
   border: none;
   border-radius: 8px;
-  color: #ffffff;
+  padding: 8px 16px;
   font-weight: 800;
+  font-size: 0.85rem;
   cursor: pointer;
-  white-space: nowrap;
 }
 
 /* ============================================================
-   RESPONSIVIDADE (MOBILE LANDSCAPE & TELAS PEQUENAS)
+   O PLACAR CLONE DA TV (GRID IDÊNTICO)
    ============================================================ */
-@media (max-width: 600px) {
-  .control-container {
-    padding: 8px;
-  }
-  .tv-sb-row {
-    grid-template-columns: 28% repeat(3, 1fr);
-    min-height: 115px;
-  }
-  .nome-val {
-    font-size: 0.95rem;
-  }
-  .team-val {
-    font-size: 0.65rem;
-  }
-  .score-num {
-    font-size: 2.2rem;
-  }
-  .pill-btn {
-    font-size: 0.75rem;
-    padding: 5px 1px;
-  }
-  .time-val {
-    font-size: 1.6rem;
-  }
-  .status-btn-text {
-    font-size: 1rem;
+.tv-clone-board {
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.18);
+  border-radius: 4px;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Linhas dos Atletas */
+.tv-clone-row {
+  display: grid;
+  grid-template-columns: 32% 68%;
+  align-items: stretch;
+  min-height: 120px;
+  border-bottom: 2px solid #ffffff;
+}
+
+/* Coluna 1: Nome do Atleta */
+.tv-clone-name {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 12px 14px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: filter 0.15s;
+}
+
+.tv-clone-name:active {
+  filter: brightness(0.9);
+}
+
+.tv-clone-row--a .tv-clone-name {
+  background: #0052cc;
+  color: #ffffff;
+  border-right: 2px solid #ffffff;
+}
+
+.tv-clone-row--b .tv-clone-name {
+  background: #ffffff;
+  color: #1a1a1a;
+  border-right: 2px solid #ddd;
+}
+
+.clone-athlete-nome {
+  font-size: 1.45rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1.1;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.clone-athlete-team {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 3px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tv-clone-row--a .clone-athlete-team {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.tv-clone-row--b .clone-athlete-team {
+  color: #666666;
+}
+
+.clone-edit-hint {
+  font-size: 0.65rem;
+  font-weight: 700;
+  opacity: 0.6;
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Coluna 2: Células de Pontos, Vantagem e Punição */
+.tv-clone-pts {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  height: 100%;
+}
+
+.tv-clone-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-right: 2px solid #ffffff;
+  transition: transform 0.08s, filter 0.08s;
+  touch-action: manipulation;
+}
+
+.tv-clone-cell:last-child {
+  border-right: none;
+}
+
+.tv-clone-cell:active {
+  transform: scale(0.96);
+  filter: brightness(1.15);
+}
+
+.tv-clone-cell--pts {
+  background: #22c55e;
+}
+
+.tv-clone-cell--adv {
+  background: #eab308;
+}
+
+.tv-clone-cell--pen {
+  background: #ef4444;
+}
+
+.tv-clone-num {
+  font-size: 4.4rem;
+  font-weight: 900;
+  color: #ffffff;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  line-height: 1;
+}
+
+/* ============ LINHA DE BAIXO (FOOTER: TEMPO E STATUS) ============ */
+.tv-clone-foot {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 8px;
+  padding: 8px;
+  background: #c0c0c0;
+  height: 85px;
+}
+
+.tv-clone-time {
+  background: #1a1a1a;
+  color: #ffffff;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: filter 0.15s;
+}
+
+.tv-clone-time:active {
+  filter: brightness(1.2);
+}
+
+.clone-time-val {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 2.8rem;
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.clone-time-sub {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #d9a83c;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.tv-clone-status {
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: transform 0.08s, filter 0.08s;
+  user-select: none;
+}
+
+.tv-clone-status:active {
+  transform: scale(0.96);
+}
+
+.tv-clone-status--stopped {
+  background: #ef4444;
+}
+
+.tv-clone-status--running {
+  background: #22c55e;
+}
+
+.clone-status-txt {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* ============================================================
+   BARRA DE CONTROLES RÁPIDOS DA TV (TOOLBAR INFERIOR)
+   ============================================================ */
+.tv-clone-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.toolbar-side-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #dbdbdb;
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid #b8b8b8;
+}
+
+.toolbar-side-tag {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.toolbar-side-tag--a {
+  background: #0052cc;
+  color: #ffffff;
+}
+
+.toolbar-side-tag--b {
+  background: #ffffff;
+  color: #1a1a1a;
+  border: 1px solid #ccc;
+}
+
+.tb-btn {
+  flex: 1;
+  min-height: 42px;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  transition: transform 0.08s;
+  touch-action: manipulation;
+}
+
+.tb-btn:active {
+  transform: scale(0.93);
+}
+
+.tb-btn--p {
+  background: #22c55e;
+}
+
+.tb-btn--v {
+  background: #eab308;
+}
+
+.tb-btn--x {
+  background: #ef4444;
+}
+
+.tb-btn--sub {
+  background: #71717a;
+  font-size: 1.25rem;
+}
+
+.tb-btn--sub:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Ações Gerais (Linha Inferior da TV) */
+.toolbar-actions-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.tb-action-btn {
+  background: #ffffff;
+  border: 1px solid #b8b8b8;
+  border-radius: 8px;
+  padding: 10px 6px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #1a1a1a;
+  cursor: pointer;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  transition: transform 0.08s, background 0.15s;
+  white-space: nowrap;
+}
+
+.tb-action-btn:active {
+  transform: scale(0.95);
+  background: #f0f0f0;
+}
+
+.tb-action-btn--go {
+  background: #22c55e;
+  color: #ffffff;
+  border-color: #16a34a;
+}
+
+.tb-action-btn--warn {
+  background: #ef4444;
+  color: #ffffff;
+  border-color: #dc2626;
+}
+
+.tb-action-btn--reset {
+  color: #dc2626;
+}
+
+/* ============================================================
+   MODAIS (EDIÇÃO DE ATLETAS E TEMPO)
+   ============================================================ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 16px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-card {
+  background: #1c1a17;
+  color: #f2ebdd;
+  border: 1.5px solid rgba(217, 168, 60, 0.35);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+  animation: zoomIn 0.2s ease-out;
+}
+
+@keyframes zoomIn {
+  from { opacity: 0; transform: scale(0.93); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.modal-header h2 {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #d9a83c;
+  margin: 0;
+}
+
+.modal-close {
+  background: transparent;
+  border: none;
+  color: #888;
+  font-size: 1.3rem;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.modal-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #9c937f;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-input {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1.5px solid rgba(217, 168, 60, 0.3);
+  border-radius: 10px;
+  padding: 12px 14px;
+  color: #ffffff;
+  font-size: 1.05rem;
+  font-weight: 700;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-input:focus {
+  border-color: #d9a83c;
+  box-shadow: 0 0 0 3px rgba(217, 168, 60, 0.2);
+}
+
+.modal-footer {
+  display: flex;
+  gap: 10px;
+  padding: 14px 20px 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.btn-modal-cancel {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #bbb;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-modal-save {
+  flex: 2;
+  background: #d9a83c;
+  border: none;
+  color: #120e05;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(217, 168, 60, 0.35);
+}
+
+.time-select-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.time-pick-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1.5px solid rgba(217, 168, 60, 0.25);
+  border-radius: 10px;
+  padding: 14px 6px;
+  color: #f2ebdd;
+  font-size: 1.05rem;
+  font-weight: 800;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+}
+
+.time-pick-btn:active, .time-pick-btn.active {
+  background: #d9a83c;
+  color: #120e05;
+  border-color: #f0c566;
+  box-shadow: 0 4px 12px rgba(217, 168, 60, 0.4);
+}
+
+/* ============================================================
+   AJUSTES RESPONSIVOS (MOBILE E PAISAGEM / LANDSCAPE)
+   ============================================================ */
+@media (max-width: 480px) {
+  .control-header-left .header-title {
+    font-size: 1.15rem;
   }
   .ctrl-wallclock {
     font-size: 1.1rem;
-    padding: 3px 10px;
+    padding: 2px 10px;
+  }
+  .tv-clone-row {
+    grid-template-columns: 35% 65%;
+    min-height: 105px;
+  }
+  .clone-athlete-nome {
+    font-size: 1.2rem;
+  }
+  .tv-clone-num {
+    font-size: 3.6rem;
+  }
+  .clone-time-val {
+    font-size: 2.3rem;
+  }
+  .clone-status-txt {
+    font-size: 1.5rem;
+  }
+  .toolbar-actions-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Modo Paisagem (O celular vira literalmente a TV) */
+@media (orientation: landscape) and (max-height: 600px) {
+  .control-container {
+    padding: 6px 12px;
+  }
+  .control-header {
+    padding: 2px 4px 6px;
+  }
+  .tv-clone-row {
+    min-height: 80px;
+  }
+  .tv-clone-num {
+    font-size: 3rem;
+  }
+  .tv-clone-foot {
+    height: 60px;
+  }
+  .clone-time-val {
+    font-size: 2.2rem;
+  }
+  .clone-status-txt {
+    font-size: 1.3rem;
+  }
+  .tb-btn {
+    min-height: 34px;
+    font-size: 0.95rem;
+  }
+  .toolbar-actions-row {
+    grid-template-columns: repeat(6, 1fr);
   }
 }

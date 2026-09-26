@@ -32,12 +32,12 @@ html, body {
 }
 
 .display-header {
-  text-align: center;
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   min-height: 48px;
+  gap: 20px;
 }
 
 .display-header h1 {
@@ -49,32 +49,30 @@ html, body {
   text-decoration: underline;
   text-decoration-thickness: 3px;
   text-underline-offset: 8px;
+  margin: 0;
 }
 
 .display-wallclock {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  flex: 1;
+  text-align: center;
   font-family: monospace;
-  font-size: clamp(1.8rem, 3.8vw, 3.2rem);
+  font-size: clamp(1.6rem, 2.5vw, 2.4rem);
   font-weight: 800;
-  color: #d9a83c;
-  background: rgba(0, 0, 0, 0.65);
-  border: 2px solid rgba(217, 168, 60, 0.65);
-  padding: 4px 24px;
+  color: #1a1a1a;
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid #ccc;
+  padding: 4px 20px;
   border-radius: 999px;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
-  text-shadow: 0 0 12px rgba(217, 168, 60, 0.6);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   line-height: 1;
-  pointer-events: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: fit-content;
+  margin: 0 auto;
 }
 
 .display-header-actions {
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
   display: flex;
   align-items: center;
   gap: 10px;
