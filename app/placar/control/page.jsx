@@ -52,6 +52,7 @@ const PRESET_PLAYLISTS = [
   { name: '⚡ Tatame Cardio & Trap', url: 'https://open.spotify.com/playlist/37i9dQZF1DXdxcBWuJwBLq' },
   { name: '🇧🇷 Rap Nacional Tatame', url: 'https://open.spotify.com/playlist/37i9dQZF1DWZq7rP2Q869N' },
   { name: '🌊 Lo-Fi Jiu-Jitsu Flow', url: 'https://open.spotify.com/playlist/37i9dQZF1DXdLEN7aqioXM' },
+  { name: '☀️ Reggae Tatame', url: 'https://open.spotify.com/playlist/37i9dQZF1DXbSjqWVDCKew' },
 ];
 
 export default function PlacarControl() {
@@ -61,7 +62,14 @@ export default function PlacarControl() {
   const [toast, setToast] = useState('');
   const [activeTab, setActiveTab] = useState('placar'); // 'placar' | 'spotify'
 
-  // Voz
+  // Horário real
+  const [wallClock, setWallClock] = useState('');
+
+  // Modais de edição
+  const [editModal, setEditModal] = useState({ open: false, athlete: 'atletaA', nome: '', team: '' });
+  const [timeModal, setTimeModal] = useState(false);
+
+  // Módulo de Voz
   const [isListening, setIsListening] = useState(false);
   const [continuous, setContinuous] = useState(true);
   const [transcript, setTranscript] = useState('');
@@ -75,7 +83,6 @@ export default function PlacarControl() {
   const [spotifyName, setSpotifyName] = useState('');
 
   const connRef = useRef(null);
-  const focusedRef = useRef(null);
   const recognitionRef = useRef(null);
   const continuousRef = useRef(true);
   const isListeningRef = useRef(false);
@@ -90,6 +97,17 @@ export default function PlacarControl() {
   useEffect(() => {
     continuousRef.current = continuous;
   }, [continuous]);
+
+  // Relógio atual
+  useEffect(() => {
+    const update = () => {
+      const d = new Date();
+      setWallClock(String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'));
+    };
+    update();
+    const id = setInterval(update, 1000);
+    return () => clearInterval(id);
+  }, []);
 
   // Conexão WebRTC PeerJS
   useEffect(() => {
@@ -112,16 +130,8 @@ export default function PlacarControl() {
             if (msg.kind === 'hello' || msg.kind === 'state') {
               if (msg.match) {
                 setMatch((prev) => {
-                  const f = focusedRef.current;
-                  if (!f) return msg.match;
-                  const next = { ...msg.match };
-                  if (f.athlete && f.field) {
-                    next[f.athlete] = {
-                      ...next[f.athlete],
-                      [f.field]: prev[f.athlete]?.[f.field],
-                    };
-                  }
-                  return next;
+                  // Se o modal de edição estiver aberto, preserva os dados que o usuário está digitando
+                  return msg.match;
                 });
               }
               if (typeof msg.running === 'boolean') setRunning(msg.running);
@@ -165,14 +175,6 @@ export default function PlacarControl() {
     try { navigator.vibrate?.(40); } catch {}
   }, [ctrl]);
 
-  const setField = (athlete, field, value) => {
-    setMatch((prev) => ({
-      ...prev,
-      [athlete]: { ...prev[athlete], [field]: value },
-    }));
-    ctrl('set', { athlete, field, value });
-  };
-
   const swapAthletes = useCallback(() => {
     setMatch((prev) => ({
       ...prev,
@@ -185,6 +187,7 @@ export default function PlacarControl() {
 
   // ==========================================
   // PARSER DE COMANDOS DE VOZ EM PORTUGUÊS (BJJ)
+  // Robusto contra variações fonéticas ("ar", "r", "ah", "be", etc.)
   // ==========================================
   const parseVoiceCommand = useCallback((rawText) => {
     const text = rawText
@@ -199,35 +202,37 @@ export default function PlacarControl() {
     const nameA = (currentMatch.atletaA?.nome || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     const nameB = (currentMatch.atletaB?.nome || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
-    // Identifica atleta
-    let target = null;
-    const matchesA = /\b(lutador a|atleta a|para o a|pro a|do a|no a|azul|atleta azul|lutador azul)\b/.test(text) ||
-      (nameA.length > 2 && text.includes(nameA));
-    const matchesB = /\b(lutador b|atleta b|para o b|pro b|do b|no b|vermelho|branco|atleta vermelho|lutador vermelho|atleta branco|lutador branco)\b/.test(text) ||
-      (nameB.length > 2 && text.includes(nameB));
-
-    if (matchesA && !matchesB) target = 'atletaA';
-    else if (matchesB && !matchesA) target = 'atletaB';
-    else if (/\b(o a|ao a|no a)\b/.test(text)) target = 'atletaA';
-    else if (/\b(o b|ao b|no b)\b/.test(text)) target = 'atletaB';
-
-    // 1. Comandos de Tempo / Gerais
-    if (/\b(iniciar luta|iniciar tempo|comecar luta|comecar|valendo|combate|soltar tempo)\b/.test(text)) {
+    // 1. Comandos de Tempo / Gerais primeiro
+    if (/\b(iniciar luta|iniciar tempo|comecar luta|comecar|valendo|combate|soltar tempo|iniciar|soltar)\b/.test(text)) {
       if (!runningRef.current) ctrl('startPause');
       return { desc: '▶ Iniciar Luta', success: true };
     }
-    if (/\b(pausar luta|parar luta|pausar tempo|parar tempo|parou|tempo|pause)\b/.test(text)) {
+    if (/\b(pausar luta|parar luta|pausar tempo|parar tempo|parou|tempo|pause|pausa|para o tempo)\b/.test(text)) {
       if (runningRef.current) ctrl('startPause');
       return { desc: '⏸ Pausar Luta', success: true };
     }
-    if (/\b(zerar placar|zerar luta|zerar tudo|reiniciar placar)\b/.test(text)) {
+    if (/\b(zerar placar|zerar luta|zerar tudo|reiniciar placar|zerar)\b/.test(text)) {
       ctrl('reset');
       return { desc: '↺ Placar Zerado', success: true };
     }
-    if (/\b(trocar lados|inverter atletas|inverter lados)\b/.test(text)) {
+    if (/\b(trocar lados|inverter atletas|inverter lados|trocar)\b/.test(text)) {
       swapAthletes();
       return { desc: '⇆ Lados Trocados', success: true };
     }
+
+    // 2. Identificação fonética do Atleta A e B
+    // No português do Brasil, o reconhecimento de voz ouve "pro A" como "pro ar", "para o ar", "o ar", etc.
+    const regexA = /\b(pro ar|para o ar|pra o ar|pro a|para o a|pra o a|ao ar|ao a|no ar|no a|do ar|do a|o ar|lutador ar|lutador a|atleta ar|atleta a|lutadora ar|lutadora a|letra a|letra ar|azul|atleta azul|lutador azul|faixa azul)\b/;
+    const regexB = /\b(pro be|pro b|pro beh|pro bê|para o be|para o b|pra o be|pra o b|ao be|ao b|no be|no b|do be|do b|o be|o b|lutador be|lutador b|atleta be|atleta b|lutadora be|lutadora b|letra be|letra b|branco|faixa branca|atleta branco|lutador branco|vermelho|atleta vermelho|lutador vermelho)\b/;
+
+    let target = null;
+    const matchesA = regexA.test(text) || (nameA.length > 2 && text.includes(nameA));
+    const matchesB = regexB.test(text) || (nameB.length > 2 && text.includes(nameB));
+
+    if (matchesA && !matchesB) target = 'atletaA';
+    else if (matchesB && !matchesA) target = 'atletaB';
+    else if (/\b(ar|a)$/.test(text)) target = 'atletaA';
+    else if (/\b(be|b)$/.test(text)) target = 'atletaB';
 
     if (!target) {
       return null;
@@ -235,54 +240,54 @@ export default function PlacarControl() {
 
     const athleteLabel = target === 'atletaA' ? 'Lutador A (Azul)' : 'Lutador B (Branco)';
 
-    // 2. Pontos Subtração (-2, -3, -4, -1)
-    if (/\b(retirar 2 pontos|retirar dois pontos|tirar 2 pontos|tirar dois pontos|menos 2 pontos|menos dois pontos|menos dois|menos 2)\b/.test(text)) {
+    // 3. Subtração de pontos
+    if (/\b(retirar 2|retirar dois|tirar 2|tirar dois|menos 2|menos dois|menos duas)\b/.test(text)) {
       addScore(target, 'pontos', -2);
       return { desc: `-2 pontos para ${athleteLabel}`, target, success: true };
     }
-    if (/\b(retirar 3 pontos|retirar tres pontos|tirar 3 pontos|tirar tres pontos|menos 3 pontos|menos tres pontos|menos tres|menos 3)\b/.test(text)) {
+    if (/\b(retirar 3|retirar tres|tirar 3|tirar tres|menos 3|menos tres)\b/.test(text)) {
       addScore(target, 'pontos', -3);
       return { desc: `-3 pontos para ${athleteLabel}`, target, success: true };
     }
-    if (/\b(retirar 4 pontos|retirar quatro pontos|tirar 4 pontos|tirar quatro pontos|menos 4 pontos|menos quatro pontos|menos quatro|menos 4)\b/.test(text)) {
+    if (/\b(retirar 4|retirar quatro|tirar 4|tirar quatro|menos 4|menos quatro)\b/.test(text)) {
       addScore(target, 'pontos', -4);
       return { desc: `-4 pontos para ${athleteLabel}`, target, success: true };
     }
-    if (/\b(retirar 1 ponto|retirar um ponto|tirar 1 ponto|tirar um ponto|menos 1 ponto|menos um ponto|menos um)\b/.test(text)) {
+    if (/\b(retirar 1|retirar um|tirar 1|tirar um|menos 1|menos um|menos uma)\b/.test(text)) {
       addScore(target, 'pontos', -1);
       return { desc: `-1 ponto para ${athleteLabel}`, target, success: true };
     }
 
-    // 3. Vantagem Adição / Subtração
+    // 4. Vantagem
     if (/\b(desvantagem|menos vantagem|retirar vantagem|tirar vantagem|menos uma vantagem)\b/.test(text)) {
       addScore(target, 'vantagem', -1);
       return { desc: `-1 Vantagem para ${athleteLabel}`, target, success: true };
     }
-    if (/\b(vantagem|uma vantagem|mais uma vantagem|dar vantagem)\b/.test(text)) {
+    if (/\b(vantagem|uma vantagem|mais uma vantagem|dar vantagem|vantagens)\b/.test(text)) {
       addScore(target, 'vantagem', 1);
       return { desc: `+1 Vantagem para ${athleteLabel}`, target, success: true };
     }
 
-    // 4. Punição / Penalidade Adição / Subtração
+    // 5. Punição
     if (/\b(retirar punicao|tirar punicao|menos punicao|retirar falta|tirar falta|retirar penalidade)\b/.test(text)) {
       addScore(target, 'penalidade', -1);
       return { desc: `-1 Punição para ${athleteLabel}`, target, success: true };
     }
-    if (/\b(punicao|uma punicao|penalidade|falta|dar punicao|dar falta)\b/.test(text)) {
+    if (/\b(punicao|uma punicao|penalidade|falta|dar punicao|dar falta|punições)\b/.test(text)) {
       addScore(target, 'penalidade', 1);
       return { desc: `+1 Punição para ${athleteLabel}`, target, success: true };
     }
 
-    // 5. Pontos Adição (+2, +3, +4, +1)
-    if (/\b(dois pontos|2 pontos|mais dois pontos|mais 2|queda|raspagem|joelho na barriga)\b/.test(text)) {
+    // 6. Adição de pontos
+    if (/\b(dois pontos|2 pontos|mais dois|mais 2|queda|raspagem|joelho|joelho na barriga)\b/.test(text)) {
       addScore(target, 'pontos', 2);
       return { desc: `+2 pontos para ${athleteLabel}`, target, success: true };
     }
-    if (/\b(tres pontos|3 pontos|mais tres pontos|mais 3|passagem de guarda|passagem)\b/.test(text)) {
+    if (/\b(tres pontos|3 pontos|mais tres|mais 3|passagem de guarda|passagem|passou)\b/.test(text)) {
       addScore(target, 'pontos', 3);
       return { desc: `+3 pontos para ${athleteLabel}`, target, success: true };
     }
-    if (/\b(quatro pontos|4 pontos|mais quatro pontos|mais 4|montada|costas|pegada de costas)\b/.test(text)) {
+    if (/\b(quatro pontos|4 pontos|mais quatro|mais 4|montada|costas|pegada de costas|montou|pegou as costas)\b/.test(text)) {
       addScore(target, 'pontos', 4);
       return { desc: `+4 pontos para ${athleteLabel}`, target, success: true };
     }
@@ -329,7 +334,7 @@ export default function PlacarControl() {
           setTimeout(() => setHighlightB(false), 800);
         }
       } else {
-        setLastVoiceCmd(`Comando não reconhecido: "${text}"`);
+        setLastVoiceCmd(`Não reconhecido: "${text}"`);
         playChime(false);
       }
     };
@@ -341,7 +346,6 @@ export default function PlacarControl() {
     };
 
     recognition.onend = () => {
-      // Se estiver em modo contínuo, reinicia automaticamente para o tatame
       if (continuousRef.current && isListeningRef.current) {
         try {
           recognition.start();
@@ -369,7 +373,7 @@ export default function PlacarControl() {
     } else {
       isListeningRef.current = true;
       setIsListening(true);
-      setTranscript('Ouvindo... Diga o comando.');
+      setTranscript('Ouvindo... Fale o comando.');
       try {
         recognitionRef.current.start();
         flash('🎙️ Microfone ativado — diga o comando!');
@@ -394,188 +398,58 @@ export default function PlacarControl() {
     setSpotifyName('');
   };
 
+  // Abrir Modal de Edição de Atleta
+  const openEditAthlete = (athleteKey) => {
+    setEditModal({
+      open: true,
+      athlete: athleteKey,
+      nome: match[athleteKey]?.nome || '',
+      team: match[athleteKey]?.team || '',
+    });
+  };
+
+  // Salvar Edição de Atleta (resolve o bug de digitação letra por letra)
+  const saveEditAthlete = () => {
+    if (!editModal.open) return;
+    const { athlete, nome, team } = editModal;
+    const finalNome = nome.trim() || (athlete === 'atletaA' ? 'ATLETA A' : 'ATLETA B');
+    const finalTeam = team.trim() || (athlete === 'atletaA' ? 'CT HEISHIKAN' : 'VISITANTE');
+
+    setMatch((prev) => ({
+      ...prev,
+      [athlete]: { ...prev[athlete], nome: finalNome, team: finalTeam },
+    }));
+    ctrl('set', { athlete, field: 'nome', value: finalNome });
+    ctrl('set', { athlete, field: 'team', value: finalTeam });
+    setEditModal({ open: false, athlete: 'atletaA', nome: '', team: '' });
+    flash('Atleta salvo na TV ✓');
+  };
+
   const statusTxt = {
-    'no-id': 'Escaneie o QR code da TV para abrir o controle com a sessão.',
+    'no-id': 'Escaneie o QR code da TV com a câmera do celular.',
     connecting: 'Conectando à TV…',
-    connected: '✓ Conectado à TV — alterações aparecem na hora',
-    closed: 'Conexão encerrada. Escaneie o QR de novo na TV.',
-    error: 'Não foi possível conectar. Escaneie o QR de novo na TV.',
+    connected: '✓ Conectado à TV em tempo real',
+    closed: 'Conexão encerrada.',
+    error: 'Erro de conexão.',
   }[status];
 
   const on = status === 'connected';
 
-  // Bloco de Atleta com botões rápidos CBJJ
-  const AthleteBlock = ({ id, title, highlight }) => {
-    const isA = id === 'atletaA';
-    return (
-      <section className={`athlete-control ${isA ? 'athlete-a' : 'athlete-b'} ${highlight ? 'athlete--highlight' : ''}`}>
-        <div className="athlete-title-bar">
-          <h2>{title}</h2>
-          <span className={`athlete-badge ${isA ? 'badge--blue' : 'badge--white'}`}>
-            {isA ? 'Faixa Azul' : 'Branco / Vermelho'}
-          </span>
-        </div>
-
-        <div className="input-group">
-          <label>Nome do Lutador</label>
-          <input
-            type="text"
-            value={match[id].nome}
-            disabled={!on}
-            maxLength={30}
-            className="input-text"
-            onFocus={() => { focusedRef.current = { athlete: id, field: 'nome' }; }}
-            onBlur={() => { focusedRef.current = null; }}
-            onChange={(e) => setField(id, 'nome', e.target.value)}
-          />
-        </div>
-
-        <div className="input-group">
-          <label>Equipe</label>
-          <input
-            type="text"
-            value={match[id].team}
-            disabled={!on}
-            maxLength={30}
-            className="input-text"
-            onFocus={() => { focusedRef.current = { athlete: id, field: 'team' }; }}
-            onBlur={() => { focusedRef.current = null; }}
-            onChange={(e) => setField(id, 'team', e.target.value)}
-          />
-        </div>
-
-        {/* Resumo dos pontos atuais */}
-        <div className="score-summary-cards">
-          <div className="sum-card sum-card--pts">
-            <span className="sum-label">Pontos</span>
-            <span className="sum-val">{match[id].pontos}</span>
-          </div>
-          <div className="sum-card sum-card--adv">
-            <span className="sum-label">Vantagem</span>
-            <span className="sum-val">{match[id].vantagem}</span>
-          </div>
-          <div className="sum-card sum-card--pen">
-            <span className="sum-label">Punição</span>
-            <span className="sum-val">{match[id].penalidade}</span>
-          </div>
-        </div>
-
-        {/* BOTÕES RÁPIDOS CBJJ */}
-        <div className="bjj-actions">
-          <div className="bjj-action-group">
-            <span className="bjj-group-label">Pontos CBJJ</span>
-            <div className="bjj-btn-row">
-              <button
-                disabled={!on}
-                onClick={() => addScore(id, 'pontos', 2)}
-                className="btn-bjj btn-bjj--2"
-                title="Queda, Raspagem ou Joelho na barriga (+2)"
-              >
-                <strong>+2</strong>
-                <small>Queda / Rasp</small>
-              </button>
-              <button
-                disabled={!on}
-                onClick={() => addScore(id, 'pontos', 3)}
-                className="btn-bjj btn-bjj--3"
-                title="Passagem de guarda (+3)"
-              >
-                <strong>+3</strong>
-                <small>Passagem</small>
-              </button>
-              <button
-                disabled={!on}
-                onClick={() => addScore(id, 'pontos', 4)}
-                className="btn-bjj btn-bjj--4"
-                title="Montada ou Pegada pelas costas (+4)"
-              >
-                <strong>+4</strong>
-                <small>Montada / Costas</small>
-              </button>
-            </div>
-            {/* Correção de pontos */}
-            <div className="bjj-minus-row">
-              {[-1, -2, -3, -4].map((delta) => (
-                <button
-                  key={delta}
-                  disabled={!on || match[id].pontos === 0}
-                  onClick={() => addScore(id, 'pontos', delta)}
-                  className="btn-bjj-sub"
-                  title={`Retirar ${Math.abs(delta)} pontos`}
-                >
-                  {delta}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="bjj-action-group bjj-action-group--split">
-            {/* Vantagem */}
-            <div className="bjj-subgroup">
-              <span className="bjj-group-label">Vantagem</span>
-              <div className="bjj-btn-duo">
-                <button
-                  disabled={!on}
-                  onClick={() => addScore(id, 'vantagem', 1)}
-                  className="btn-bjj btn-bjj--adv"
-                >
-                  +1 V
-                </button>
-                <button
-                  disabled={!on || match[id].vantagem === 0}
-                  onClick={() => addScore(id, 'vantagem', -1)}
-                  className="btn-bjj-sub"
-                >
-                  −1 V
-                </button>
-              </div>
-            </div>
-
-            {/* Punição */}
-            <div className="bjj-subgroup">
-              <span className="bjj-group-label">Punição</span>
-              <div className="bjj-btn-duo">
-                <button
-                  disabled={!on}
-                  onClick={() => addScore(id, 'penalidade', 1)}
-                  className="btn-bjj btn-bjj--pen"
-                >
-                  +1 P
-                </button>
-                <button
-                  disabled={!on || match[id].penalidade === 0}
-                  onClick={() => addScore(id, 'penalidade', -1)}
-                  className="btn-bjj-sub"
-                >
-                  −1 P
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    );
-  };
-
   return (
     <div className="control-container">
+      {/* TOAST FLUTUANTE */}
+      {toast && <div className="control-toast">{toast}</div>}
+
       {/* CABEÇALHO */}
       <header className="control-header">
         <div className="control-brand">
           <img src="/img/logo-heishikan.png" alt="CT Heishikan" width="36" height="36" />
           <div>
-            <h1>Controle do Placar</h1>
+            <h1>PLACAR JIU-JITSU</h1>
             <p className={`conn-status ${on ? 'conn-status--ok' : ''}`}>{statusTxt}</p>
           </div>
+          {wallClock && <div className="ctrl-wallclock">{wallClock}</div>}
         </div>
-
-        {!on && status === 'no-id' && (
-          <div className="conn-help-box">
-            <p>
-              Abra o placar na TV (em <strong>/placar/display</strong> ou no app Tatame TV) e escaneie o QR code com a câmera do celular.
-            </p>
-          </div>
-        )}
 
         {/* ABAS */}
         <div className="control-tabs">
@@ -583,151 +457,260 @@ export default function PlacarControl() {
             className={`tab-btn ${activeTab === 'placar' ? 'tab-btn--active' : ''}`}
             onClick={() => setActiveTab('placar')}
           >
-            🥋 Placar & Voz
+            🥋 Placar TV & Voz
           </button>
           <button
             className={`tab-btn ${activeTab === 'spotify' ? 'tab-btn--active' : ''}`}
             onClick={() => setActiveTab('spotify')}
           >
-            🎵 Spotify & Treino
+            🎵 Spotify na TV
           </button>
         </div>
       </header>
 
-      {/* ABA 1: PLACAR E COMANDO DE VOZ */}
+      {/* ABA 1: PLACAR INTERATIVO (IGUAL À TV) */}
       {activeTab === 'placar' && (
-        <>
-          {/* MÓDULO DE RECONHECIMENTO DE VOZ */}
-          <section className="voice-panel">
-            <div className="voice-header">
-              <div className="voice-title">
-                <h3>🎙️ Pontuar por Voz</h3>
-                <span className="voice-badge">Tatame Hands-Free</span>
-              </div>
-              <label className="voice-continuous-toggle">
+        <main className="placar-tab-body">
+          {/* PAINEL DE VOZ */}
+          <section className="voice-bar">
+            <div className="voice-bar-left">
+              <button
+                disabled={!on}
+                onClick={toggleVoice}
+                className={`btn-voice-toggle ${isListening ? 'listening' : ''}`}
+              >
+                <span className="mic-icon">{isListening ? '⏹' : '🎤'}</span>
+                <span>{isListening ? 'Ouvindo... (Toque p/ parar)' : 'Ativar Pontuação por Voz'}</span>
+              </button>
+              <label className="toggle-continuous" title="Deixa o celular ouvindo continuamente">
                 <input
                   type="checkbox"
                   checked={continuous}
                   onChange={(e) => setContinuous(e.target.checked)}
                 />
-                <span>Modo Contínuo</span>
+                <span>Contínuo</span>
               </label>
             </div>
 
-            {voiceSupported ? (
-              <>
-                <div className="voice-action-row">
-                  <button
-                    disabled={!on}
-                    onClick={toggleVoice}
-                    className={`btn-voice ${isListening ? 'btn-voice--active' : ''}`}
-                  >
-                    <span className="voice-icon">{isListening ? '⏹' : '🎙️'}</span>
-                    <span>{isListening ? 'Ouvindo... Toque para Parar' : 'Ativar Microfone por Voz'}</span>
-                  </button>
-                </div>
-
-                {/* Status da fala */}
-                <div className="voice-feedback">
-                  {transcript && <p className="voice-transcript">{transcript}</p>}
-                  {lastVoiceCmd && <p className="voice-last-cmd">✓ {lastVoiceCmd}</p>}
-                  {!transcript && !lastVoiceCmd && (
-                    <p className="voice-hint">
-                      Exemplos: <em>"dois pontos para o lutador A"</em>, <em>"retirar 2 pontos do A"</em>, <em>"desvantagem para o lutador A"</em>, <em>"punição para o B"</em>.
-                    </p>
-                  )}
-                </div>
-              </>
-            ) : (
-              <p className="voice-unsupported">
-                Seu navegador não suporta reconhecimento de voz direto. Use o Google Chrome ou Safari no celular.
-              </p>
+            {/* Transcrição da Voz */}
+            {(transcript || lastVoiceCmd) && (
+              <div className="voice-live-card">
+                {transcript && <div className="transcript-line">{transcript}</div>}
+                {lastVoiceCmd && <div className="last-cmd-line">{lastVoiceCmd}</div>}
+              </div>
             )}
           </section>
 
-          {/* CONTEÚDO DOS ATLETAS */}
-          <div className={`control-content ${!on ? 'control-content--dim' : ''}`}>
-            <AthleteBlock id="atletaA" title="Atleta A" highlight={highlightA} />
-            <AthleteBlock id="atletaB" title="Atleta B" highlight={highlightB} />
-
-            {/* SEÇÃO DO CRONÔMETRO */}
-            <section className="timer-control">
-              <div className="timer-head-row">
-                <h2>Luta</h2>
-                <button
-                  disabled={!on}
-                  onClick={swapAthletes}
-                  className="btn-swap-sides"
-                  title="Trocar lados dos atletas"
-                >
-                  ⇆ Inverter Lados
-                </button>
+          {/* O PLACAR VISUAL DA TV (INTERATIVO) */}
+          <section className="tv-scoreboard">
+            {/* LINHA ATLETA A (AZUL) */}
+            <div className={`tv-sb-row tv-sb-row--a ${highlightA ? 'highlight' : ''}`}>
+              {/* Caixa do Nome (Azul) */}
+              <div
+                className="tv-cell-name tv-cell-name--a"
+                onClick={() => openEditAthlete('atletaA')}
+                title="Toque para editar o nome"
+              >
+                <div className="name-box">
+                  <span className="nome-val">{match.atletaA.nome}</span>
+                  <span className="team-val">{match.atletaA.team}</span>
+                </div>
+                <span className="edit-badge">✏️ Editar</span>
               </div>
 
-              <div className="timer-display">
-                <div className="time-value">{match.tempo}</div>
-                <div className="time-buttons">
-                  {[3, 5, 6, 8, 10].map((min) => (
-                    <button
-                      key={min}
-                      disabled={!on}
-                      onClick={() => {
-                        ctrl('timerSet', { minutes: min });
-                        flash(`${min} min ✓`);
-                      }}
-                      className={`time-btn ${match.tempo === `${String(min).padStart(2, '0')}:00` ? 'active' : ''}`}
-                    >
-                      {min}min
-                    </button>
-                  ))}
+              {/* Caixa Verde: PONTOS */}
+              <div className="tv-cell-score tv-cell-score--pts">
+                <div
+                  className="score-touch-area"
+                  onClick={() => addScore('atletaA', 'pontos', 2)}
+                  title="Toque no número para dar +2 pontos"
+                >
+                  <span className="score-num">{match.atletaA.pontos}</span>
+                </div>
+                <div className="score-pill-row">
+                  <button className="pill-btn pill-btn--pts" onClick={() => addScore('atletaA', 'pontos', 2)}>+2</button>
+                  <button className="pill-btn pill-btn--pts" onClick={() => addScore('atletaA', 'pontos', 3)}>+3</button>
+                  <button className="pill-btn pill-btn--pts" onClick={() => addScore('atletaA', 'pontos', 4)}>+4</button>
+                  <button
+                    className="pill-btn pill-btn--sub"
+                    disabled={match.atletaA.pontos === 0}
+                    onClick={() => addScore('atletaA', 'pontos', -1)}
+                  >
+                    −1
+                  </button>
                 </div>
               </div>
 
-              <div className="control-buttons">
-                <button
-                  disabled={!on}
-                  onClick={() => {
-                    ctrl('startPause');
-                    flash(running ? 'Pausado ✓' : 'Iniciado ✓');
-                  }}
-                  className={`btn-large ${running ? 'btn-pause' : 'btn-play'}`}
+              {/* Caixa Amarela: VANTAGEM */}
+              <div className="tv-cell-score tv-cell-score--adv">
+                <div
+                  className="score-touch-area"
+                  onClick={() => addScore('atletaA', 'vantagem', 1)}
+                  title="Toque no número para dar +1 vantagem"
                 >
-                  {running ? '⏸ Pausar Luta' : '▶ Iniciar Luta'}
-                </button>
-              </div>
-
-              <div className="status-buttons">
-                <label>Status da Luta</label>
-                <div className="button-group-status">
-                  {['INÍCIO', 'DURANTE', 'FINAL'].map((s) => (
-                    <button
-                      key={s}
-                      disabled={!on}
-                      onClick={() => {
-                        ctrl('status', { value: s });
-                        flash(`Status: ${s}`);
-                      }}
-                      className={`status-btn ${match.statusLuta === s ? 'active' : ''}`}
-                    >
-                      {s}
-                    </button>
-                  ))}
+                  <span className="score-num">{match.atletaA.vantagem}</span>
+                </div>
+                <div className="score-pill-row">
+                  <button className="pill-btn pill-btn--adv" onClick={() => addScore('atletaA', 'vantagem', 1)}>+1</button>
+                  <button
+                    className="pill-btn pill-btn--sub"
+                    disabled={match.atletaA.vantagem === 0}
+                    onClick={() => addScore('atletaA', 'vantagem', -1)}
+                  >
+                    −1
+                  </button>
                 </div>
               </div>
 
-              <button
-                disabled={!on}
+              {/* Caixa Vermelha: PUNIÇÃO */}
+              <div className="tv-cell-score tv-cell-score--pen">
+                <div
+                  className="score-touch-area"
+                  onClick={() => addScore('atletaA', 'penalidade', 1)}
+                  title="Toque no número para dar +1 punição"
+                >
+                  <span className="score-num">{match.atletaA.penalidade}</span>
+                </div>
+                <div className="score-pill-row">
+                  <button className="pill-btn pill-btn--pen" onClick={() => addScore('atletaA', 'penalidade', 1)}>+1</button>
+                  <button
+                    className="pill-btn pill-btn--sub"
+                    disabled={match.atletaA.penalidade === 0}
+                    onClick={() => addScore('atletaA', 'penalidade', -1)}
+                  >
+                    −1
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* LINHA ATLETA B (BRANCO) */}
+            <div className={`tv-sb-row tv-sb-row--b ${highlightB ? 'highlight' : ''}`}>
+              {/* Caixa do Nome (Branco) */}
+              <div
+                className="tv-cell-name tv-cell-name--b"
+                onClick={() => openEditAthlete('atletaB')}
+                title="Toque para editar o nome"
+              >
+                <div className="name-box">
+                  <span className="nome-val">{match.atletaB.nome}</span>
+                  <span className="team-val">{match.atletaB.team}</span>
+                </div>
+                <span className="edit-badge">✏️ Editar</span>
+              </div>
+
+              {/* Caixa Verde: PONTOS */}
+              <div className="tv-cell-score tv-cell-score--pts">
+                <div
+                  className="score-touch-area"
+                  onClick={() => addScore('atletaB', 'pontos', 2)}
+                  title="Toque no número para dar +2 pontos"
+                >
+                  <span className="score-num">{match.atletaB.pontos}</span>
+                </div>
+                <div className="score-pill-row">
+                  <button className="pill-btn pill-btn--pts" onClick={() => addScore('atletaB', 'pontos', 2)}>+2</button>
+                  <button className="pill-btn pill-btn--pts" onClick={() => addScore('atletaB', 'pontos', 3)}>+3</button>
+                  <button className="pill-btn pill-btn--pts" onClick={() => addScore('atletaB', 'pontos', 4)}>+4</button>
+                  <button
+                    className="pill-btn pill-btn--sub"
+                    disabled={match.atletaB.pontos === 0}
+                    onClick={() => addScore('atletaB', 'pontos', -1)}
+                  >
+                    −1
+                  </button>
+                </div>
+              </div>
+
+              {/* Caixa Amarela: VANTAGEM */}
+              <div className="tv-cell-score tv-cell-score--adv">
+                <div
+                  className="score-touch-area"
+                  onClick={() => addScore('atletaB', 'vantagem', 1)}
+                  title="Toque no número para dar +1 vantagem"
+                >
+                  <span className="score-num">{match.atletaB.vantagem}</span>
+                </div>
+                <div className="score-pill-row">
+                  <button className="pill-btn pill-btn--adv" onClick={() => addScore('atletaB', 'vantagem', 1)}>+1</button>
+                  <button
+                    className="pill-btn pill-btn--sub"
+                    disabled={match.atletaB.vantagem === 0}
+                    onClick={() => addScore('atletaB', 'vantagem', -1)}
+                  >
+                    −1
+                  </button>
+                </div>
+              </div>
+
+              {/* Caixa Vermelha: PUNIÇÃO */}
+              <div className="tv-cell-score tv-cell-score--pen">
+                <div
+                  className="score-touch-area"
+                  onClick={() => addScore('atletaB', 'penalidade', 1)}
+                  title="Toque no número para dar +1 punição"
+                >
+                  <span className="score-num">{match.atletaB.penalidade}</span>
+                </div>
+                <div className="score-pill-row">
+                  <button className="pill-btn pill-btn--pen" onClick={() => addScore('atletaB', 'penalidade', 1)}>+1</button>
+                  <button
+                    className="pill-btn pill-btn--sub"
+                    disabled={match.atletaB.penalidade === 0}
+                    onClick={() => addScore('atletaB', 'penalidade', -1)}
+                  >
+                    −1
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* LINHA DE BAIXO (TEMPO E BOTÃO INICIAR/PAUSAR) */}
+            <div className="tv-sb-foot">
+              <div
+                className="tv-cell-time"
+                onClick={() => setTimeModal(true)}
+                title="Toque para mudar o tempo da luta"
+              >
+                <span className="time-val">{match.tempo}</span>
+                <span className="time-hint">⏱ Ajustar Tempo</span>
+              </div>
+
+              <div
+                className={`tv-cell-status ${running ? 'status--running' : 'status--stopped'}`}
                 onClick={() => {
+                  ctrl('startPause');
+                  flash(running ? 'Pausado ⏸' : 'Iniciado ▶');
+                }}
+                title="Toque para Iniciar ou Pausar a luta"
+              >
+                <span className="status-label">{running ? 'LUTANDO' : 'INÍCIO'}</span>
+                <span className="status-btn-text">{running ? '⏸ PAUSAR' : '▶ INICIAR LUTA'}</span>
+              </div>
+            </div>
+          </section>
+
+          {/* BOTÕES DE AÇÕES RÁPIDAS DE TATAME */}
+          <div className="quick-actions-bar">
+            <button className="quick-action-btn" onClick={swapAthletes} title="Inverter lados">
+              ⇆ Trocar Lados
+            </button>
+            <button
+              className="quick-action-btn quick-action-btn--reset"
+              onClick={() => {
+                if (window.confirm('Deseja realmente zerar todos os pontos e o cronômetro?')) {
                   ctrl('reset');
                   flash('Placar zerado ✓');
-                }}
-                className="btn-reset"
-              >
-                Zerar Placar
-              </button>
-            </section>
+                }
+              }}
+            >
+              ↺ Zerar Placar
+            </button>
+            <button className="quick-action-btn" onClick={() => setActiveTab('spotify')}>
+              ♫ Spotify
+            </button>
           </div>
-        </>
+        </main>
       )}
 
       {/* ABA 2: SPOTIFY & MÚSICA */}
@@ -752,68 +735,112 @@ export default function PlacarControl() {
           </div>
 
           <div className="spotify-card">
-            <h3>📱 Enviar Qualquer Playlist do seu Spotify</h3>
-            <p className="spotify-sub">
-              No seu celular: abra a playlist no app do Spotify → toque em <strong>Compartilhar</strong> → <strong>Copiar Link</strong> → cole abaixo:
-            </p>
-
-            <div className="input-group">
-              <label>Nome do Atalho (Opcional)</label>
+            <h3>📱 Enviar Qualquer Playlist do seu Celular</h3>
+            <p className="spotify-sub">Abra o Spotify no celular, clique em "Compartilhar" ➔ "Copiar Link" e cole aqui:</p>
+            <div className="spotify-custom-form">
               <input
                 type="text"
-                placeholder="Ex: Treino das 19h"
-                value={spotifyName}
-                maxLength={30}
-                className="input-text"
-                onChange={(e) => setSpotifyName(e.target.value)}
-              />
-            </div>
-
-            <div className="input-group">
-              <label>Link da Playlist do Spotify</label>
-              <textarea
-                rows={2}
-                placeholder="Cole o link aqui (https://open.spotify.com/playlist/...)"
                 value={spotifyUrl}
-                className="input-text input-textarea"
                 onChange={(e) => setSpotifyUrl(e.target.value)}
+                placeholder="Cole o link ou ID da playlist (ex: open.spotify.com/playlist/...)"
+                className="input-text"
               />
-            </div>
-
-            <div className="spotify-action-row">
               <button
-                type="button"
-                className="btn-paste"
-                onClick={async () => {
-                  try {
-                    const clip = await navigator.clipboard.readText();
-                    if (clip) setSpotifyUrl(clip);
-                  } catch {}
-                }}
-              >
-                📋 Colar
-              </button>
-              <button
-                type="button"
-                disabled={!on || !spotifyUrl.trim()}
-                className="btn-send-spotify"
+                disabled={!on}
                 onClick={() => sendSpotifyPlaylist()}
+                className="btn-send-spotify"
               >
-                Enviar para a TV
+                Tocar na TV ➔
               </button>
             </div>
-          </div>
-
-          <div className="spotify-card">
-            <h3>🔑 Dica para Músicas Completas</h3>
-            <p className="spotify-tip">
-              Para as músicas tocarem completas sem a prévia de 30 segundos, faça login com sua conta Spotify no navegador da TV ou abra o app Spotify instalado na TV!
-            </p>
           </div>
         </div>
       )}
 
-      {toast && <div className="pc-toast">{toast}</div>}
+      {/* MODAL PARA EDITAR ATLETA (Resolve o bug de digitação letra por letra) */}
+      {editModal.open && (
+        <div className="modal-overlay" onClick={() => setEditModal({ ...editModal, open: false })}>
+          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Editar {editModal.athlete === 'atletaA' ? 'Atleta A (Faixa Azul)' : 'Atleta B (Branco / Visitante)'}</h2>
+              <button className="modal-close" onClick={() => setEditModal({ ...editModal, open: false })}>✕</button>
+            </div>
+
+            <div className="modal-body">
+              <div className="form-group">
+                <label>Nome do Lutador</label>
+                <input
+                  type="text"
+                  value={editModal.nome}
+                  onChange={(e) => setEditModal({ ...editModal, nome: e.target.value })}
+                  placeholder="Nome do atleta"
+                  className="form-input"
+                  maxLength={30}
+                  autoFocus
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Equipe / CT</label>
+                <input
+                  type="text"
+                  value={editModal.team}
+                  onChange={(e) => setEditModal({ ...editModal, team: e.target.value })}
+                  placeholder="Ex: CT HEISHIKAN AURUM"
+                  className="form-input"
+                  maxLength={30}
+                />
+              </div>
+            </div>
+
+            <div className="modal-footer">
+              <button className="btn-modal-cancel" onClick={() => setEditModal({ ...editModal, open: false })}>
+                Cancelar
+              </button>
+              <button className="btn-modal-save" onClick={saveEditAthlete}>
+                Salvar na TV ✓
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL PARA AJUSTAR TEMPO DA LUTA */}
+      {timeModal && (
+        <div className="modal-overlay" onClick={() => setTimeModal(false)}>
+          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>⏱ Tempo da Luta</h2>
+              <button className="modal-close" onClick={() => setTimeModal(false)}>✕</button>
+            </div>
+
+            <div className="modal-body">
+              <p className="modal-desc">Escolha a duração da luta para enviar à TV:</p>
+              <div className="time-select-grid">
+                {[3, 4, 5, 6, 7, 8, 10, 12].map((min) => (
+                  <button
+                    key={min}
+                    className={`time-pick-btn ${match.tempo === `${String(min).padStart(2, '0')}:00` ? 'active' : ''}`}
+                    onClick={() => {
+                      ctrl('timerSet', { minutes: min });
+                      flash(`${min} min definidos na TV ✓`);
+                      setTimeModal(false);
+                    }}
+                  >
+                    {min} min
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="modal-footer">
+              <button className="btn-modal-cancel" onClick={() => setTimeModal(false)}>
+                Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useReducer, useCallback } from 'react';
+import { useState, useEffect, useReducer, useCallback } from 'react';
 import RemoteBridge from '../RemoteBridge';
 import { DEFAULT_STATE, applyCtrl, tickTempo } from '../state';
 import '../display.css';
@@ -49,10 +49,23 @@ export default function PlacarDisplay() {
     dispatch({ type: 'showQR', value: v });
   }, []);
 
+  const [wallClock, setWallClock] = useState('');
+
+  useEffect(() => {
+    const update = () => {
+      const d = new Date();
+      setWallClock(String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'));
+    };
+    update();
+    const id = setInterval(update, 1000);
+    return () => clearInterval(id);
+  }, []);
+
   return (
     <div className="display-container">
       <div className="display-header">
-        <h1>PLACAR JUJITSU</h1>
+        <h1>PLACAR JIU-JITSU</h1>
+        {wallClock && <div className="display-wallclock">{wallClock}</div>}
         <div className="display-header-actions">
           <RemoteBridge
             match={match}
