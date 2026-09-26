@@ -148,6 +148,28 @@ export default function RemotePage() {
             <p className="rt-scan-tip">
               Toca/pausa o player da TV. Para pular faixas, use o app do Spotify.
             </p>
+
+            <h4 style={{ margin: '14px 0 8px 0', fontSize: '0.9rem', color: 'var(--gold)' }}>Playlists Prontas de Treino</h4>
+            <div className="rt-modes">
+              {[
+                { name: '🥊 Beast Mode (Rock)', url: 'https://open.spotify.com/playlist/37i9dQZF1DX76Wlfdnj7AP' },
+                { name: '🥋 Roll & Flow (Rap)', url: 'https://open.spotify.com/playlist/37i9dQZF1DX0XUsuxWHRQd' },
+                { name: '⚡ Tatame Cardio & Trap', url: 'https://open.spotify.com/playlist/37i9dQZF1DXdxcBWuJwBLq' },
+                { name: '🇧🇷 Rap Nacional Tatame', url: 'https://open.spotify.com/playlist/37i9dQZF1DWZq7rP2Q869N' },
+                { name: '🌊 Lo-Fi Jiu-Jitsu Flow', url: 'https://open.spotify.com/playlist/37i9dQZF1DXdLEN7aqioXM' },
+              ].map((pl) => (
+                <button
+                  key={pl.url}
+                  className="rt-mode-btn"
+                  onClick={() => {
+                    send({ kind: 'playlist', url: pl.url, name: pl.name });
+                    flash(`Playlist enviada: ${pl.name} 🎵`);
+                  }}
+                >
+                  <strong>{pl.name}</strong>
+                </button>
+              ))}
+            </div>
           </div>
 
           <div className="rt-card">

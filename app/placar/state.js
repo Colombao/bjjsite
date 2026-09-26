@@ -77,6 +77,17 @@ export const applyCtrl = (match, running, msg) => {
     return { match: { ...DEFAULT_STATE }, running: false };
   }
 
+  if (action === 'swap') {
+    return {
+      running,
+      match: {
+        ...match,
+        atletaA: { ...match.atletaB },
+        atletaB: { ...match.atletaA },
+      },
+    };
+  }
+
   return { match, running };
 };
 

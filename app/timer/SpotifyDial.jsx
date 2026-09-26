@@ -31,7 +31,12 @@ const parseSpotify = (str) => {
 };
 
 const DEFAULT_PLAYLISTS = [
-  { name: 'Beast Mode', type: 'playlist', id: '37i9dQZF1DX76Wlfdnj7AP' },
+  { name: '🥊 BJJ Beast Mode (Rock / Metal)', type: 'playlist', id: '37i9dQZF1DX76Wlfdnj7AP' },
+  { name: '🥋 Jiu-Jitsu Roll & Flow (Hip-Hop)', type: 'playlist', id: '37i9dQZF1DX0XUsuxWHRQd' },
+  { name: '⚡ Tatame Cardio & Drill', type: 'playlist', id: '37i9dQZF1DXdxcBWuJwBLq' },
+  { name: '🇧🇷 Rap Nacional Tatame', type: 'playlist', id: '37i9dQZF1DWZq7rP2Q869N' },
+  { name: '🌊 Lo-Fi Jiu-Jitsu Flow', type: 'playlist', id: '37i9dQZF1DXdLEN7aqioXM' },
+  { name: '☀️ Reggae Tatame Vibes', type: 'playlist', id: '37i9dQZF1DXbSbnqxMTGx9' },
 ];
 
 export default function SpotifyDial() {

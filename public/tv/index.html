@@ -264,6 +264,8 @@ button{font-family:inherit;color:inherit;background:none;border:none;cursor:poin
 .cb--wide{min-width:auto;padding:1.1vh 1.6vh;font-size:1.9vh;font-weight:800;white-space:nowrap}
 .cb--dark{background:var(--sb-dark);color:#fff;border-color:#000}
 .cb--go{background:var(--sb-blue);color:#fff;border-color:#003d99}
+.cb--gold{background:linear-gradient(180deg,var(--gold),var(--golddeep));color:#150F03;border-color:var(--goldhi)}
+.cb--gold:focus{background:linear-gradient(180deg,var(--goldhi),var(--gold));color:#150F03}
 body.fix .cb--p,body.fix .cb--v,body.fix .cb--x{opacity:.62}
 .fixchip{
   background:var(--sb-dark);color:#fff;font-size:1.6vh;font-weight:900;
@@ -384,6 +386,7 @@ body.fix .cb--p,body.fix .cb--v,body.fix .cb--x{opacity:.62}
     </div>
     <div class="top-right">
       <span class="chip chip--mute" id="clockNow">--:--</span>
+      <button class="btn btn--sm btn--gold" id="btnQrMenu">📱 Celular / Voz</button>
       <button class="btn btn--sm btn--spot" id="btnMusicMenu">♫ Música</button>
       <button class="btn btn--sm" id="btnSet">⚙ Ajustes</button>
     </div>
@@ -452,6 +455,7 @@ body.fix .cb--p,body.fix .cb--v,body.fix .cb--x{opacity:.62}
     <button class="btn btn--gold btn--big" id="tPlay">▶ Iniciar</button>
     <button class="btn btn--big" id="tReset">↺ Zerar</button>
     <button class="btn" id="tModes">☰ Modos</button>
+    <button class="btn btn--gold" id="btnQrTimer">📱 Celular / Voz</button>
     <button class="btn btn--spot" id="btnMusicTimer">♫ Música</button>
     <button class="btn" id="tMute">🔊 Som</button>
     <button class="btn btn--ghost" data-go="menu">← Menu</button>
@@ -462,7 +466,10 @@ body.fix .cb--p,body.fix .cb--v,body.fix .cb--x{opacity:.62}
 <section class="scr" id="placar">
 
   <div class="sb">
-    <div class="sb-head"><h1>PLACAR JUJITSU</h1></div>
+    <div class="sb-head" style="position:relative">
+      <h1>PLACAR JUJITSU</h1>
+      <button class="btn btn--sm btn--gold" id="btnQrPlacarTop" style="position:absolute;right:0;top:50%;transform:translateY(-50%)">📱 Celular / Voz</button>
+    </div>
 
     <div class="sb-main">
       <div class="sb-row sb-row--a">
@@ -523,6 +530,7 @@ body.fix .cb--p,body.fix .cb--v,body.fix .cb--x{opacity:.62}
       <button class="cb cb--wide" id="pUndo">↶ Desfazer</button>
       <button class="cb cb--wide" id="pSwap">⇄ Trocar lados</button>
       <button class="cb cb--wide" id="pZero">↺ Zerar placar</button>
+      <button class="cb cb--wide cb--gold" id="btnQrPlacar">📱 Celular / Voz</button>
       <button class="cb cb--wide" id="btnMusicPlacar">♫ Música</button>
       <button class="cb cb--wide cb--dark" data-go="menu">← Menu</button>
     </div>
@@ -685,16 +693,35 @@ body.fix .cb--p,body.fix .cb--v,body.fix .cb--x{opacity:.62}
   <div class="modal">
     <h2>♫ Música</h2>
     <div class="modal-actions" style="margin-top:0">
-      <button class="btn btn--spot btn--big" id="spotOpen">▶ Abrir o Spotify da TV</button>
+      <button class="btn btn--spot btn--big" id="spotOpen">▶ Abrir App Spotify TV</button>
+      <button class="btn btn--gold" id="spotLogin">🔑 Entrar no Spotify</button>
+      <button class="btn" id="spotQrMobile">📱 Enviar do Celular</button>
     </div>
     <p class="modal-note">
-      Escolha a playlist lá dentro, dê play e volte com <b>VOLTAR</b> —
-      a música continua tocando por trás do timer.
+      Faça login na sua conta para tocar músicas completas. Ou escolha uma das playlists de treino abaixo:
     </p>
     <div class="pl-list" id="plList"></div>
+    <div id="tvSpotifyEmbedContainer" style="margin-top:1.4vh;display:none;width:100%"></div>
     <div class="modal-actions">
       <button class="btn" id="plAdd">＋ Salvar atalho</button>
       <button class="btn" id="plClose">✕ Fechar</button>
+    </div>
+  </div>
+</div>
+
+<div class="mask" id="maskQr">
+  <div class="modal" style="max-width:88vw;width:580px">
+    <h2>📱 Celular & Voz</h2>
+    <div id="qrCodeTarget" style="display:flex;align-items:center;justify-content:center;margin:1.4vh auto;background:#f2ebdd;padding:1.4vh;border-radius:1.2vh;width:24vh;height:24vh;box-sizing:border-box"></div>
+    <div id="qrStatusPill" class="toast on" style="position:static;transform:none;opacity:1;pointer-events:auto;margin:1vh auto 1.4vh;display:inline-block;font-size:1.8vh">Iniciando conexão…</div>
+    <p class="modal-note" style="text-align:left;line-height:1.45;font-size:1.7vh">
+      • Aponte a câmera do celular para o QR Code acima.<br>
+      • <strong>Pontue por voz:</strong> Fale <em>"dois pontos para o lutador A"</em>, <em>"retirar 2 pontos do A"</em>, <em>"desvantagem para o lutador A"</em>, <em>"punição para o B"</em>.<br>
+      • Ou use os botões rápidos CBJJ (+2, +3, +4, +V, +P) na tela do celular.<br>
+      • Você também pode enviar qualquer playlist do Spotify do celular para a TV!
+    </p>
+    <div class="modal-actions">
+      <button class="btn btn--gold" id="qrClose">✕ Fechar</button>
     </div>
   </div>
 </div>
@@ -822,7 +849,12 @@ const PHASE_TXT = {
 };
 
 const DEFAULT_PLAYLISTS = [
-  { name:'Beast Mode', type:'playlist', id:'37i9dQZF1DX76Wlfdnj7AP' },
+  { name:'🥊 BJJ Beast Mode (Rock / Metal)', type:'playlist', id:'37i9dQZF1DX76Wlfdnj7AP' },
+  { name:'🥋 Roll & Flow (Hip-Hop)', type:'playlist', id:'37i9dQZF1DX0XUsuxWHRQd' },
+  { name:'⚡ Tatame Cardio & Drill', type:'playlist', id:'37i9dQZF1DXdxcBWuJwBLq' },
+  { name:'🇧🇷 Rap Nacional Tatame', type:'playlist', id:'37i9dQZF1DWZq7rP2Q869N' },
+  { name:'🌊 Lo-Fi Jiu-Jitsu Flow', type:'playlist', id:'37i9dQZF1DXdLEN7aqioXM' },
+  { name:'☀️ Reggae Tatame Vibes', type:'playlist', id:'37i9dQZF1DXbSbnqxMTGx9' },
 ];
 
 const defTexts = () => JSON.parse(JSON.stringify(PHASE_TXT));
@@ -859,7 +891,11 @@ function load(){
       S.cfg = Object.assign(S.cfg, d.cfg||{});
       S.modes = Array.isArray(d.modes) ? d.modes : [];
       S.activeMode = d.activeMode || S.activeMode;
-      if(Array.isArray(d.playlists)) S.playlists = d.playlists;
+      if(Array.isArray(d.playlists) && d.playlists.length > 1) {
+        S.playlists = d.playlists;
+      } else {
+        S.playlists = DEFAULT_PLAYLISTS.slice();
+      }
       S.texts = mergeTexts(d.texts);
       if(d.placar){
         S.placar.a = Object.assign(S.placar.a, d.placar.a||{});
@@ -1058,6 +1094,7 @@ function timerReset(silent){
   T.endAt = 0;
   paintTimer();
   if(!silent) toast('Cronômetro zerado');
+  try{ if(typeof broadcastMatchState === 'function') broadcastMatchState(); }catch(e){}
 }
 
 function timerToggle(){
@@ -1072,6 +1109,7 @@ function timerToggle(){
     T.left = Math.max(0, (T.endAt - Date.now())/1000);
   }
   paintTimer();
+  try{ if(typeof broadcastMatchState === 'function') broadcastMatchState(); }catch(e){}
 }
 
 function nextPhase(){
@@ -1208,6 +1246,7 @@ function score(side, field, delta){
   ath[field] = Math.max(0, ath[field] + (fixMode ? -delta : delta));
   save(); renderPlacar();
   if(!fixMode && S.cfg.sound) Snd.score();
+  try{ if(typeof broadcastMatchState === 'function') broadcastMatchState(); }catch(e){}
 }
 function resetPlacar(keepNames){
   pushUndo();
@@ -1219,11 +1258,13 @@ function resetPlacar(keepNames){
     }
   });
   save(); renderPlacar();
+  try{ if(typeof broadcastMatchState === 'function') broadcastMatchState(); }catch(e){}
 }
 function swapSides(){
   pushUndo();
   const t = S.placar.a; S.placar.a = S.placar.b; S.placar.b = t;
   save(); renderPlacar(); toast('Lados trocados');
+  try{ if(typeof broadcastMatchState === 'function') broadcastMatchState(); }catch(e){}
 }
 
 /* diminui a fonte até o nome caber na faixa, em vez de cortar com "..." */
@@ -1266,17 +1307,38 @@ function renderPlacar(){
       completa e continua tocando por trás do timer.
    ============================================================ */
 
-/* abre o app do Spotify (a ponte TV é injetada pelo app Android) */
+/* abre o app do Spotify da TV ou o web player */
 function openSpotifyApp(){
   if(window.TV && TV.openSpotify){ toast('Abrindo o Spotify…'); TV.openSpotify(); return; }
-  toast('Só funciona no app da TV');
+  window.open('https://open.spotify.com', '_blank');
 }
 
-/* abre direto numa playlist salva */
+/* login na conta do Spotify (para tocar músicas completas) */
+function loginSpotifyFlow(){
+  const url = 'https://accounts.spotify.com/pt-BR/login';
+  if(window.TV && TV.openBrowser){
+    TV.openBrowser(url);
+  } else {
+    window.open(url, '_blank', 'width=520,height=720');
+  }
+  toast('Abrindo login do Spotify…');
+}
+
+/* carrega player embutido na TV */
+function loadEmbedPlayer(pl){
+  const box = $('#tvSpotifyEmbedContainer');
+  if(!box) return;
+  box.style.display = 'block';
+  box.innerHTML = '<iframe style="border-radius:12px;border:none" src="https://open.spotify.com/embed/' + pl.type + '/' + pl.id + '?utm_source=generator&theme=0" width="100%" height="152" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>';
+}
+
+/* abre playlist: toca no player embutido e também abre no app Spotify se disponível */
 function openSpotifyPlaylist(pl){
-  toast('Abrindo "' + pl.name + '" no Spotify…');
-  try{ window.location.href = 'spotify:' + pl.type + ':' + pl.id; }
-  catch(e){ toast('Não consegui abrir o app do Spotify'); }
+  toast('Tocando "' + pl.name + '"…');
+  loadEmbedPlayer(pl);
+  if(window.TV && TV.openSpotify){
+    try { window.location.href = 'spotify:' + pl.type + ':' + pl.id; } catch(e){}
+  }
 }
 
 /* aceita link completo, URI spotify: ou só o ID */
@@ -1286,6 +1348,174 @@ function parseSpotify(str){
   if(m) return { type:m[1], id:m[2] };
   if(/^[A-Za-z0-9]{20,}$/.test(s)) return { type:'playlist', id:s };
   return null;
+}
+
+/* ============================================================
+   8B. PONTE TV ⇄ CELULAR VIA WEBRTC (PeerJS) & QR CODE
+   ============================================================ */
+let qrPeer = null;
+let qrConns = [];
+let qrSessionId = null;
+let qrRemoteUrl = '';
+
+function initQrBridge(onReady){
+  if(qrPeer && qrSessionId){
+    if(onReady) onReady();
+    return;
+  }
+  const loadScript = (src) => new Promise((res, rej) => {
+    if(document.querySelector('script[src="' + src + '"]')) return res();
+    const s = document.createElement('script');
+    s.src = src; s.onload = res; s.onerror = rej;
+    document.head.appendChild(s);
+  });
+
+  const SCRIPTS = {
+    peer: 'https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.2/peerjs.min.js',
+    qr: 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js',
+  };
+
+  const statusPill = $('#qrStatusPill');
+  if(statusPill) statusPill.textContent = 'Carregando conexão…';
+
+  Promise.all([loadScript(SCRIPTS.peer), loadScript(SCRIPTS.qr)]).then(()=>{
+    qrSessionId = 'hshk-tv-' + Math.random().toString(36).slice(2, 9);
+    try {
+      qrPeer = new window.Peer(qrSessionId);
+    } catch(err) {
+      if(statusPill) statusPill.textContent = 'Erro ao iniciar WebRTC';
+      return;
+    }
+
+    qrPeer.on('open', ()=>{
+      const base = (location.origin && location.origin !== 'null' && !location.origin.startsWith('file:'))
+        ? location.origin
+        : (localStorage.getItem('tatame_remote_host') || 'https://bjjsite.vercel.app');
+      qrRemoteUrl = base + '/placar/control#' + qrSessionId;
+      if(statusPill) statusPill.textContent = 'Aguardando celular… escaneie o QR code';
+
+      const target = $('#qrCodeTarget');
+      if(target && window.QRCode){
+        target.innerHTML = '';
+        new window.QRCode(target, {
+          text: qrRemoteUrl,
+          width: 200,
+          height: 200,
+          colorDark: '#0B0A08',
+          colorLight: '#F2EBDD',
+        });
+      }
+      if(onReady) onReady();
+    });
+
+    qrPeer.on('connection', (conn)=>{
+      qrConns.push(conn);
+      conn.on('open', ()=>{
+        if(statusPill){
+          statusPill.textContent = '✓ Celular conectado! Pronto para pontuar por voz ou botões';
+          statusPill.style.color = 'var(--go)';
+        }
+        toast('✓ Celular conectado ao placar!');
+        conn.send({
+          kind: 'hello',
+          match: {
+            atletaA: { nome: S.placar.a.nome, team: S.placar.a.team, pontos: S.placar.a.p, vantagem: S.placar.a.adv, penalidade: S.placar.a.pen },
+            atletaB: { nome: S.placar.b.nome, team: S.placar.b.team, pontos: S.placar.b.p, vantagem: S.placar.b.adv, penalidade: S.placar.b.pen },
+            tempo: fmt(Math.ceil(T.left)),
+            statusLuta: T.phase === 'finished' ? 'FINAL' : (T.running ? 'DURANTE' : 'INÍCIO')
+          },
+          running: T.running
+        });
+      });
+
+      conn.on('data', (msg)=>{
+        if(!msg || typeof msg !== 'object') return;
+        if(msg.kind === 'ctrl'){
+          handleRemoteCtrl(msg);
+        } else if(msg.kind === 'playlist' && msg.url){
+          const parsed = parseSpotify(msg.url);
+          if(parsed){
+            const name = (msg.name || '').trim() || ('Playlist ' + (S.playlists.length + 1));
+            S.playlists = S.playlists.filter(p => p.id !== parsed.id).concat([{ name, type: parsed.type, id: parsed.id }]);
+            save(); renderPlaylists();
+            toast('🎵 Playlist "' + name + '" recebida do celular!');
+            openSpotifyPlaylist({ name, ...parsed });
+          }
+        }
+      });
+
+      conn.on('close', ()=>{
+        qrConns = qrConns.filter(c => c !== conn);
+        if(!qrConns.length && statusPill){
+          statusPill.textContent = 'Aguardando celular…';
+          statusPill.style.color = '';
+        }
+      });
+    });
+
+    qrPeer.on('error', (e)=>{
+      if(statusPill) statusPill.textContent = 'Conexão pronta';
+    });
+  }).catch(()=>{
+    if(statusPill) statusPill.textContent = 'Verifique a conexão de internet da TV.';
+  });
+}
+
+function handleRemoteCtrl(msg){
+  const action = msg.action;
+  if(action === 'score'){
+    const athlete = msg.athlete;
+    const field = msg.field;
+    const delta = Number(msg.delta);
+    const side = athlete === 'atletaA' ? 'a' : 'b';
+    const f = field === 'pontos' ? 'p' : (field === 'vantagem' ? 'adv' : 'pen');
+    pushUndo();
+    S.placar[side][f] = Math.max(0, S.placar[side][f] + delta);
+    save(); renderPlacar();
+    if(delta > 0 && S.cfg.sound) Snd.score();
+    broadcastMatchState();
+  } else if(action === 'set'){
+    const athlete = msg.athlete;
+    const field = msg.field;
+    const value = msg.value;
+    const side = athlete === 'atletaA' ? 'a' : 'b';
+    if(field === 'nome' || field === 'team'){
+      S.placar[side][field] = String(value || '').slice(0, 30);
+      save(); renderPlacar();
+      broadcastMatchState();
+    }
+  } else if(action === 'swap'){
+    swapSides();
+    broadcastMatchState();
+  } else if(action === 'reset'){
+    resetPlacar(true);
+    broadcastMatchState();
+  } else if(action === 'startPause'){
+    timerToggle();
+    broadcastMatchState();
+  } else if(action === 'timerSet'){
+    const mins = Math.max(1, Math.min(99, Number(msg.minutes) || 5));
+    S.cfg.matchTime = mins * 60;
+    save();
+    timerReset(true);
+    broadcastMatchState();
+  }
+}
+
+function broadcastMatchState(){
+  const payload = {
+    kind: 'state',
+    match: {
+      atletaA: { nome: S.placar.a.nome, team: S.placar.a.team, pontos: S.placar.a.p, vantagem: S.placar.a.adv, penalidade: S.placar.a.pen },
+      atletaB: { nome: S.placar.b.nome, team: S.placar.b.team, pontos: S.placar.b.p, vantagem: S.placar.b.adv, penalidade: S.placar.b.pen },
+      tempo: fmt(Math.ceil(T.left)),
+      statusLuta: T.phase === 'finished' ? 'FINAL' : (T.running ? 'DURANTE' : 'INÍCIO')
+    },
+    running: T.running
+  };
+  qrConns.forEach(c => {
+    try { if(c.open) c.send(payload); } catch(e){}
+  });
 }
 
 function renderPlaylists(){
@@ -1476,6 +1706,13 @@ document.addEventListener('click', e=>{
 
   /* ---- música ---- */
   if(id === 'spotOpen'){ openSpotifyApp(); return; }
+  if(id === 'spotLogin'){ loginSpotifyFlow(); return; }
+  if(id === 'spotQrMobile'){
+    closeMask('maskMusic');
+    openMask('maskQr', '#qrClose');
+    initQrBridge();
+    return;
+  }
   if(el.dataset.pl !== undefined){
     const pl = S.playlists[parseInt(el.dataset.pl,10)];
     if(pl) openSpotifyPlaylist(pl);
@@ -1493,6 +1730,14 @@ document.addEventListener('click', e=>{
   }
   if(id === 'plAdd'){ closeMask('maskMusic'); addPlaylistFlow(); return; }
   if(id === 'plClose'){ closeMask('maskMusic'); return; }
+
+  /* ---- QR Code / Celular & Voz ---- */
+  if(id === 'btnQrMenu' || id === 'btnQrTimer' || id === 'btnQrPlacar' || id === 'btnQrPlacarTop'){
+    openMask('maskQr', '#qrClose');
+    initQrBridge();
+    return;
+  }
+  if(id === 'qrClose'){ closeMask('maskQr'); return; }
 
   /* ---- campo de texto ---- */
   if(id === 'kbOk'){ confirmKb(); return; }

@@ -74,7 +74,10 @@ export default function RemoteBridge({
       peerRef.current = peer;
 
       peer.on('open', () => {
-        setRemoteUrl(`${window.location.origin}/placar/control#${id}`);
+        const base = (typeof window !== 'undefined' && window.location.origin && window.location.origin !== 'null' && !window.location.origin.startsWith('file:'))
+          ? window.location.origin
+          : 'https://bjjsite.vercel.app';
+        setRemoteUrl(`${base}/placar/control#${id}`);
         setStatus('waiting');
       });
 
@@ -165,8 +168,10 @@ export default function RemoteBridge({
                 </div>
                 <p className="qr-url">{remoteUrl}</p>
                 <p className="qr-hint">
-                  Escaneie com a câmera do celular. Pelo controle você muda nomes,
-                  dá pontos e controla o tempo — tudo atualiza na TV na hora.
+                  Escaneie com a câmera do celular para controlar o placar: você pode
+                  <strong> pontuar por voz</strong> (ex: <em>"dois pontos para o lutador A"</em>,
+                  <em>"retirar 2 pontos do A"</em>, <em>"desvantagem para o lutador A"</em>) ou usar os
+                  botões rápidos CBJJ (+2, +3, +4, +V, +P) e controlar o tempo.
                 </p>
                 <p className="qr-hint qr-hint--mute">
                   Funciona com o site publicado (não funciona em localhost).

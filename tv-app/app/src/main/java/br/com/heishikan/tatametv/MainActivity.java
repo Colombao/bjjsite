@@ -57,30 +57,43 @@ public class MainActivity extends Activity {
         WebSettings s = web.getSettings();
         s.setJavaScriptEnabled(true);
         s.setDomStorageEnabled(true);           // localStorage: guarda placar, modos e ajustes
+        s.setDatabaseEnabled(true);
         s.setMediaPlaybackRequiresUserGesture(false); // gongo/sirene tocam sem toque prévio
         s.setAllowFileAccess(true);
-        s.setCacheMode(WebSettings.LOAD_NO_CACHE);
+        s.setCacheMode(WebSettings.LOAD_DEFAULT);
         s.setUseWideViewPort(true);
         s.setLoadWithOverviewMode(true);
         s.setSupportZoom(false);
         s.setBuiltInZoomControls(false);
         s.setTextZoom(100);                     // ignora a fonte gigante do sistema da TV
 
-        // O app é fechado: nada abre navegador externo.
-        // A exceção é o esquema "spotify:", que entrega a playlist ao app
-        // do Spotify instalado na TV (onde toca completa, sem prévia de 30s).
+        // Habilita cookies e cookies de terceiros para o login e player do Spotify
+        android.webkit.CookieManager cm = android.webkit.CookieManager.getInstance();
+        cm.setAcceptCookie(true);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            cm.setAcceptThirdPartyCookies(web, true);
+            s.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
+
+        // Abre links externos ou permite navegação interna para login do Spotify
         web.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView v, WebResourceRequest r) {
                 Uri u = r.getUrl();
-                if (u != null && "spotify".equals(u.getScheme())) {
+                if (u == null) return false;
+                if ("spotify".equals(u.getScheme())) {
                     openExternal(u);
+                    return true;
                 }
-                return true;
+                String host = u.getHost();
+                if (host != null && (host.contains("spotify.com") || host.contains("scdn.co") || host.contains("peerjs.com") || host.contains("cloudflare.com"))) {
+                    return false; // Carrega na própria WebView
+                }
+                return false;
             }
         });
 
-        // ponte usada pela página: teclado do sistema e app do Spotify
+        // ponte usada pela página: teclado do sistema, app do Spotify e navegador
         web.addJavascriptInterface(new TvBridge(), "TV");
 
         web.loadUrl("file:///android_asset/index.html");
@@ -133,6 +146,20 @@ public class MainActivity extends Activity {
                     }
                 }
                 toastOnPage("O app do Spotify não está instalado nesta TV");
+            });
+        }
+
+        /** Abre um link externo (como login do Spotify) em um navegador */
+        @JavascriptInterface
+        public void openBrowser(String url) {
+            runOnUiThread(() -> {
+                try {
+                    Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(i);
+                } catch (Exception e) {
+                    toastOnPage("Não foi possível abrir o navegador");
+                }
             });
         }
     }

@@ -5,10 +5,10 @@
     <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
     <uses-feature android:name="android.software.leanback"    android:required="false" />
 
-    <!--
-      Nenhuma permissão de rede: o app é 100% offline.
-      A música vem do app do Spotify da TV, aberto por intent.
-    -->
+    <!-- Permissões de rede: conexão com celular (QR Code / Placar por voz) e Spotify Web/Login -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 
     <!-- necessário no Android 11+ para conseguir abrir o app do Spotify da TV -->
     <queries>
