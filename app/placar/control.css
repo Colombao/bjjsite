@@ -245,6 +245,156 @@ body {
 }
 
 /* ============================================================
+   PAINEL DE COMANDOS DE VOZ DO ÁRBITRO (SPEECH TO TEXT CONTÍNUO)
+   ============================================================ */
+.referee-voice-bar {
+  background: #1e1e24;
+  color: #f0f0f0;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  border: 1px solid #333;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.referee-bar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.referee-status-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.referee-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #777;
+  display: inline-block;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.referee-dot--live {
+  background: #10b981;
+  box-shadow: 0 0 10px #10b981;
+  animation: refereePulse 1.2s infinite ease-in-out;
+}
+
+@keyframes refereePulse {
+  0% { transform: scale(0.9); opacity: 0.7; box-shadow: 0 0 4px #10b981; }
+  50% { transform: scale(1.25); opacity: 1; box-shadow: 0 0 14px #10b981; }
+  100% { transform: scale(0.9); opacity: 0.7; box-shadow: 0 0 4px #10b981; }
+}
+
+.referee-status-text {
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: #ccc;
+  text-transform: uppercase;
+}
+
+.btn-referee-toggle {
+  background: #d9a83c;
+  color: #120e05;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-referee-toggle:active {
+  transform: scale(0.96);
+}
+
+.btn-referee-toggle.active {
+  background: #ef4444;
+  color: #fff;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+}
+
+.referee-stt-visor {
+  background: #121216;
+  border: 1px solid #2d2d35;
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stt-executed-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #14532d;
+  color: #4ade80;
+  border: 1px solid #16a34a;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  animation: slideDownToast 0.2s ease-out;
+  align-self: flex-start;
+}
+
+.stt-check {
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.stt-live-box {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  overflow: hidden;
+}
+
+.stt-label {
+  font-size: 0.72rem;
+  font-weight: 900;
+  color: #888;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
+.stt-speech-text {
+  font-size: 0.88rem;
+  color: #f1f5f9;
+  font-style: italic;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Destaque visual nas linhas quando pontuado por voz */
+.tv-clone-row.highlight-athlete {
+  position: relative;
+  box-shadow: inset 0 0 0 4px #ffd700, 0 0 16px rgba(255, 215, 0, 0.6) !important;
+  animation: athleteRowFlash 0.5s alternate infinite;
+}
+
+@keyframes athleteRowFlash {
+  from { filter: brightness(1); }
+  to { filter: brightness(1.2); }
+}
+
+/* ============================================================
    O PLACAR CLONE DA TV (GRID IDÊNTICO)
    ============================================================ */
 .tv-clone-board {
