@@ -422,6 +422,7 @@ body.fix .cb--p,body.fix .cb--v,body.fix .cb--x{opacity:.62}
       <span class="chip-wallclock" id="clockNow">--:--</span>
     </div>
     <div class="top-right">
+      <button class="btn btn--sm" id="btnUpdateMenu">🔄 Atualizar</button>
       <button class="btn btn--sm btn--gold" id="btnQrMenu">📱 Celular / Voz</button>
       <button class="btn btn--sm btn--spot" id="btnMusicMenu">♫ Música</button>
       <button class="btn btn--sm" id="btnSet">⚙ Ajustes</button>
@@ -700,6 +701,18 @@ body.fix .cb--p,body.fix .cb--v,body.fix .cb--x{opacity:.62}
         </div>
       </div>
 
+      <div class="set-card">
+        <h3>Atualização do Tatame TV</h3>
+        <div class="row">
+          <label>Versão instalada<span class="rd">Versão do app em execução na TV</span></label>
+          <span class="chip" id="curVerLabel">v1.6</span>
+        </div>
+        <div class="row" style="border:none">
+          <label>Buscar novas versões<span class="rd">Baixa e instala atualizações direto do GitHub</span></label>
+          <button class="btn btn--sm btn--gold" id="btnCheckUpdateAjustes">🔄 Verificar Atualização</button>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
@@ -746,6 +759,16 @@ body.fix .cb--p,body.fix .cb--v,body.fix .cb--x{opacity:.62}
     <div class="modal-actions">
       <button class="btn" id="plAdd">＋ Salvar atalho</button>
       <button class="btn" id="plClose">✕ Fechar</button>
+    </div>
+  </div>
+</div>
+
+<div class="mask" id="maskUpdate">
+  <div class="modal" style="min-width:56vh;max-width:70vh">
+    <h2>🔄 Atualização do Tatame TV</h2>
+    <div id="updateBody" style="text-align:center;padding:1.4vh 0"></div>
+    <div class="modal-actions" id="updateActions">
+      <button class="btn" id="btnUpdateClose">✕ Fechar</button>
     </div>
   </div>
 </div>
@@ -1856,8 +1879,202 @@ document.addEventListener('click', e=>{
     });
     return;
   }
+  if(id === 'btnUpdateMenu' || id === 'btnCheckUpdateAjustes' || id === 'btnCheckUpdate'){
+    checkUpdate(true);
+    return;
+  }
+  if(id === 'btnStartUpdate'){
+    startAppUpdate();
+    return;
+  }
+  if(id === 'btnRetryUpdate'){
+    checkUpdate(true);
+    return;
+  }
+  if(id === 'btnUpdateClose'){
+    closeMask('maskUpdate');
+    return;
+  }
   if(id === 'cfNo'){ closeMask('maskConfirm'); return; }
 });
+
+/* ============================================================
+   ATUALIZADOR AUTOMÁTICO (OTA) VIA GITHUB RELEASES
+   ============================================================ */
+const GITHUB_REPO = 'Colombao/bjjsite';
+let updateInfo = null;
+
+function getAppVersion() {
+  if (window.TV && typeof TV.getAppVersion === 'function') {
+    return TV.getAppVersion();
+  }
+  return '1.7';
+}
+
+function checkUpdate(userTriggered) {
+  if (userTriggered) {
+    openMask('maskUpdate');
+    renderUpdateState('checking');
+  }
+
+  if (window.TV && typeof TV.checkUpdate === 'function') {
+    TV.checkUpdate(Boolean(userTriggered));
+    return;
+  }
+
+  // Fallback web
+  fetch('https://api.github.com/repos/' + GITHUB_REPO + '/releases/latest')
+    .then(r => {
+      if (!r.ok) throw new Error('Status ' + r.status);
+      return r.json();
+    })
+    .then(data => {
+      const tag = data.tag_name || '';
+      const notes = data.body || '';
+      let downloadUrl = '';
+      if (Array.isArray(data.assets)) {
+        const apkAsset = data.assets.find(a => a.name && a.name.endsWith('.apk'));
+        if (apkAsset) downloadUrl = apkAsset.browser_download_url;
+      }
+      const curVer = getAppVersion();
+      const hasUpdate = isNewerVersion(tag, curVer) && Boolean(downloadUrl);
+      window.__onUpdateChecked({
+        hasUpdate,
+        tag,
+        downloadUrl,
+        notes,
+        currentVersion: curVer,
+        userTriggered: Boolean(userTriggered)
+      });
+    })
+    .catch(err => {
+      if (userTriggered) {
+        window.__onUpdateError({ error: err.message });
+      }
+    });
+}
+
+function isNewerVersion(remoteTag, currentVersion) {
+  if (!remoteTag || !currentVersion) return false;
+  const cleanRemote = remoteTag.replace(/[^0-9.]/g, '').trim();
+  const cleanCurrent = currentVersion.replace(/[^0-9.]/g, '').trim();
+  if (!cleanRemote || !cleanCurrent) return remoteTag !== currentVersion;
+  const rParts = cleanRemote.split('.').map(n => parseInt(n, 10) || 0);
+  const cParts = cleanCurrent.split('.').map(n => parseInt(n, 10) || 0);
+  const len = Math.max(rParts.length, cParts.length);
+  for (let i = 0; i < len; i++) {
+    const r = rParts[i] || 0;
+    const c = cParts[i] || 0;
+    if (r > c) return true;
+    if (r < c) return false;
+  }
+  return false;
+}
+
+window.__onUpdateChecked = function(data) {
+  updateInfo = data;
+  const curLabel = $('#curVerLabel');
+  if (curLabel) curLabel.textContent = 'v' + data.currentVersion;
+
+  if (data.hasUpdate) {
+    const btnMenu = $('#btnUpdateMenu');
+    if (btnMenu) {
+      btnMenu.classList.add('btn--gold');
+      btnMenu.innerHTML = '🔄 Atualizar <span style="font-size:1.3vh;color:#150F03;background:#2EE06A;padding:.2vh .6vh;border-radius:99vh;margin-left:.4vh;font-weight:900">NOVO</span>';
+    }
+    if (!data.userTriggered) {
+      toast('Nova versão ' + data.tag + ' do Tatame TV disponível!');
+    }
+  }
+
+  if (data.userTriggered) {
+    if (data.hasUpdate) renderUpdateState('available', data);
+    else renderUpdateState('uptodate', data);
+  }
+};
+
+window.__onUpdateProgress = function(data) {
+  renderUpdateState('downloading', data);
+};
+
+window.__onUpdateError = function(data) {
+  renderUpdateState('error', data);
+};
+
+function renderUpdateState(state, data) {
+  data = data || {};
+  const body = $('#updateBody');
+  const acts = $('#updateActions');
+  if (!body || !acts) return;
+
+  if (state === 'checking') {
+    body.innerHTML = `
+      <div style="font-size:4.5vh;margin-bottom:1.5vh">🔍</div>
+      <p style="font-size:2.2vh;font-weight:800;color:var(--gold);margin-bottom:.8vh">Verificando novas versões...</p>
+      <p style="font-size:1.6vh;color:var(--mute)">Consultando releases do Tatame TV no GitHub.</p>
+    `;
+    acts.innerHTML = `<button class="btn" id="btnUpdateClose">✕ Cancelar</button>`;
+  } else if (state === 'uptodate') {
+    body.innerHTML = `
+      <div style="font-size:4.5vh;margin-bottom:1.5vh">✓</div>
+      <p style="font-size:2.4vh;font-weight:800;color:var(--go);margin-bottom:.8vh">O aplicativo está atualizado!</p>
+      <p style="font-size:1.7vh;color:var(--mute)">Você já está usando a versão mais recente (<b style="color:var(--bone)">v${data.currentVersion || getAppVersion()}</b>).</p>
+    `;
+    acts.innerHTML = `<button class="btn btn--gold" id="btnUpdateClose">✓ Pronto</button>`;
+  } else if (state === 'available') {
+    const rawNotes = (data.notes || 'Melhorias de desempenho e novas funções do tatame.').trim();
+    const cleanNotes = rawNotes.length > 200 ? rawNotes.slice(0, 200) + '...' : rawNotes;
+    body.innerHTML = `
+      <div style="font-size:4.5vh;margin-bottom:1.5vh">🎁</div>
+      <p style="font-size:2.5vh;font-weight:900;color:var(--gold);margin-bottom:.8vh">Nova versão disponível: ${data.tag}</p>
+      <p style="font-size:1.6vh;color:var(--mute);margin-bottom:1.6vh">Versão atual da TV: v${data.currentVersion || getAppVersion()}</p>
+      <div style="background:rgba(255,255,255,.05);border:.15vh solid var(--line);border-radius:1vh;padding:1.4vh;font-size:1.5vh;color:var(--bone);text-align:left;line-height:1.4;margin:0 auto 1.5vh;max-width:52vh">
+        ${cleanNotes}
+      </div>
+    `;
+    acts.innerHTML = `
+      <button class="btn btn--gold btn--big" id="btnStartUpdate">📥 Baixar e Atualizar Agora</button>
+      <button class="btn" id="btnUpdateClose">Depois</button>
+    `;
+  } else if (state === 'downloading') {
+    const pct = typeof data.percent === 'number' ? data.percent : 0;
+    body.innerHTML = `
+      <div style="font-size:4.5vh;margin-bottom:1.5vh">📥</div>
+      <p style="font-size:2.3vh;font-weight:800;color:var(--gold);margin-bottom:1.2vh">Baixando atualização (${pct}%)</p>
+      <div style="width:100%;height:1.6vh;background:rgba(255,255,255,.1);border-radius:99vh;overflow:hidden;margin:0 auto 1.4vh;max-width:48vh">
+        <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--gold),#2EE06A);transition:width .2s ease"></div>
+      </div>
+      <p style="font-size:1.6vh;color:var(--mute)">${pct >= 100 ? 'Abrindo instalador da TV... Confirme "Instalar" no controle.' : 'Aguarde o download do arquivo APK.'}</p>
+    `;
+    acts.innerHTML = ``;
+  } else if (state === 'error') {
+    body.innerHTML = `
+      <div style="font-size:4.5vh;margin-bottom:1.5vh">⚠️</div>
+      <p style="font-size:2.3vh;font-weight:800;color:var(--warn);margin-bottom:.8vh">Não foi possível atualizar</p>
+      <p style="font-size:1.6vh;color:var(--mute);margin-bottom:1.5vh">${data.error || 'Verifique a conexão de internet da TV.'}</p>
+    `;
+    acts.innerHTML = `
+      <button class="btn btn--gold" id="btnRetryUpdate">🔄 Tentar Novamente</button>
+      <button class="btn" id="btnUpdateClose">✕ Fechar</button>
+    `;
+  }
+
+  requestAnimationFrame(() => {
+    const firstBtn = acts.querySelector('button');
+    if (firstBtn) firstBtn.focus();
+  });
+}
+
+function startAppUpdate() {
+  if (!updateInfo || !updateInfo.downloadUrl) return;
+  if (window.TV && typeof TV.downloadAndInstallUpdate === 'function') {
+    TV.downloadAndInstallUpdate(updateInfo.downloadUrl);
+  } else {
+    window.open(updateInfo.downloadUrl, '_blank');
+    closeMask('maskUpdate');
+    toast('Download do APK iniciado no navegador!');
+  }
+}
 
 /* ---------------- botão VOLTAR / teclado ---------------- */
 function goBack(){
@@ -1941,6 +2158,13 @@ document.body.classList.add('hide-cursor');
   renderPlaylists();
   timerReset(true);
   paintTimer();
+
+  const curLabel = $('#curVerLabel');
+  if (curLabel) curLabel.textContent = 'v' + getAppVersion();
+
+  // Verifica atualizações silenciosamente 4 segundos após iniciar
+  setTimeout(() => checkUpdate(false), 4000);
+
   requestAnimationFrame(()=>{ const c = $('.card'); if(c) c.focus(); });
 })();
 </script>

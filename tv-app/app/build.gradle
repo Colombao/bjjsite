@@ -10,8 +10,8 @@ android {
         applicationId "br.com.heishikan.tatametv"
         minSdk 21          // cobre praticamente qualquer Android TV / TV Box
         targetSdk 34
-        versionCode 7
-        versionName "1.6"
+        versionCode 8
+        versionName "1.7"
     }
 
     buildTypes {
@@ -33,4 +33,6 @@ android {
     }
 }
 
-dependencies { }
+dependencies {
+    implementation 'androidx.core:core:1.13.1'
+}
