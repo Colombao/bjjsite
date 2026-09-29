@@ -306,14 +306,38 @@ public class MainActivity extends Activity {
         runOnUiThread(() -> {
             try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    if (!getPackageManager().canRequestPackageInstalls()) {
-                        toastOnPage("Autorize a permissão para instalar atualizações");
-                        Intent manage = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
-                        manage.setData(Uri.parse("package:" + getPackageName()));
-                        manage.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(manage);
-                        return;
-                    }
+                    try {
+                        if (!getPackageManager().canRequestPackageInstalls()) {
+                            boolean openedSettings = false;
+                            try {
+                                Intent manage = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
+                                manage.setData(Uri.parse("package:" + getPackageName()));
+                                manage.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(manage);
+                                openedSettings = true;
+                            } catch (Exception e1) {
+                                try {
+                                    Intent manageAll = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
+                                    manageAll.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(manageAll);
+                                    openedSettings = true;
+                                } catch (Exception e2) {
+                                    try {
+                                        Intent sec = new Intent(Settings.ACTION_SECURITY_SETTINGS);
+                                        sec.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        startActivity(sec);
+                                        openedSettings = true;
+                                    } catch (Exception ignored) {}
+                                }
+                            }
+                            if (openedSettings) {
+                                toastOnPage("Autorize o Tatame TV em 'Apps desconhecidos' e volte");
+                                return;
+                            }
+                            // Em muitas TVs (ex: RCA / Philco / TCL), a tela de settings do celular não existe.
+                            // Segue direto para o PackageInstaller que gerencia a permissão na própria TV.
+                        }
+                    } catch (Exception ignored) {}
                 }
 
                 Intent intent = new Intent(Intent.ACTION_VIEW);
