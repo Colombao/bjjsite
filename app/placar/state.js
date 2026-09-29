@@ -58,6 +58,18 @@ export const applyCtrl = (match, running, msg) => {
     };
   }
 
+  if (action === 'edit') {
+    return {
+      running,
+      match: {
+        ...match,
+        atletaA: msg.atletaA ? { ...match.atletaA, ...msg.atletaA } : match.atletaA,
+        atletaB: msg.atletaB ? { ...match.atletaB, ...msg.atletaB } : match.atletaB,
+        tempo: msg.tempo || match.tempo,
+      },
+    };
+  }
+
   if (action === 'status') {
     const value = msg.value;
     if (!['INÍCIO', 'DURANTE', 'FINAL'].includes(value)) return { match, running };
@@ -73,8 +85,36 @@ export const applyCtrl = (match, running, msg) => {
     return { match, running: !running };
   }
 
+  if (action === 'start') {
+    return { match, running: true };
+  }
+
+  if (action === 'pause') {
+    return { match, running: false };
+  }
+
+  if (action === 'resetScore' || action === 'resetScores') {
+    return {
+      running,
+      match: {
+        ...match,
+        atletaA: { ...match.atletaA, pontos: 0, vantagem: 0, penalidade: 0 },
+        atletaB: { ...match.atletaB, pontos: 0, vantagem: 0, penalidade: 0 },
+      },
+    };
+  }
+
   if (action === 'reset') {
-    return { match: { ...DEFAULT_STATE }, running: false };
+    return {
+      running: false,
+      match: {
+        ...match,
+        atletaA: { ...match.atletaA, pontos: 0, vantagem: 0, penalidade: 0 },
+        atletaB: { ...match.atletaB, pontos: 0, vantagem: 0, penalidade: 0 },
+        tempo: msg.tempo || match.tempo || '05:00',
+        statusLuta: 'INÍCIO',
+      },
+    };
   }
 
   if (action === 'swap') {

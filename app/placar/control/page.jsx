@@ -90,6 +90,8 @@ export default function PlacarControl() {
   const isListeningRef = useRef(false);
   const shouldListenRef = useRef(false); // Flag para escuta contínua de árbitro
   const lastCmdTimeRef = useRef(0);
+  const lastExecutedKeyRef = useRef('');
+  const lastExecutedTextRef = useRef('');
 
   useEffect(() => {
     matchRef.current = match;
@@ -122,7 +124,10 @@ export default function PlacarControl() {
         peer.on('open', () => {
           const conn = peer.connect(id, { reliable: true });
           connRef.current = conn;
-          conn.on('open', () => setStatus('connected'));
+          conn.on('open', () => {
+            setStatus('connected');
+            try { conn.send({ kind: 'ping' }); } catch {}
+          });
           conn.on('data', (msg) => {
             if (!msg || typeof msg !== 'object') return;
             if (msg.kind === 'hello' || msg.kind === 'state') {
@@ -203,9 +208,45 @@ export default function PlacarControl() {
     flash('Lados trocados ⇆');
   }, [ctrl]);
 
+  // Zerar apenas as pontuações (mantém nomes e tempo)
+  const resetScores = useCallback(() => {
+    setMatch((prev) => ({
+      ...prev,
+      atletaA: { ...prev.atletaA, pontos: 0, vantagem: 0, penalidade: 0 },
+      atletaB: { ...prev.atletaB, pontos: 0, vantagem: 0, penalidade: 0 },
+    }));
+    setHistory([]);
+    ctrl('resetScore');
+    try { navigator.vibrate?.(60); } catch {}
+    flash('Pontuações zeradas (0 x 0) ✓');
+  }, [ctrl]);
+
+  // Reiniciar luta completa (zera pontuações e reinicia o tempo)
+  const resetAll = useCallback(() => {
+    setMatch((prev) => ({
+      ...prev,
+      atletaA: { ...prev.atletaA, pontos: 0, vantagem: 0, penalidade: 0 },
+      atletaB: { ...prev.atletaB, pontos: 0, vantagem: 0, penalidade: 0 },
+      statusLuta: 'INÍCIO',
+    }));
+    setRunning(false);
+    setHistory([]);
+    ctrl('reset');
+    try { navigator.vibrate?.([60, 60, 60]); } catch {}
+    flash('Placar e tempo reiniciados ✓');
+  }, [ctrl]);
+
+  // Iniciar / Pausar cronômetro
+  const toggleStartPause = useCallback(() => {
+    setRunning((prev) => !prev);
+    ctrl('startPause');
+    flash(!runningRef.current ? 'Iniciado ▶' : 'Pausado ⏸');
+    try { navigator.vibrate?.(50); } catch {}
+  }, [ctrl]);
+
   // ============================================================
   // PARSER DE COMANDOS DE ÁRBITRO DE JIU-JITSU (CBJJ / IBJJF)
-  // Suporta qualquer ordem das palavras: "queda azul" ou "dois pontos azul"
+  // Função PURA: analisa o texto e retorna a instrução sem mutar estado
   // ============================================================
   const parseRefereeVoiceCommand = useCallback((rawText) => {
     if (!rawText) return null;
@@ -220,41 +261,40 @@ export default function PlacarControl() {
 
     if (!text) return null;
 
+    // 1. Comandos de tempo e controle da luta
+    if (/\b(combate|valendo|iniciar luta|iniciar tempo|soltar tempo|solta o tempo|comecar|luta|tempo rodando)\b/.test(text)) {
+      return { type: 'control', action: 'start', desc: '▶ Combate! (Luta Iniciada)' };
+    }
+
+    if (/\b(parou|tempo|para o tempo|parar tempo|pausar luta|pausa|pausar|stop)\b/.test(text)) {
+      return { type: 'control', action: 'pause', desc: '⏸ Parou! (Luta Pausada)' };
+    }
+
+    if (/\b(desfazer|desfaz|anular ponto|anular|cancela o ponto)\b/.test(text)) {
+      return { type: 'undo', desc: '↶ Desfazer Executado' };
+    }
+
+    if (/\b(trocar lados|inverter lados|inverter atletas|inverter)\b/.test(text)) {
+      return { type: 'swap', desc: '⇆ Lados Trocados' };
+    }
+
+    // Zerar apenas pontos
+    if (/\b(zerar pontos|zerar pontuacao|zerar pontuação|limpar pontos|zerar ponto|limpar pontuacao)\b/.test(text)) {
+      return { type: 'resetScore', desc: '↺ Pontuações Zeradas (0 x 0)' };
+    }
+
+    // Zerar placar / reiniciar luta completa
+    if (/\b(zerar placar|zerar luta|reiniciar placar|reiniciar luta|reiniciar|zerar tudo|novo combate)\b/.test(text)) {
+      return { type: 'resetAll', desc: '↺ Placar e Luta Reiniciados' };
+    }
+
+    // 2. Identificação do Atleta (Target)
     const currentMatch = matchRef.current;
     const rawNameA = (currentMatch.atletaA?.nome || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
     const rawNameB = (currentMatch.atletaB?.nome || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
     const nameA = rawNameA.length >= 3 && !['atleta', 'lutador', 'faixa'].includes(rawNameA) ? rawNameA : '';
     const nameB = rawNameB.length >= 3 && !['atleta', 'lutador', 'faixa'].includes(rawNameB) ? rawNameB : '';
 
-    // 1. Comandos de tempo e controle da luta
-    if (/\b(combate|valendo|iniciar luta|iniciar tempo|soltar tempo|solta o tempo|comecar|luta|tempo rodando)\b/.test(text)) {
-      if (!runningRef.current) ctrl('startPause');
-      return { desc: '▶ Combate! (Luta Iniciada)', success: true };
-    }
-
-    if (/\b(parou|tempo|para o tempo|parar tempo|pausar luta|pausa|pausar|stop)\b/.test(text)) {
-      if (runningRef.current) ctrl('startPause');
-      return { desc: '⏸ Parou! (Luta Pausada)', success: true };
-    }
-
-    if (/\b(desfazer|desfaz|anular ponto|anular|cancela o ponto)\b/.test(text)) {
-      undoLastAction();
-      return { desc: '↶ Desfazer Executado', success: true };
-    }
-
-    if (/\b(trocar lados|inverter lados|inverter atletas|inverter)\b/.test(text)) {
-      swapAthletes();
-      return { desc: '⇆ Lados Trocados', success: true };
-    }
-
-    if (/\b(zerar placar|zerar luta|reiniciar placar|zerar tudo)\b/.test(text)) {
-      ctrl('reset');
-      setHistory([]);
-      return { desc: '↺ Placar Zerado', success: true };
-    }
-
-    // 2. Identificação do Atleta (Target)
-    // No português do Brasil, o reconhecimento de voz ouve "pro A" como "pro ar", "para o ar", "ao ar", "no ar", "o ar", etc.
     const regexA = /\b(azul|faixa azul|atleta azul|lutador azul|pro ar|para o ar|pra o ar|ao ar|no ar|do ar|o ar|pro a|para o a|pra o a|ao a|no a|do a|atleta a|lutador a|letra a|atleta ar|lutador ar|letra ar)\b/;
     const regexB = /\b(branco|faixa branca|atleta branco|lutador branco|vermelho|faixa vermelha|atleta vermelho|lutador vermelho|pro be|pro b|pro bê|para o be|para o b|ao be|ao b|no be|no b|do be|do b|atleta be|atleta b|lutador be|lutador b|letra be|letra b)\b/;
 
@@ -273,71 +313,98 @@ export default function PlacarControl() {
 
     // 3. Subtração / Retirada de pontos
     if (/\b(menos dois|menos 2|retirar dois|retirar 2|tirar dois|tirar 2|tira dois|tira 2|menos duas)\b/.test(text)) {
-      addScore(target, 'pontos', -2);
-      return { desc: `-2 Pontos para ${label}`, target, success: true };
+      return { type: 'score', target, field: 'pontos', delta: -2, desc: `-2 Pontos para ${label}` };
     }
     if (/\b(menos tres|menos três|menos 3|retirar tres|retirar três|retirar 3|tirar tres|tirar três|tirar 3)\b/.test(text)) {
-      addScore(target, 'pontos', -3);
-      return { desc: `-3 Pontos para ${label}`, target, success: true };
+      return { type: 'score', target, field: 'pontos', delta: -3, desc: `-3 Pontos para ${label}` };
     }
     if (/\b(menos quatro|menos 4|retirar quatro|retirar 4|tirar quatro|tirar 4)\b/.test(text)) {
-      addScore(target, 'pontos', -4);
-      return { desc: `-4 Pontos para ${label}`, target, success: true };
+      return { type: 'score', target, field: 'pontos', delta: -4, desc: `-4 Pontos para ${label}` };
     }
     if (/\b(menos um|menos 1|retirar um|retirar 1|tirar um ponto|menos um ponto)\b/.test(text)) {
-      addScore(target, 'pontos', -1);
-      return { desc: `-1 Ponto para ${label}`, target, success: true };
+      return { type: 'score', target, field: 'pontos', delta: -1, desc: `-1 Ponto para ${label}` };
     }
     if (/\b(retirar vantagem|tirar vantagem|tira vantagem|menos vantagem|desvantagem)\b/.test(text)) {
-      addScore(target, 'vantagem', -1);
-      return { desc: `-1 Vantagem para ${label}`, target, success: true };
+      return { type: 'score', target, field: 'vantagem', delta: -1, desc: `-1 Vantagem para ${label}` };
     }
     if (/\b(retirar punicao|retirar punição|tirar punicao|tirar punição|tira punicao|menos punicao|menos punição)\b/.test(text)) {
-      addScore(target, 'penalidade', -1);
-      return { desc: `-1 Punição para ${label}`, target, success: true };
+      return { type: 'score', target, field: 'penalidade', delta: -1, desc: `-1 Punição para ${label}` };
     }
 
     // 4. Pontuações positivas & Golpes de Jiu-Jitsu
     // 4 Pontos: Montada ou Costas
     if (/\b(quatro pontos|4 pontos|mais quatro|mais 4|montada|montou|costas|pegada de costas|pegou as costas|quatro)\b/.test(text)) {
-      addScore(target, 'pontos', 4);
       const golpe = text.includes('mont') ? ' (Montada)' : text.includes('costas') ? ' (Costas)' : '';
-      return { desc: `+4 Pontos para ${label}${golpe}`, target, success: true };
+      return { type: 'score', target, field: 'pontos', delta: 4, desc: `+4 Pontos para ${label}${golpe}` };
     }
 
     // 3 Pontos: Passagem de Guarda
     if (/\b(tres pontos|três pontos|3 pontos|mais tres|mais três|mais 3|passagem de guarda|passagem|passou a guarda|passou|tres|três)\b/.test(text)) {
-      addScore(target, 'pontos', 3);
       const golpe = text.includes('pass') ? ' (Passagem de Guarda)' : '';
-      return { desc: `+3 Pontos para ${label}${golpe}`, target, success: true };
+      return { type: 'score', target, field: 'pontos', delta: 3, desc: `+3 Pontos para ${label}${golpe}` };
     }
 
     // 2 Pontos: Queda, Raspagem, Joelho na barriga
     if (/\b(dois pontos|2 pontos|mais dois|mais 2|queda|derrubou|raspagem|raspou|joelho na barriga|joelho|dois)\b/.test(text)) {
-      addScore(target, 'pontos', 2);
       const golpe = text.includes('queda') || text.includes('derrub') ? ' (Queda)' :
                     text.includes('rasp') ? ' (Raspagem)' :
                     text.includes('joelho') ? ' (Joelho na Barriga)' : '';
-      return { desc: `+2 Pontos para ${label}${golpe}`, target, success: true };
+      return { type: 'score', target, field: 'pontos', delta: 2, desc: `+2 Pontos para ${label}${golpe}` };
     }
 
     // Vantagem
     if (/\b(vantagem|uma vantagem|1 vantagem|mais vantagem|ponto de vantagem)\b/.test(text)) {
-      addScore(target, 'vantagem', 1);
-      return { desc: `+1 Vantagem para ${label}`, target, success: true };
+      return { type: 'score', target, field: 'vantagem', delta: 1, desc: `+1 Vantagem para ${label}` };
     }
 
     // Punição / Penalidade
     if (/\b(punicao|punição|uma punicao|uma punição|falta|uma falta|penalidade|penalizacao|penalização|shido)\b/.test(text)) {
-      addScore(target, 'penalidade', 1);
-      return { desc: `+1 Punição para ${label}`, target, success: true };
+      return { type: 'score', target, field: 'penalidade', delta: 1, desc: `+1 Punição para ${label}` };
     }
 
     return null;
-  }, [addScore, ctrl, swapAthletes, undoLastAction]);
+  }, []);
+
+  // Executa com segurança o comando recebido por voz
+  const executeRefereeCommand = useCallback((cmd) => {
+    if (!cmd) return;
+
+    if (cmd.type === 'score') {
+      addScore(cmd.target, cmd.field, cmd.delta);
+      if (cmd.target === 'atletaA') {
+        setHighlightA(true);
+        setTimeout(() => setHighlightA(false), 1400);
+      } else if (cmd.target === 'atletaB') {
+        setHighlightB(true);
+        setTimeout(() => setHighlightB(false), 1400);
+      }
+    } else if (cmd.type === 'control') {
+      if (cmd.action === 'start' && !runningRef.current) {
+        setRunning(true);
+        ctrl('start');
+      } else if (cmd.action === 'pause' && runningRef.current) {
+        setRunning(false);
+        ctrl('pause');
+      }
+    } else if (cmd.type === 'undo') {
+      undoLastAction();
+    } else if (cmd.type === 'swap') {
+      swapAthletes();
+    } else if (cmd.type === 'resetScore') {
+      resetScores();
+    } else if (cmd.type === 'resetAll') {
+      resetAll();
+    }
+
+    playChime(true);
+    try { navigator.vibrate?.([70, 40, 70]); } catch {}
+    setLastExecutedCmd(cmd.desc);
+    setLiveSpeechText('');
+  }, [addScore, ctrl, undoLastAction, swapAthletes, resetScores, resetAll]);
 
   // ============================================================
   // MOTOR DE ESCUTA CONTÍNUA (SPEECH TO TEXT PARA ÁRBITRO)
+  // Com filtro anti-duplicação estrito para evitar pontuações 2x
   // ============================================================
   useEffect(() => {
     const SpeechRecognition = typeof window !== 'undefined'
@@ -374,27 +441,25 @@ export default function PlacarControl() {
       }
 
       const textToProcess = (final || interim).trim();
-      if (textToProcess) {
-        const cmdResult = parseRefereeVoiceCommand(textToProcess);
-        if (cmdResult && cmdResult.success) {
-          const now = Date.now();
-          // Debounce de 1.1s para não duplicar na mesma fala
-          if (now - lastCmdTimeRef.current > 1100) {
-            lastCmdTimeRef.current = now;
-            playChime(true);
-            try { navigator.vibrate?.([70, 40, 70]); } catch {}
-            setLastExecutedCmd(cmdResult.desc);
-            setLiveSpeechText('');
+      if (!textToProcess) return;
 
-            if (cmdResult.target === 'atletaA') {
-              setHighlightA(true);
-              setTimeout(() => setHighlightA(false), 1400);
-            } else if (cmdResult.target === 'atletaB') {
-              setHighlightB(true);
-              setTimeout(() => setHighlightB(false), 1400);
-            }
-          }
+      const cmd = parseRefereeVoiceCommand(textToProcess);
+      if (cmd) {
+        const now = Date.now();
+        const timeSinceLast = now - lastCmdTimeRef.current;
+        const normalized = textToProcess.toLowerCase().trim();
+        const cmdKey = `${cmd.type}_${cmd.target || ''}_${cmd.field || ''}_${cmd.delta || cmd.action || ''}`;
+
+        // Se for o MESMO comando nos últimos 2.8s OU qualquer comando em menos de 1.2s, ignora para não duplicar
+        if (timeSinceLast < 1200 || (timeSinceLast < 2800 && lastExecutedKeyRef.current === cmdKey)) {
+          return;
         }
+
+        lastCmdTimeRef.current = now;
+        lastExecutedKeyRef.current = cmdKey;
+        lastExecutedTextRef.current = normalized;
+
+        executeRefereeCommand(cmd);
       }
     };
 
@@ -432,7 +497,7 @@ export default function PlacarControl() {
       shouldListenRef.current = false;
       try { recognition.abort(); } catch {}
     };
-  }, [parseRefereeVoiceCommand]);
+  }, [parseRefereeVoiceCommand, executeRefereeCommand]);
 
   const toggleRefereeVoice = () => {
     if (!voiceSupported) {
@@ -721,10 +786,7 @@ export default function PlacarControl() {
 
           <div
             className={`tv-clone-status ${running ? 'tv-clone-status--running' : 'tv-clone-status--stopped'}`}
-            onClick={() => {
-              ctrl('startPause');
-              flash(running ? 'Pausado ⏸' : 'Iniciado ▶');
-            }}
+            onClick={toggleStartPause}
             title="Toque para Iniciar ou Pausar a luta"
           >
             <span className="clone-status-txt">{running ? 'PAUSAR' : 'INÍCIO'}</span>
@@ -774,10 +836,7 @@ export default function PlacarControl() {
         <div className="toolbar-actions-row">
           <button
             className={`tb-action-btn ${running ? 'tb-action-btn--warn' : 'tb-action-btn--go'}`}
-            onClick={() => {
-              ctrl('startPause');
-              flash(running ? 'Pausado ⏸' : 'Iniciado ▶');
-            }}
+            onClick={toggleStartPause}
           >
             {running ? '⏸ Pausar' : '▶ Iniciar'}
           </button>
@@ -795,15 +854,17 @@ export default function PlacarControl() {
           </button>
           <button
             className="tb-action-btn tb-action-btn--reset"
-            onClick={() => {
-              if (window.confirm('Deseja realmente zerar todos os pontos e o cronômetro?')) {
-                ctrl('reset');
-                setHistory([]);
-                flash('Placar zerado ✓');
-              }
-            }}
+            onClick={resetScores}
+            title="Zerar apenas os pontos dos dois atletas"
           >
-            ↺ Zerar Placar
+            ↺ Zerar Pontos
+          </button>
+          <button
+            className="tb-action-btn tb-action-btn--reset-all"
+            onClick={resetAll}
+            title="Zerar pontuações e reiniciar o tempo da luta"
+          >
+            ↺ Reiniciar Luta
           </button>
         </div>
       </section>

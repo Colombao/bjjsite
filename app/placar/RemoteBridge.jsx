@@ -92,6 +92,12 @@ export default function RemoteBridge({
           if (!msg || typeof msg !== 'object') return;
           if (msg.kind === 'ctrl') {
             window.dispatchEvent(new CustomEvent('pc-remote-ctrl', { detail: msg }));
+            setTimeout(() => {
+              try {
+                const { match: m, running: r } = stateRef.current;
+                conn.send({ kind: 'state', match: m, running: r });
+              } catch {}
+            }, 50);
           } else if (msg.kind === 'ping') {
             try {
               const { match: m, running: r } = stateRef.current;

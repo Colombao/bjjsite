@@ -732,6 +732,15 @@ body {
 
 .tb-action-btn--reset {
   color: #dc2626;
+  border-color: rgba(220, 38, 38, 0.4);
+  background: #fff5f5;
+}
+
+.tb-action-btn--reset-all {
+  color: #b91c1c;
+  border-color: #ef4444;
+  background: #fee2e2;
+  font-weight: 900;
 }
 
 /* ============================================================
@@ -922,6 +931,9 @@ body {
   .toolbar-actions-row {
     grid-template-columns: repeat(3, 1fr);
   }
+  .tb-action-btn--reset-all {
+    grid-column: span 3;
+  }
 }
 
 /* Modo Paisagem (O celular vira literalmente a TV) */
@@ -952,6 +964,6 @@ body {
     font-size: 0.95rem;
   }
   .toolbar-actions-row {
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(7, 1fr);
   }
 }
