@@ -1548,14 +1548,35 @@ function handleRemoteCtrl(msg){
       save(); renderPlacar();
       broadcastMatchState();
     }
+  } else if(action === 'edit'){
+    if(msg.atletaA){
+      if(msg.atletaA.nome) S.placar.a.nome = String(msg.atletaA.nome).slice(0, 30);
+      if(msg.atletaA.team) S.placar.a.team = String(msg.atletaA.team).slice(0, 30);
+    }
+    if(msg.atletaB){
+      if(msg.atletaB.nome) S.placar.b.nome = String(msg.atletaB.nome).slice(0, 30);
+      if(msg.atletaB.team) S.placar.b.team = String(msg.atletaB.team).slice(0, 30);
+    }
+    save(); renderPlacar();
+    broadcastMatchState();
   } else if(action === 'swap'){
     swapSides();
     broadcastMatchState();
+  } else if(action === 'resetScore' || action === 'resetScores'){
+    resetPlacar(true);
+    broadcastMatchState();
   } else if(action === 'reset'){
     resetPlacar(true);
+    timerReset(true);
     broadcastMatchState();
   } else if(action === 'startPause'){
     timerToggle();
+    broadcastMatchState();
+  } else if(action === 'start'){
+    if(!T.running) timerToggle();
+    broadcastMatchState();
+  } else if(action === 'pause'){
+    if(T.running) timerToggle();
     broadcastMatchState();
   } else if(action === 'timerSet'){
     const mins = Math.max(1, Math.min(99, Number(msg.minutes) || 5));
