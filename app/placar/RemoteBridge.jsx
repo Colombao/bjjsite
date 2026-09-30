@@ -187,9 +187,11 @@ export default function RemoteBridge({
               <p>Preparando sessão…</p>
             )}
             {statusTxt && (
-              <span className={`pc-remote-status ${status === 'connected' ? 'ok' : ''}`}>
-                {statusTxt}
-              </span>
+              <div className="pc-remote-status-wrapper">
+                <span className={`pc-remote-status ${status === 'connected' ? 'ok' : ''}`}>
+                  {statusTxt}
+                </span>
+              </div>
             )}
             <button onClick={() => setShow(false)} className="qr-close">
               {status === 'connected' ? 'Continuar' : '✕ Fechar'}

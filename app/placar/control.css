@@ -1,5 +1,5 @@
 /* ============================================================
-   CT HEISHIKAN — CONTROLE DO PLACAR CBJJ (CLONE EXATO DA TV)
+   CT HEISHIKAN — CONTROLE DO PLACAR CBJJ (CLONE MODERNO DA TV)
    ============================================================ */
 
 * {
@@ -9,40 +9,43 @@
 }
 
 body {
-  background: #c0c0c0;
+  background: #0d0f15;
+  color: #f1f5f9;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 .control-container {
   min-height: 100vh;
   min-height: 100dvh;
-  background: #c0c0c0;
-  color: #1a1a1a;
-  padding: 10px 12px 24px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  background: #0d0f15;
+  color: #f1f5f9;
+  padding: 10px 14px 28px;
   display: flex;
   flex-direction: column;
-  max-width: 960px;
+  max-width: 980px;
   margin: 0 auto;
 }
 
-/* ============ TOAST ============ */
+/* ============ TOAST FLUTUANTE ============ */
 .control-toast {
   position: fixed;
   top: 14px;
   left: 50%;
   transform: translateX(-50%);
-  background: #1a1a1a;
-  color: #ffd700;
+  background: #1e222e;
+  color: #fbbf24;
   font-weight: 800;
   padding: 8px 22px;
   border-radius: 999px;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.6);
   z-index: 9999;
-  font-size: 0.95rem;
-  letter-spacing: 0.5px;
-  border: 1px solid rgba(255, 215, 0, 0.4);
+  font-size: 0.92rem;
+  letter-spacing: 0.4px;
+  border: 1px solid rgba(251, 191, 36, 0.4);
   animation: slideDownToast 0.25s ease-out;
   pointer-events: none;
+  white-space: nowrap;
 }
 
 @keyframes slideDownToast {
@@ -55,19 +58,16 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 6px 4px 12px;
+  padding: 8px 4px 14px;
   gap: 12px;
 }
 
 .control-header-left .header-title {
-  font-size: 1.35rem;
+  font-size: 1.15rem;
   font-weight: 900;
-  color: #1a1a1a;
-  letter-spacing: 1px;
+  color: #f8fafc;
+  letter-spacing: 1.2px;
   text-transform: uppercase;
-  text-decoration: underline;
-  text-decoration-thickness: 3px;
-  text-underline-offset: 4px;
   white-space: nowrap;
 }
 
@@ -79,16 +79,16 @@ body {
 }
 
 .ctrl-wallclock {
-  font-family: monospace;
-  font-size: 1.3rem;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1.25rem;
   font-weight: 800;
-  color: #1a1a1a;
-  background: rgba(255, 255, 255, 0.85);
-  border: 2px solid #bbb;
+  color: #fbbf24;
+  background: #181b24;
+  border: 1px solid rgba(251, 191, 36, 0.35);
   border-radius: 999px;
-  padding: 3px 14px;
-  letter-spacing: 1px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  padding: 3px 16px;
+  letter-spacing: 1.5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
   white-space: nowrap;
 }
 
@@ -100,18 +100,20 @@ body {
 }
 
 .conn-badge {
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   font-weight: 700;
-  padding: 5px 10px;
+  padding: 5px 11px;
   border-radius: 999px;
-  background: #e5e5e5;
-  color: #666;
+  background: #1e2433;
+  color: #94a3b8;
+  border: 1px solid #334155;
   white-space: nowrap;
 }
 
 .conn-badge--ok {
-  background: #dcfce7;
-  color: #166534;
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border-color: rgba(16, 185, 129, 0.4);
 }
 
 .btn-header-spotify {
@@ -120,13 +122,13 @@ body {
   border: none;
   border-radius: 8px;
   padding: 6px 12px;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 800;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 4px;
-  transition: transform 0.15s;
+  transition: transform 0.12s, filter 0.15s;
 }
 
 .btn-header-spotify:active {
@@ -135,18 +137,18 @@ body {
 
 .btn-header-spotify.active {
   background: #15803d;
-  color: #fff;
+  color: #ffffff;
 }
 
 /* ============ GAVETA SPOTIFY ============ */
 .spotify-drawer {
-  background: #191714;
-  color: #f2ebdd;
+  background: #141721;
+  color: #f1f5f9;
   border-radius: 12px;
   padding: 14px;
   margin-bottom: 12px;
-  border: 1px solid rgba(217, 168, 60, 0.3);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(29, 185, 84, 0.3);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
   animation: slideDownToast 0.2s ease-out;
 }
 
@@ -158,15 +160,15 @@ body {
 }
 
 .spotify-card-head h3 {
-  font-size: 1rem;
-  color: #d9a83c;
+  font-size: 0.95rem;
+  color: #4ade80;
   margin: 0;
 }
 
 .spotify-card-close {
   background: transparent;
   border: none;
-  color: #888;
+  color: #94a3b8;
   font-size: 1.2rem;
   cursor: pointer;
   padding: 2px 6px;
@@ -180,7 +182,7 @@ body {
 
 .spotify-sub {
   font-size: 0.8rem;
-  color: #9c937f;
+  color: #94a3b8;
   margin-bottom: 8px;
 }
 
@@ -191,11 +193,11 @@ body {
 }
 
 .preset-btn {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(217, 168, 60, 0.2);
+  background: #1c202d;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 8px;
   padding: 8px 10px;
-  color: #e6dfcf;
+  color: #e2e8f0;
   font-size: 0.8rem;
   font-weight: 700;
   text-align: left;
@@ -224,8 +226,8 @@ body {
 
 .input-text {
   flex: 1;
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(217, 168, 60, 0.3);
+  background: #0d0f15;
+  border: 1px solid #334155;
   border-radius: 8px;
   padding: 8px 12px;
   color: #fff;
@@ -248,13 +250,13 @@ body {
    PAINEL DE COMANDOS DE VOZ DO ÁRBITRO (SPEECH TO TEXT CONTÍNUO)
    ============================================================ */
 .referee-voice-bar {
-  background: #1e1e24;
-  color: #f0f0f0;
-  border-radius: 10px;
+  background: #141721;
+  color: #f1f5f9;
+  border-radius: 12px;
   padding: 10px 14px;
   margin-bottom: 12px;
-  border: 1px solid #333;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  border: 1px solid #242938;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -274,10 +276,10 @@ body {
 }
 
 .referee-dot {
-  width: 12px;
-  height: 12px;
+  width: 11px;
+  height: 11px;
   border-radius: 50%;
-  background: #777;
+  background: #64748b;
   display: inline-block;
   flex-shrink: 0;
   transition: all 0.3s ease;
@@ -296,20 +298,20 @@ body {
 }
 
 .referee-status-text {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 800;
   letter-spacing: 0.5px;
-  color: #ccc;
+  color: #cbd5e1;
   text-transform: uppercase;
 }
 
 .btn-referee-toggle {
-  background: #d9a83c;
-  color: #120e05;
+  background: #d97706;
+  color: #ffffff;
   border: none;
   border-radius: 8px;
   padding: 6px 14px;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 800;
   cursor: pointer;
   display: flex;
@@ -323,14 +325,14 @@ body {
 }
 
 .btn-referee-toggle.active {
-  background: #ef4444;
+  background: #dc2626;
   color: #fff;
-  box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+  box-shadow: 0 0 12px rgba(220, 38, 38, 0.45);
 }
 
 .referee-stt-visor {
-  background: #121216;
-  border: 1px solid #2d2d35;
+  background: #0d0f15;
+  border: 1px solid #1e2433;
   border-radius: 8px;
   padding: 8px 12px;
   display: flex;
@@ -342,19 +344,19 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: #14532d;
-  color: #4ade80;
-  border: 1px solid #16a34a;
+  background: rgba(16, 185, 129, 0.18);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.4);
   border-radius: 6px;
   padding: 4px 10px;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 800;
   animation: slideDownToast 0.2s ease-out;
   align-self: flex-start;
 }
 
 .stt-check {
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 900;
 }
 
@@ -366,15 +368,15 @@ body {
 }
 
 .stt-label {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 900;
-  color: #888;
+  color: #64748b;
   letter-spacing: 0.5px;
   flex-shrink: 0;
 }
 
 .stt-speech-text {
-  font-size: 0.88rem;
+  font-size: 0.85rem;
   color: #f1f5f9;
   font-style: italic;
   white-space: nowrap;
@@ -385,7 +387,7 @@ body {
 /* Destaque visual nas linhas quando pontuado por voz */
 .tv-clone-row.highlight-athlete {
   position: relative;
-  box-shadow: inset 0 0 0 4px #ffd700, 0 0 16px rgba(255, 215, 0, 0.6) !important;
+  box-shadow: inset 0 0 0 4px #fbbf24, 0 0 18px rgba(251, 191, 36, 0.6) !important;
   animation: athleteRowFlash 0.5s alternate infinite;
 }
 
@@ -395,26 +397,100 @@ body {
 }
 
 /* ============================================================
+   BANCO DO MODO CORRIGIR (ALERTA DE SUBTRAÇÃO)
+   ============================================================ */
+.fix-mode-banner {
+  background: linear-gradient(135deg, #7f1d1d, #991b1b);
+  border: 1.5px solid #f87171;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  box-shadow: 0 4px 16px rgba(220, 38, 38, 0.35);
+  animation: slideDownToast 0.2s ease-out;
+}
+
+.fix-mode-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.fix-mode-icon {
+  font-size: 1.4rem;
+}
+
+.fix-mode-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.fix-mode-title {
+  font-size: 0.85rem;
+  font-weight: 900;
+  color: #fee2e2;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.fix-mode-desc {
+  font-size: 0.78rem;
+  color: #fca5a5;
+}
+
+.fix-mode-desc strong {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+.btn-exit-fix {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #ffffff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+
+.btn-exit-fix:active {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* ============================================================
    O PLACAR CLONE DA TV (GRID IDÊNTICO)
    ============================================================ */
 .tv-clone-board {
   display: flex;
   flex-direction: column;
-  background: #ffffff;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.18);
-  border-radius: 4px;
+  background: #141721;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  border: 2px solid #242938;
+  border-radius: 12px;
   overflow: hidden;
   user-select: none;
   -webkit-user-select: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.tv-clone-board--fix {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.5), 0 8px 28px rgba(239, 68, 68, 0.3);
 }
 
 /* Linhas dos Atletas */
 .tv-clone-row {
   display: grid;
-  grid-template-columns: 32% 68%;
+  grid-template-columns: 34% 66%;
   align-items: stretch;
-  min-height: 120px;
-  border-bottom: 2px solid #ffffff;
+  min-height: 125px;
+  border-bottom: 2px solid #242938;
 }
 
 /* Coluna 1: Nome do Atleta */
@@ -437,21 +513,21 @@ body {
 .tv-clone-row--a .tv-clone-name {
   background: #0052cc;
   color: #ffffff;
-  border-right: 2px solid #ffffff;
+  border-right: 2px solid rgba(255, 255, 255, 0.25);
 }
 
 .tv-clone-row--b .tv-clone-name {
   background: #ffffff;
-  color: #1a1a1a;
-  border-right: 2px solid #ddd;
+  color: #0f172a;
+  border-right: 2px solid #cbd5e1;
 }
 
 .clone-athlete-nome {
-  font-size: 1.45rem;
+  font-size: 1.4rem;
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  line-height: 1.1;
+  line-height: 1.15;
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -463,7 +539,7 @@ body {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-top: 3px;
+  margin-top: 4px;
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -475,14 +551,14 @@ body {
 }
 
 .tv-clone-row--b .clone-athlete-team {
-  color: #666666;
+  color: #475569;
 }
 
 .clone-edit-hint {
   font-size: 0.65rem;
-  font-weight: 700;
-  opacity: 0.6;
-  margin-top: 4px;
+  font-weight: 800;
+  opacity: 0.7;
+  margin-top: 5px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -495,11 +571,12 @@ body {
 }
 
 .tv-clone-cell {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  border-right: 2px solid #ffffff;
+  border-right: 2px solid rgba(0, 0, 0, 0.2);
   transition: transform 0.08s, filter 0.08s;
   touch-action: manipulation;
 }
@@ -514,7 +591,7 @@ body {
 }
 
 .tv-clone-cell--pts {
-  background: #22c55e;
+  background: #16a34a;
 }
 
 .tv-clone-cell--adv {
@@ -522,37 +599,56 @@ body {
 }
 
 .tv-clone-cell--pen {
-  background: #ef4444;
+  background: #dc2626;
 }
 
 .tv-clone-num {
   font-size: 4.4rem;
   font-weight: 900;
   color: #ffffff;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
   line-height: 1;
+}
+
+/* Badge indicativo de subtração no modo corrigir */
+.cell-fix-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(0, 0, 0, 0.85);
+  color: #f87171;
+  border: 1.5px solid #ef4444;
+  font-size: 0.85rem;
+  font-weight: 900;
+  border-radius: 6px;
+  padding: 2px 7px;
+  pointer-events: none;
+  text-shadow: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  line-height: 1.1;
 }
 
 /* ============ LINHA DE BAIXO (FOOTER: TEMPO E STATUS) ============ */
 .tv-clone-foot {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  gap: 8px;
-  padding: 8px;
-  background: #c0c0c0;
-  height: 85px;
+  gap: 10px;
+  padding: 10px;
+  background: #181b24;
+  height: 88px;
 }
 
 .tv-clone-time {
-  background: #1a1a1a;
+  background: #0d0f15;
   color: #ffffff;
-  border-radius: 6px;
+  border: 1px solid #242938;
+  border-radius: 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
   transition: filter 0.15s;
 }
 
@@ -565,25 +661,25 @@ body {
   font-size: 2.8rem;
   font-weight: 900;
   line-height: 1;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .clone-time-sub {
   font-size: 0.65rem;
   font-weight: 700;
-  color: #d9a83c;
+  color: #fbbf24;
   letter-spacing: 0.5px;
   text-transform: uppercase;
   margin-top: 2px;
 }
 
 .tv-clone-status {
-  border-radius: 6px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
   transition: transform 0.08s, filter 0.08s;
   user-select: none;
 }
@@ -593,20 +689,22 @@ body {
 }
 
 .tv-clone-status--stopped {
-  background: #ef4444;
+  background: #dc2626;
+  border: 1px solid #ef4444;
 }
 
 .tv-clone-status--running {
-  background: #22c55e;
+  background: #16a34a;
+  border: 1px solid #22c55e;
 }
 
 .clone-status-txt {
   font-size: 1.8rem;
   font-weight: 900;
   color: #ffffff;
-  letter-spacing: 1px;
+  letter-spacing: 1.2px;
   text-transform: uppercase;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
 /* ============================================================
@@ -615,25 +713,26 @@ body {
 .tv-clone-toolbar {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-top: 10px;
+  gap: 10px;
+  margin-top: 14px;
 }
 
 .toolbar-side-row {
   display: flex;
   align-items: center;
-  gap: 6px;
-  background: #dbdbdb;
-  padding: 6px 8px;
-  border-radius: 8px;
-  border: 1px solid #b8b8b8;
+  gap: 8px;
+  background: #181b24;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid #242938;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
 .toolbar-side-tag {
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   font-weight: 800;
   letter-spacing: 0.5px;
-  padding: 6px 10px;
+  padding: 8px 10px;
   border-radius: 6px;
   white-space: nowrap;
   flex-shrink: 0;
@@ -646,21 +745,21 @@ body {
 
 .toolbar-side-tag--b {
   background: #ffffff;
-  color: #1a1a1a;
-  border: 1px solid #ccc;
+  color: #0f172a;
+  border: 1px solid #cbd5e1;
 }
 
 .tb-btn {
   flex: 1;
-  min-height: 42px;
+  min-height: 44px;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 1.15rem;
   font-weight: 900;
   color: #ffffff;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-  transition: transform 0.08s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  transition: transform 0.08s, filter 0.08s;
   touch-action: manipulation;
 }
 
@@ -669,7 +768,7 @@ body {
 }
 
 .tb-btn--p {
-  background: #22c55e;
+  background: #16a34a;
 }
 
 .tb-btn--v {
@@ -677,11 +776,11 @@ body {
 }
 
 .tb-btn--x {
-  background: #ef4444;
+  background: #dc2626;
 }
 
 .tb-btn--sub {
-  background: #71717a;
+  background: #475569;
   font-size: 1.25rem;
 }
 
@@ -690,57 +789,92 @@ body {
   cursor: not-allowed;
 }
 
-/* Ações Gerais (Linha Inferior da TV) */
+/* Ações Gerais (Linha Inferior) */
 .toolbar-actions-row {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
-  margin-top: 2px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 4px;
 }
 
 .tb-action-btn {
-  background: #ffffff;
-  border: 1px solid #b8b8b8;
-  border-radius: 8px;
-  padding: 10px 6px;
-  font-size: 0.85rem;
+  background: #181b24;
+  border: 1px solid #2a3144;
+  border-radius: 10px;
+  padding: 12px 6px;
+  font-size: 0.88rem;
   font-weight: 800;
-  color: #1a1a1a;
+  color: #f1f5f9;
   cursor: pointer;
   text-align: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-  transition: transform 0.08s, background 0.15s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: transform 0.08s, background 0.15s, border-color 0.15s;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: manipulation;
 }
 
 .tb-action-btn:active {
-  transform: scale(0.95);
-  background: #f0f0f0;
+  transform: scale(0.96);
+  background: #242938;
 }
 
 .tb-action-btn--go {
-  background: #22c55e;
+  background: #16a34a;
   color: #ffffff;
-  border-color: #16a34a;
+  border-color: #22c55e;
+  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.35);
 }
 
 .tb-action-btn--warn {
-  background: #ef4444;
+  background: #dc2626;
   color: #ffffff;
-  border-color: #dc2626;
+  border-color: #ef4444;
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.35);
+}
+
+.tb-action-btn--fix {
+  background: #23293a;
+  color: #cbd5e1;
+  border-color: #3b455f;
+}
+
+.tb-action-btn--fix.active {
+  background: #dc2626 !important;
+  color: #ffffff !important;
+  border-color: #f87171 !important;
+  box-shadow: 0 0 14px rgba(239, 68, 68, 0.55);
+  animation: fixBtnPulse 1.2s infinite ease-in-out;
+}
+
+@keyframes fixBtnPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.97); filter: brightness(1.2); }
+  100% { transform: scale(1); }
 }
 
 .tb-action-btn--reset {
-  color: #dc2626;
-  border-color: rgba(220, 38, 38, 0.4);
-  background: #fff5f5;
+  color: #fca5a5;
+  border-color: rgba(239, 68, 68, 0.35);
+  background: rgba(239, 68, 68, 0.12);
+}
+
+.tb-action-btn--reset:active {
+  background: rgba(239, 68, 68, 0.25);
 }
 
 .tb-action-btn--reset-all {
-  color: #b91c1c;
+  color: #fee2e2;
   border-color: #ef4444;
-  background: #fee2e2;
+  background: rgba(220, 38, 38, 0.25);
   font-weight: 900;
+}
+
+.tb-action-btn--reset-all:active {
+  background: #dc2626;
+  color: #fff;
 }
 
 /* ============================================================
@@ -749,8 +883,8 @@ body {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -765,19 +899,19 @@ body {
 }
 
 .modal-card {
-  background: #1c1a17;
-  color: #f2ebdd;
-  border: 1.5px solid rgba(217, 168, 60, 0.35);
+  background: #141721;
+  color: #f1f5f9;
+  border: 1.5px solid #2a3144;
   border-radius: 16px;
   width: 100%;
   max-width: 420px;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65);
   overflow: hidden;
   animation: zoomIn 0.2s ease-out;
 }
 
 @keyframes zoomIn {
-  from { opacity: 0; transform: scale(0.93); }
+  from { opacity: 0; transform: scale(0.94); }
   to { opacity: 1; transform: scale(1); }
 }
 
@@ -786,20 +920,20 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 16px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid #242938;
 }
 
 .modal-header h2 {
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   font-weight: 800;
-  color: #d9a83c;
+  color: #fbbf24;
   margin: 0;
 }
 
 .modal-close {
   background: transparent;
   border: none;
-  color: #888;
+  color: #94a3b8;
   font-size: 1.3rem;
   cursor: pointer;
   padding: 4px;
@@ -819,16 +953,16 @@ body {
 }
 
 .form-group label {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 700;
-  color: #9c937f;
+  color: #94a3b8;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .form-input {
-  background: rgba(0, 0, 0, 0.5);
-  border: 1.5px solid rgba(217, 168, 60, 0.3);
+  background: #0d0f15;
+  border: 1.5px solid #2a3144;
   border-radius: 10px;
   padding: 12px 14px;
   color: #ffffff;
@@ -839,22 +973,22 @@ body {
 }
 
 .form-input:focus {
-  border-color: #d9a83c;
-  box-shadow: 0 0 0 3px rgba(217, 168, 60, 0.2);
+  border-color: #fbbf24;
+  box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.2);
 }
 
 .modal-footer {
   display: flex;
   gap: 10px;
   padding: 14px 20px 18px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid #242938;
 }
 
 .btn-modal-cancel {
   flex: 1;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #bbb;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid #2a3144;
+  color: #94a3b8;
   padding: 12px;
   border-radius: 10px;
   font-size: 0.95rem;
@@ -864,7 +998,7 @@ body {
 
 .btn-modal-save {
   flex: 2;
-  background: #d9a83c;
+  background: #fbbf24;
   border: none;
   color: #120e05;
   padding: 12px;
@@ -872,7 +1006,7 @@ body {
   font-size: 0.95rem;
   font-weight: 800;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(217, 168, 60, 0.35);
+  box-shadow: 0 4px 14px rgba(251, 191, 36, 0.35);
 }
 
 .time-select-grid {
@@ -882,11 +1016,11 @@ body {
 }
 
 .time-pick-btn {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1.5px solid rgba(217, 168, 60, 0.25);
+  background: #1c202d;
+  border: 1.5px solid #2a3144;
   border-radius: 10px;
   padding: 14px 6px;
-  color: #f2ebdd;
+  color: #f1f5f9;
   font-size: 1.05rem;
   font-weight: 800;
   cursor: pointer;
@@ -895,44 +1029,76 @@ body {
 }
 
 .time-pick-btn:active, .time-pick-btn.active {
-  background: #d9a83c;
+  background: #fbbf24;
   color: #120e05;
-  border-color: #f0c566;
-  box-shadow: 0 4px 12px rgba(217, 168, 60, 0.4);
+  border-color: #fcd34d;
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4);
 }
 
 /* ============================================================
    AJUSTES RESPONSIVOS (MOBILE E PAISAGEM / LANDSCAPE)
    ============================================================ */
-@media (max-width: 480px) {
+@media (max-width: 600px) {
   .control-header-left .header-title {
-    font-size: 1.15rem;
+    font-size: 1rem;
   }
   .ctrl-wallclock {
     font-size: 1.1rem;
-    padding: 2px 10px;
+    padding: 3px 12px;
   }
   .tv-clone-row {
-    grid-template-columns: 35% 65%;
-    min-height: 105px;
+    grid-template-columns: 36% 64%;
+    min-height: 110px;
   }
   .clone-athlete-nome {
-    font-size: 1.2rem;
+    font-size: 1.25rem;
   }
   .tv-clone-num {
-    font-size: 3.6rem;
+    font-size: 3.8rem;
   }
   .clone-time-val {
-    font-size: 2.3rem;
+    font-size: 2.5rem;
   }
   .clone-status-txt {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
   }
   .toolbar-actions-row {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
   }
-  .tb-action-btn--reset-all {
-    grid-column: span 3;
+}
+
+@media (max-width: 400px) {
+  .control-header-left .header-title {
+    font-size: 0.9rem;
+  }
+  .ctrl-wallclock {
+    font-size: 0.95rem;
+    padding: 2px 8px;
+  }
+  .tv-clone-row {
+    grid-template-columns: 38% 62%;
+    min-height: 98px;
+  }
+  .clone-athlete-nome {
+    font-size: 1.1rem;
+  }
+  .tv-clone-num {
+    font-size: 3.2rem;
+  }
+  .clone-time-val {
+    font-size: 2.1rem;
+  }
+  .clone-status-txt {
+    font-size: 1.35rem;
+  }
+  .tb-btn {
+    min-height: 38px;
+    font-size: 1rem;
+  }
+  .tb-action-btn {
+    padding: 10px 4px;
+    font-size: 0.8rem;
   }
 }
 
@@ -964,6 +1130,6 @@ body {
     font-size: 0.95rem;
   }
   .toolbar-actions-row {
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(4, 1fr);
   }
 }

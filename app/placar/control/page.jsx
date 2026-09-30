@@ -78,6 +78,7 @@ export default function PlacarControl() {
   const [voiceSupported, setVoiceSupported] = useState(true);
   const [highlightA, setHighlightA] = useState(false);
   const [highlightB, setHighlightB] = useState(false);
+  const [fixMode, setFixMode] = useState(false);
 
   // Spotify
   const [spotifyUrl, setSpotifyUrl] = useState('');
@@ -175,6 +176,17 @@ export default function PlacarControl() {
     setHistory((prev) => [...prev, { athlete, field, delta }]);
     try { navigator.vibrate?.(40); } catch {}
   }, [ctrl]);
+
+  // Clique interativo na célula do placar (no modo normal soma, no modo corrigir subtrai)
+  const handleCellClick = useCallback((athlete, field) => {
+    if (fixMode) {
+      const delta = field === 'pontos' ? -2 : -1;
+      addScore(athlete, field, delta);
+    } else {
+      const delta = field === 'pontos' ? 2 : 1;
+      addScore(athlete, field, delta);
+    }
+  }, [fixMode, addScore]);
 
   const undoLastAction = useCallback(() => {
     setHistory((prev) => {
@@ -689,8 +701,22 @@ export default function PlacarControl() {
         </section>
       )}
 
+      {/* BANNER DO MODO CORRIGIR */}
+      {fixMode && (
+        <div className="fix-mode-banner">
+          <div className="fix-mode-left">
+            <span className="fix-mode-icon">⚠️</span>
+            <div className="fix-mode-info">
+              <span className="fix-mode-title">MODO CORREÇÃO ATIVO</span>
+              <span className="fix-mode-desc">Toques no placar e botões agora <strong>subtraem (−)</strong> pontos.</span>
+            </div>
+          </div>
+          <button className="btn-exit-fix" onClick={() => setFixMode(false)}>✕ Sair</button>
+        </div>
+      )}
+
       {/* O PLACAR VISUAL DA TV (CLONE 1:1 INTERATIVO) */}
-      <main className="tv-clone-board">
+      <main className={`tv-clone-board ${fixMode ? 'tv-clone-board--fix' : ''}`}>
         {/* LINHA ATLETA A (AZUL) */}
         <div className={`tv-clone-row tv-clone-row--a ${highlightA ? 'highlight-athlete' : ''}`}>
           {/* Caixa do Nome (Azul) */}
@@ -708,26 +734,29 @@ export default function PlacarControl() {
           <div className="tv-clone-pts">
             <div
               className="tv-clone-cell tv-clone-cell--pts"
-              onClick={() => addScore('atletaA', 'pontos', 2)}
-              title="Toque para +2 pontos"
+              onClick={() => handleCellClick('atletaA', 'pontos')}
+              title={fixMode ? 'Subtrair 2 pontos' : 'Toque para +2 pontos'}
             >
               <span className="tv-clone-num">{match.atletaA.pontos}</span>
+              {fixMode && <span className="cell-fix-badge">−2</span>}
             </div>
 
             <div
               className="tv-clone-cell tv-clone-cell--adv"
-              onClick={() => addScore('atletaA', 'vantagem', 1)}
-              title="Toque para +1 vantagem"
+              onClick={() => handleCellClick('atletaA', 'vantagem')}
+              title={fixMode ? 'Subtrair 1 vantagem' : 'Toque para +1 vantagem'}
             >
               <span className="tv-clone-num">{match.atletaA.vantagem}</span>
+              {fixMode && <span className="cell-fix-badge">−1</span>}
             </div>
 
             <div
               className="tv-clone-cell tv-clone-cell--pen"
-              onClick={() => addScore('atletaA', 'penalidade', 1)}
-              title="Toque para +1 punição"
+              onClick={() => handleCellClick('atletaA', 'penalidade')}
+              title={fixMode ? 'Subtrair 1 punição' : 'Toque para +1 punição'}
             >
               <span className="tv-clone-num">{match.atletaA.penalidade}</span>
+              {fixMode && <span className="cell-fix-badge">−1</span>}
             </div>
           </div>
         </div>
@@ -749,26 +778,29 @@ export default function PlacarControl() {
           <div className="tv-clone-pts">
             <div
               className="tv-clone-cell tv-clone-cell--pts"
-              onClick={() => addScore('atletaB', 'pontos', 2)}
-              title="Toque para +2 pontos"
+              onClick={() => handleCellClick('atletaB', 'pontos')}
+              title={fixMode ? 'Subtrair 2 pontos' : 'Toque para +2 pontos'}
             >
               <span className="tv-clone-num">{match.atletaB.pontos}</span>
+              {fixMode && <span className="cell-fix-badge">−2</span>}
             </div>
 
             <div
               className="tv-clone-cell tv-clone-cell--adv"
-              onClick={() => addScore('atletaB', 'vantagem', 1)}
-              title="Toque para +1 vantagem"
+              onClick={() => handleCellClick('atletaB', 'vantagem')}
+              title={fixMode ? 'Subtrair 1 vantagem' : 'Toque para +1 vantagem'}
             >
               <span className="tv-clone-num">{match.atletaB.vantagem}</span>
+              {fixMode && <span className="cell-fix-badge">−1</span>}
             </div>
 
             <div
               className="tv-clone-cell tv-clone-cell--pen"
-              onClick={() => addScore('atletaB', 'penalidade', 1)}
-              title="Toque para +1 punição"
+              onClick={() => handleCellClick('atletaB', 'penalidade')}
+              title={fixMode ? 'Subtrair 1 punição' : 'Toque para +1 punição'}
             >
               <span className="tv-clone-num">{match.atletaB.penalidade}</span>
+              {fixMode && <span className="cell-fix-badge">−1</span>}
             </div>
           </div>
         </div>
@@ -799,36 +831,56 @@ export default function PlacarControl() {
         {/* Atleta A Side Bar */}
         <div className="toolbar-side-row toolbar-side-row--a">
           <span className="toolbar-side-tag toolbar-side-tag--a">ATLETA A</span>
-          <button className="tb-btn tb-btn--p" onClick={() => addScore('atletaA', 'pontos', 2)}>+2</button>
-          <button className="tb-btn tb-btn--p" onClick={() => addScore('atletaA', 'pontos', 3)}>+3</button>
-          <button className="tb-btn tb-btn--p" onClick={() => addScore('atletaA', 'pontos', 4)}>+4</button>
-          <button className="tb-btn tb-btn--v" onClick={() => addScore('atletaA', 'vantagem', 1)}>+V</button>
-          <button className="tb-btn tb-btn--x" onClick={() => addScore('atletaA', 'penalidade', 1)}>+P</button>
+          <button className="tb-btn tb-btn--p" onClick={() => addScore('atletaA', 'pontos', fixMode ? -2 : 2)}>
+            {fixMode ? '−2' : '+2'}
+          </button>
+          <button className="tb-btn tb-btn--p" onClick={() => addScore('atletaA', 'pontos', fixMode ? -3 : 3)}>
+            {fixMode ? '−3' : '+3'}
+          </button>
+          <button className="tb-btn tb-btn--p" onClick={() => addScore('atletaA', 'pontos', fixMode ? -4 : 4)}>
+            {fixMode ? '−4' : '+4'}
+          </button>
+          <button className="tb-btn tb-btn--v" onClick={() => addScore('atletaA', 'vantagem', fixMode ? -1 : 1)}>
+            {fixMode ? '−V' : '+V'}
+          </button>
+          <button className="tb-btn tb-btn--x" onClick={() => addScore('atletaA', 'penalidade', fixMode ? -1 : 1)}>
+            {fixMode ? '−P' : '+P'}
+          </button>
           <button
             className="tb-btn tb-btn--sub"
-            disabled={match.atletaA.pontos === 0}
-            onClick={() => addScore('atletaA', 'pontos', -1)}
-            title="Subtrair 1 ponto do atleta A"
+            disabled={!fixMode && match.atletaA.pontos === 0}
+            onClick={() => addScore('atletaA', 'pontos', fixMode ? 1 : -1)}
+            title={fixMode ? 'Adicionar 1 ponto' : 'Subtrair 1 ponto'}
           >
-            −1
+            {fixMode ? '+1' : '−1'}
           </button>
         </div>
 
         {/* Atleta B Side Bar */}
         <div className="toolbar-side-row toolbar-side-row--b">
           <span className="toolbar-side-tag toolbar-side-tag--b">ATLETA B</span>
-          <button className="tb-btn tb-btn--p" onClick={() => addScore('atletaB', 'pontos', 2)}>+2</button>
-          <button className="tb-btn tb-btn--p" onClick={() => addScore('atletaB', 'pontos', 3)}>+3</button>
-          <button className="tb-btn tb-btn--p" onClick={() => addScore('atletaB', 'pontos', 4)}>+4</button>
-          <button className="tb-btn tb-btn--v" onClick={() => addScore('atletaB', 'vantagem', 1)}>+V</button>
-          <button className="tb-btn tb-btn--x" onClick={() => addScore('atletaB', 'penalidade', 1)}>+P</button>
+          <button className="tb-btn tb-btn--p" onClick={() => addScore('atletaB', 'pontos', fixMode ? -2 : 2)}>
+            {fixMode ? '−2' : '+2'}
+          </button>
+          <button className="tb-btn tb-btn--p" onClick={() => addScore('atletaB', 'pontos', fixMode ? -3 : 3)}>
+            {fixMode ? '−3' : '+3'}
+          </button>
+          <button className="tb-btn tb-btn--p" onClick={() => addScore('atletaB', 'pontos', fixMode ? -4 : 4)}>
+            {fixMode ? '−4' : '+4'}
+          </button>
+          <button className="tb-btn tb-btn--v" onClick={() => addScore('atletaB', 'vantagem', fixMode ? -1 : 1)}>
+            {fixMode ? '−V' : '+V'}
+          </button>
+          <button className="tb-btn tb-btn--x" onClick={() => addScore('atletaB', 'penalidade', fixMode ? -1 : 1)}>
+            {fixMode ? '−P' : '+P'}
+          </button>
           <button
             className="tb-btn tb-btn--sub"
-            disabled={match.atletaB.pontos === 0}
-            onClick={() => addScore('atletaB', 'pontos', -1)}
-            title="Subtrair 1 ponto do atleta B"
+            disabled={!fixMode && match.atletaB.pontos === 0}
+            onClick={() => addScore('atletaB', 'pontos', fixMode ? 1 : -1)}
+            title={fixMode ? 'Adicionar 1 ponto' : 'Subtrair 1 ponto'}
           >
-            −1
+            {fixMode ? '+1' : '−1'}
           </button>
         </div>
 
@@ -848,6 +900,17 @@ export default function PlacarControl() {
           </button>
           <button className="tb-action-btn" onClick={undoLastAction} title="Desfazer último ponto adicionado">
             ↶ Desfazer
+          </button>
+          <button
+            className={`tb-action-btn tb-action-btn--fix ${fixMode ? 'active' : ''}`}
+            onClick={() => {
+              setFixMode(!fixMode);
+              try { navigator.vibrate?.(40); } catch {}
+              flash(!fixMode ? 'Modo Corrigir: botões e toques agora SUBTRAEM (−)' : 'Modo normal (+) ativado');
+            }}
+            title="Alternar modo de correção"
+          >
+            {fixMode ? '✓ Corrigindo' : '✎ Corrigir'}
           </button>
           <button className="tb-action-btn" onClick={swapAthletes} title="Inverter lados">
             ⇄ Trocar Lados
