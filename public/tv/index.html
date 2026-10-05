@@ -464,119 +464,6 @@ body.fix .cb--p,body.fix .cb--v,body.fix .cb--x{opacity:.62}
   height: 180px !important;
 }
 
-/* ============ SPOTIFY PLAYER DOCK PERSISTENTE ============ */
-.spot-dock {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 60;
-  background: linear-gradient(180deg, rgba(17,20,29,0.97), rgba(9,11,17,0.99));
-  border-top: 0.2vh solid rgba(46,224,106,0.35);
-  box-shadow: 0 -1vh 3vh rgba(0,0,0,0.7);
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.spot-dock.minimized .spot-embed-box {
-  display: none;
-}
-.spot-dock-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.8vh 2.5vw;
-  gap: 1.5vw;
-}
-.spot-dock-left {
-  display: flex;
-  align-items: center;
-  gap: 1.2vh;
-  min-width: 0;
-  flex: 1;
-}
-.spot-dock-dot {
-  width: 1.2vh;
-  height: 1.2vh;
-  border-radius: 50%;
-  background: #2ee06a;
-  box-shadow: 0 0 1vh #2ee06a;
-  animation: spotPulse 1.4s infinite ease-in-out;
-  flex-shrink: 0;
-}
-@keyframes spotPulse {
-  0% { transform: scale(0.9); opacity: 0.7; }
-  50% { transform: scale(1.2); opacity: 1; }
-  100% { transform: scale(0.9); opacity: 0.7; }
-}
-.spot-dock-tag {
-  font-size: 1.4vh;
-  font-weight: 900;
-  letter-spacing: 0.12em;
-  color: #2ee06a;
-  text-transform: uppercase;
-  flex-shrink: 0;
-}
-.spot-dock-name {
-  font-size: 1.9vh;
-  font-weight: 800;
-  color: #f1f5f9;
-  letter-spacing: 0.04em;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.spot-dock-actions {
-  display: flex;
-  align-items: center;
-  gap: 1vh;
-  flex-shrink: 0;
-}
-.spot-embed-box {
-  padding: 0 2vw 1.2vh;
-  max-width: 900px;
-  margin: 0 auto;
-}
-.spot-embed-box iframe {
-  width: 100%;
-  height: 80px;
-  border-radius: 12px;
-  border: none;
-}
-
-/* Player embutido dentro do modal maskMusic */
-.spot-modal-player {
-  background: var(--panel3);
-  border: 0.18vh solid rgba(46,224,106,0.3);
-  border-radius: 1.4vh;
-  padding: 1.4vh;
-  margin-bottom: 1.5vh;
-}
-.spot-modal-player-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1vh;
-}
-.spot-modal-tag {
-  font-size: 1.4vh;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  color: #2ee06a;
-}
-.spot-modal-now {
-  font-size: 1.7vh;
-  font-weight: 700;
-  color: var(--bone);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.spot-modal-embed iframe {
-  width: 100%;
-  height: 152px;
-  border-radius: 12px;
-  border: none;
-}
-
 @media (max-aspect-ratio:13/10){
   .cards{flex-wrap:wrap}
   .card{flex:1 1 40%}
@@ -918,30 +805,22 @@ body.fix .cb--p,body.fix .cb--v,body.fix .cb--x{opacity:.62}
 </div>
 
 <div class="mask" id="maskMusic">
-  <div class="modal" style="max-width:88vw;width:660px">
-    <h2>♫ Música no Tatame</h2>
+  <div class="modal" style="max-width:88vw;width:600px">
+    <h2>♫ Música & Spotify</h2>
     
-    <!-- Player Ativo Integrado dentro do modal -->
-    <div class="spot-modal-player" id="spotModalPlayer">
-      <div class="spot-modal-player-head">
-        <span class="spot-modal-tag">PLAYER INTEGRADO NA TV</span>
-        <span class="spot-modal-now" id="spotNowTitle">Selecione uma playlist para tocar direto aqui</span>
-      </div>
-      <div id="spotModalEmbed" class="spot-modal-embed">
-        <p class="modal-note" style="margin:2vh auto;color:var(--mute)">Nenhuma música tocando no momento. Escolha abaixo:</p>
-      </div>
+    <div class="modal-actions" style="margin-top:1vh">
+      <button class="btn btn--spot btn--big" id="spotQrMobile">📱 Conectar Celular & Spotify (QR Code)</button>
     </div>
 
-    <div class="modal-actions" style="margin-top:1.2vh">
-      <button class="btn btn--spot" id="plAdd">＋ Adicionar Playlist por Link</button>
-      <button class="btn btn--gold" id="spotLogin">🔑 Entrar no Spotify</button>
-      <button class="btn btn--ghost" id="spotOpen">↗ Abrir App Spotify TV</button>
-      <button class="btn" id="spotQrMobile">📱 Celular & Spotify</button>
-    </div>
-
-    <p class="modal-note" style="margin:1vh auto 0.6vh">
-      Toque em qualquer playlist abaixo para tocar direto dentro da TV (sem sair do app):
+    <p class="modal-note" style="margin:1.4vh auto 1vh;line-height:1.45;font-size:1.7vh">
+      💡 <strong>Como funciona na academia:</strong><br>
+      Escaneie o QR Code com a câmera do celular. O controle abre no seu celular e você escolhe as playlists diretamente no seu próprio app do Spotify, tocando no som do tatame via Bluetooth ou Spotify Connect!
     </p>
+
+    <div class="modal-actions" style="margin-top:1vh">
+      <button class="btn btn--ghost" id="spotOpen">↗ Abrir App Spotify TV</button>
+      <button class="btn" id="plAdd">＋ Salvar Atalho</button>
+    </div>
 
     <div class="pl-list" id="plList"></div>
 
@@ -1001,22 +880,6 @@ body.fix .cb--p,body.fix .cb--v,body.fix .cb--x{opacity:.62}
 
 <div class="flash" id="flash"></div>
 <div class="toast" id="toast"></div>
-
-<!-- DOCK / MINI-PLAYER PERSISTENTE DO SPOTIFY NA TV -->
-<div id="tvSpotifyDock" class="spot-dock" style="display:none">
-  <div class="spot-dock-bar">
-    <div class="spot-dock-left">
-      <span class="spot-dock-dot"></span>
-      <span class="spot-dock-tag">SPOTIFY TATAME</span>
-      <span class="spot-dock-name" id="spotDockName">Nenhuma playlist selecionada</span>
-    </div>
-    <div class="spot-dock-actions">
-      <button class="btn btn--xs btn--spot" id="btnSpotDockToggle">↕ Alternar Player</button>
-      <button class="btn btn--xs" id="btnSpotDockClose" title="Ocultar player">✕ Fechar</button>
-    </div>
-  </div>
-  <div id="tvSpotifyEmbedPersistent" class="spot-embed-box"></div>
-</div>
 
 <script>
 'use strict';
@@ -1575,75 +1438,27 @@ function renderPlacar(){
 }
 
 /* ============================================================
-   8. SPOTIFY — PLAYER INTEGRADO DENTRO DO APP (TATAME TV)
+   8. SPOTIFY & MÚSICAS NO TATAME
    ============================================================ */
 
-let currentSpotifyPl = null;
-
-/* abre o app do Spotify da TV nativo se o usuário pedir explicitamente */
+/* abre o app do Spotify da TV ou o web player */
 function openSpotifyApp(){
   if(window.TV && TV.openSpotify){
-    toast('Abrindo o app nativo do Spotify TV…');
+    toast('Abrindo o app do Spotify TV…');
     TV.openSpotify();
     return;
   }
   window.open('https://open.spotify.com', '_blank');
 }
 
-/* login na conta do Spotify (para tocar faixas completas) */
-function loginSpotifyFlow(){
-  const url = 'https://accounts.spotify.com/pt-BR/login';
-  if(window.TV && TV.openBrowser){
-    TV.openBrowser(url);
-  } else {
-    window.open(url, '_blank', 'width=520,height=720');
-  }
-  toast('Abrindo login do Spotify…');
-}
-
-/* carrega player integrado e persistente na TV */
-function loadEmbedPlayer(pl){
-  if(!pl) return;
-  currentSpotifyPl = pl;
-
-  const dock = $('#tvSpotifyDock');
-  const dockName = $('#spotDockName');
-  const persistentBox = $('#tvSpotifyEmbedPersistent');
-  const modalBox = $('#spotModalEmbed');
-  const modalNow = $('#spotNowTitle');
-
-  if(dockName) dockName.textContent = pl.name;
-  if(modalNow) modalNow.textContent = 'Tocando: ' + pl.name;
-
-  const embedUrl = 'https://open.spotify.com/embed/' + pl.type + '/' + pl.id + '?utm_source=generator&theme=0';
-  const iframeHtml = '<iframe src="' + embedUrl + '" width="100%" height="80" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>';
-  const modalIframeHtml = '<iframe src="' + embedUrl + '" width="100%" height="152" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>';
-
-  if(persistentBox) persistentBox.innerHTML = iframeHtml;
-  if(modalBox) modalBox.innerHTML = modalIframeHtml;
-  if(dock) dock.style.display = 'block';
-}
-
-/* abre playlist: toca no player embutido integrado da TV sem sair do app */
+/* abre playlist no Spotify da TV ou web */
 function openSpotifyPlaylist(pl){
   if(!pl) return;
-  toast('🎵 Tocando "' + pl.name + '" no Tatame!');
-  loadEmbedPlayer(pl);
-  save();
-  renderPlaylists();
-}
-
-function toggleSpotDock(){
-  const dock = $('#tvSpotifyDock');
-  if(!dock) return;
-  dock.classList.toggle('minimized');
-}
-
-function closeSpotDock(){
-  const dock = $('#tvSpotifyDock');
-  if(dock) dock.style.display = 'none';
-  const persistentBox = $('#tvSpotifyEmbedPersistent');
-  if(persistentBox) persistentBox.innerHTML = '';
+  toast('Abrindo "' + pl.name + '" no Spotify…');
+  if(window.TV && TV.openSpotify){
+    try { window.location.href = 'spotify:' + pl.type + ':' + pl.id; return; } catch(e){}
+  }
+  window.open('https://open.spotify.com/' + pl.type + '/' + pl.id, '_blank');
 }
 
 /* aceita link completo, URI spotify: ou só o ID */
@@ -2020,10 +1835,7 @@ document.addEventListener('click', e=>{
   }
 
   /* ---- música ---- */
-  if(id === 'btnSpotDockToggle' || id === 'spotDockToggle'){ toggleSpotDock(); return; }
-  if(id === 'btnSpotDockClose' || id === 'spotDockClose'){ closeSpotDock(); return; }
   if(id === 'spotOpen'){ openSpotifyApp(); return; }
-  if(id === 'spotLogin'){ loginSpotifyFlow(); return; }
   if(id === 'spotQrMobile'){
     closeMask('maskMusic');
     openMask('maskQr', '#qrClose');

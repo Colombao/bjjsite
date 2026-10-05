@@ -575,31 +575,69 @@ export default function PlacarControl() {
     flash(`Nome de ${athlete === 'atletaA' ? 'Atleta A' : 'Atleta B'} atualizado! ✓`);
   };
 
-  // Envio de playlist do Spotify para a TV
-  const sendSpotifyPlaylist = (urlToSend, playlistName) => {
+  // Abre o app oficial do Spotify no smartphone
+  const openSpotifyAppOnPhone = () => {
+    try {
+      const a = document.createElement('a');
+      a.href = 'spotify:';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => {
+        window.open('https://open.spotify.com', '_blank');
+      }, 700);
+    } catch {
+      window.open('https://open.spotify.com', '_blank');
+    }
+    flash('Abrindo aplicativo oficial do Spotify... 🎵');
+  };
+
+  // Abre uma playlist específica direto no aplicativo do Spotify no celular
+  const openSpotifyPlaylistOnPhone = (urlToSend, playlistName) => {
     const targetUrl = urlToSend || spotifyUrl;
     if (!targetUrl.trim()) {
       flash('Cole o link da playlist do Spotify!');
       return;
     }
 
-    const plName = playlistName || 'Playlist Selecionada';
-    setCurrentPlaying({ name: plName, url: targetUrl.trim() });
+    const parsed = parseSpotifyUrl(targetUrl);
+    const plName = playlistName || 'Playlist';
 
-    send({
-      kind: 'playlist',
-      url: targetUrl.trim(),
-      name: plName,
-    });
+    if (parsed) {
+      try {
+        const a = document.createElement('a');
+        a.href = `spotify:${parsed.type}:${parsed.id}`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => {
+          window.open(targetUrl, '_blank');
+        }, 700);
+      } catch {
+        window.open(targetUrl, '_blank');
+      }
+    } else {
+      window.open(targetUrl, '_blank');
+    }
 
-    send({
-      kind: 'spotify',
-      action: 'play',
-      url: targetUrl.trim(),
-      name: plName,
-    });
+    flash(`Abrindo "${plName}" no Spotify do celular! 🎵`);
+  };
 
-    flash(`Tocando "${plName}" na TV! 🎵`);
+  // Busca músicas de treino de jiu-jitsu no app do Spotify
+  const searchSpotifyOnPhone = (query = 'jiu jitsu treino') => {
+    try {
+      const a = document.createElement('a');
+      a.href = `spotify:search:${encodeURIComponent(query)}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => {
+        window.open(`https://open.spotify.com/search/${encodeURIComponent(query)}`, '_blank');
+      }, 700);
+    } catch {
+      window.open(`https://open.spotify.com/search/${encodeURIComponent(query)}`, '_blank');
+    }
+    flash(`Buscando "${query}" no Spotify! 🎵`);
   };
 
   const on = status === 'connected';
@@ -677,62 +715,50 @@ export default function PlacarControl() {
       {/* GAVETA SPOTIFY (QUANDO ATIVA) */}
       {showSpotify && (
         <section className="spotify-drawer">
-          {/* PLAYER ATIVO TOCANDO NA TV */}
-          {currentPlaying && (
-            <div className="spotify-card spotify-card--active">
-              <div className="spotify-active-header">
-                <div className="spotify-active-badge">
-                  <span className="spotify-pulse-dot"></span>
-                  <span className="spotify-active-label">Tocando no Tatame TV</span>
-                </div>
-                <button
-                  className="spotify-stop-btn"
-                  onClick={() => setCurrentPlaying(null)}
-                  title="Fechar preview"
-                >
-                  ✕
-                </button>
-              </div>
-              <div className="spotify-active-title">{currentPlaying.name}</div>
-              {(() => {
-                const parsed = parseSpotifyUrl(currentPlaying.url);
-                if (!parsed) return null;
-                return (
-                  <iframe
-                    src={`https://open.spotify.com/embed/${parsed.type}/${parsed.id}?utm_source=generator&theme=0`}
-                    width="100%"
-                    height="80"
-                    style={{ borderRadius: '12px', border: 'none', marginTop: '6px' }}
-                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                    loading="lazy"
-                  />
-                );
-              })()}
-            </div>
-          )}
+          {/* BOTÃO PRINCIPAL DE DESTAQUE: ABRIR O APP DO SPOTIFY NO CELULAR */}
+          <div className="spotify-main-cta-card">
+            <button
+              className="btn-open-spotify-app"
+              onClick={openSpotifyAppOnPhone}
+              title="Abrir aplicativo oficial do Spotify instalado no celular"
+            >
+              <span className="spotify-cta-icon">🟢</span>
+              <span className="spotify-cta-text">Abrir App do Spotify no Celular</span>
+            </button>
+            <p className="spotify-cta-tip">
+              Abra o Spotify no seu celular e transmita via Bluetooth ou Spotify Connect (ícone de dispositivos) para a TV ou caixa de som da academia!
+            </p>
+          </div>
 
           <div className="spotify-card">
             <div className="spotify-card-head">
-              <h3>🎵 Playlists para Treino BJJ</h3>
+              <h3>🎵 Playlists Prontas para Treino BJJ</h3>
               <button className="spotify-card-close" onClick={() => setShowSpotify(false)}>✕</button>
             </div>
+            <p className="spotify-sub">Toque em qualquer playlist abaixo para abrir direto no seu app do Spotify:</p>
             <div className="preset-grid">
               {PRESET_PLAYLISTS.map((p) => (
                 <button
                   key={p.url}
-                  disabled={!on}
                   className="preset-btn"
-                  onClick={() => sendSpotifyPlaylist(p.url, p.name)}
+                  onClick={() => openSpotifyPlaylistOnPhone(p.url, p.name)}
                 >
                   <span className="preset-icon">▶</span>
                   <span className="preset-name">{p.name}</span>
                 </button>
               ))}
             </div>
+
+            <button
+              className="btn-spotify-search"
+              onClick={() => searchSpotifyOnPhone('jiu jitsu bjj treino')}
+            >
+              🔍 Buscar Mais Músicas de Jiu-Jitsu no Spotify
+            </button>
           </div>
 
           <div className="spotify-card">
-            <p className="spotify-sub">Ou cole o link de qualquer playlist do seu celular:</p>
+            <p className="spotify-sub">Ou abra qualquer link de playlist no seu celular:</p>
             <div className="spotify-custom-form">
               <input
                 type="text"
@@ -742,11 +768,10 @@ export default function PlacarControl() {
                 className="input-text"
               />
               <button
-                disabled={!on}
-                onClick={() => sendSpotifyPlaylist()}
+                onClick={() => openSpotifyPlaylistOnPhone()}
                 className="btn-send-spotify"
               >
-                Tocar ➔
+                Abrir ➔
               </button>
             </div>
           </div>

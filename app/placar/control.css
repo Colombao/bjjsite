@@ -152,59 +152,64 @@ body {
   animation: slideDownToast 0.2s ease-out;
 }
 
-/* Card de reprodução ativa */
-.spotify-card--active {
-  background: linear-gradient(135deg, rgba(29, 185, 84, 0.15), rgba(15, 23, 42, 0.9));
-  border: 1px solid rgba(74, 222, 128, 0.4);
-  border-radius: 10px;
-  padding: 12px;
-  margin-bottom: 12px;
+/* Destaque principal para abrir o Spotify no celular */
+.spotify-main-cta-card {
+  background: linear-gradient(135deg, rgba(29, 185, 84, 0.2), rgba(15, 23, 42, 0.95));
+  border: 1.5px solid #1db954;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 14px;
+  text-align: center;
 }
-.spotify-active-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 6px;
-}
-.spotify-active-badge {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.spotify-pulse-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #2ee06a;
-  box-shadow: 0 0 8px #2ee06a;
-  animation: spotPulse 1.4s infinite ease-in-out;
-}
-.spotify-active-label {
-  font-size: 0.72rem;
-  font-weight: 900;
-  color: #2ee06a;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-.spotify-active-title {
-  font-size: 0.95rem;
-  font-weight: 800;
-  color: #f8fafc;
-  margin-bottom: 4px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.spotify-stop-btn {
-  background: transparent;
+.btn-open-spotify-app {
+  width: 100%;
+  background: #1db954;
+  color: #03200e;
   border: none;
-  color: #94a3b8;
-  font-size: 1.1rem;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 0.98rem;
+  font-weight: 900;
   cursor: pointer;
-  padding: 2px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 4px 14px rgba(29, 185, 84, 0.35);
+  transition: all 0.15s;
 }
-.spotify-stop-btn:hover {
-  color: #fff;
+.btn-open-spotify-app:active {
+  transform: scale(0.97);
+  background: #1aa34a;
+}
+.spotify-cta-icon {
+  font-size: 1.2rem;
+}
+.spotify-cta-tip {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  margin: 10px auto 0;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.btn-spotify-search {
+  width: 100%;
+  margin-top: 10px;
+  background: #1e293b;
+  color: #38bdf8;
+  border: 1px dashed rgba(56, 189, 248, 0.4);
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+}
+.btn-spotify-search:active {
+  background: #0f172a;
+  border-color: #38bdf8;
 }
 
 .spotify-card-head {
