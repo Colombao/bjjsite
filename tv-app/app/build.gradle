@@ -14,12 +14,22 @@ android {
         versionName "1.9"
     }
 
+    signingConfigs {
+        release {
+            storeFile rootProject.file('keystore/tatame-tv.jks')
+            storePassword 'tatametv123'
+            keyAlias 'tatametv'
+            keyPassword 'tatametv123'
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
-            // assinado com a chave de debug: o APK instala direto na TV,
-            // sem precisar criar e guardar um keystore próprio
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
+        }
+        debug {
+            signingConfig signingConfigs.release
         }
     }
 
