@@ -132,8 +132,8 @@ export default function RemoteBridge({
         text: remoteUrl,
         width: 220,
         height: 220,
-        colorDark: '#0B0A08',
-        colorLight: '#F2EBDD',
+        colorDark: '#000000',
+        colorLight: '#ffffff',
       });
       return true;
     };
@@ -167,6 +167,13 @@ export default function RemoteBridge({
         >
           <div className="qr-modal" role="dialog" aria-modal="true" aria-label="Controle pelo celular">
             <h2>Controle pelo Celular</h2>
+            {statusTxt && (
+              <div className="pc-remote-status-wrapper">
+                <span className={`pc-remote-status ${status === 'connected' ? 'ok' : ''}`}>
+                  {statusTxt}
+                </span>
+              </div>
+            )}
             {remoteUrl ? (
               <>
                 <div className="qr-container">
@@ -185,13 +192,6 @@ export default function RemoteBridge({
               </>
             ) : (
               <p>Preparando sessão…</p>
-            )}
-            {statusTxt && (
-              <div className="pc-remote-status-wrapper">
-                <span className={`pc-remote-status ${status === 'connected' ? 'ok' : ''}`}>
-                  {statusTxt}
-                </span>
-              </div>
             )}
             <button onClick={() => setShow(false)} className="qr-close">
               {status === 'connected' ? 'Continuar' : '✕ Fechar'}

@@ -56,6 +56,14 @@ const PRESET_PLAYLISTS = [
   { name: '☀️ Reggae Tatame', url: 'https://open.spotify.com/playlist/37i9dQZF1DXbSjqWVDCKew' },
 ];
 
+const parseSpotifyUrl = (str) => {
+  const s = String(str || '').trim();
+  const m = s.match(/(playlist|album|track|artist)[/:]([A-Za-z0-9]{15,})/);
+  if (m) return { type: m[1], id: m[2] };
+  if (/^[A-Za-z0-9]{20,}$/.test(s)) return { type: 'playlist', id: s };
+  return null;
+};
+
 export default function PlacarControl() {
   const [status, setStatus] = useState('connecting'); // no-id|connecting|connected|closed|error
   const [match, setMatch] = useState(DEFAULT_STATE);
@@ -82,6 +90,7 @@ export default function PlacarControl() {
 
   // Spotify
   const [spotifyUrl, setSpotifyUrl] = useState('');
+  const [currentPlaying, setCurrentPlaying] = useState(null);
 
   const connRef = useRef(null);
   const matchRef = useRef(match);
@@ -574,14 +583,23 @@ export default function PlacarControl() {
       return;
     }
 
+    const plName = playlistName || 'Playlist Selecionada';
+    setCurrentPlaying({ name: plName, url: targetUrl.trim() });
+
+    send({
+      kind: 'playlist',
+      url: targetUrl.trim(),
+      name: plName,
+    });
+
     send({
       kind: 'spotify',
       action: 'play',
       url: targetUrl.trim(),
-      name: playlistName || 'Playlist Selecionada',
+      name: plName,
     });
 
-    flash(`Tocando "${playlistName || 'Playlist'}" na TV! 🎵`);
+    flash(`Tocando "${plName}" na TV! 🎵`);
   };
 
   const on = status === 'connected';
@@ -659,6 +677,40 @@ export default function PlacarControl() {
       {/* GAVETA SPOTIFY (QUANDO ATIVA) */}
       {showSpotify && (
         <section className="spotify-drawer">
+          {/* PLAYER ATIVO TOCANDO NA TV */}
+          {currentPlaying && (
+            <div className="spotify-card spotify-card--active">
+              <div className="spotify-active-header">
+                <div className="spotify-active-badge">
+                  <span className="spotify-pulse-dot"></span>
+                  <span className="spotify-active-label">Tocando no Tatame TV</span>
+                </div>
+                <button
+                  className="spotify-stop-btn"
+                  onClick={() => setCurrentPlaying(null)}
+                  title="Fechar preview"
+                >
+                  ✕
+                </button>
+              </div>
+              <div className="spotify-active-title">{currentPlaying.name}</div>
+              {(() => {
+                const parsed = parseSpotifyUrl(currentPlaying.url);
+                if (!parsed) return null;
+                return (
+                  <iframe
+                    src={`https://open.spotify.com/embed/${parsed.type}/${parsed.id}?utm_source=generator&theme=0`}
+                    width="100%"
+                    height="80"
+                    style={{ borderRadius: '12px', border: 'none', marginTop: '6px' }}
+                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                    loading="lazy"
+                  />
+                );
+              })()}
+            </div>
+          )}
+
           <div className="spotify-card">
             <div className="spotify-card-head">
               <h3>🎵 Playlists para Treino BJJ</h3>

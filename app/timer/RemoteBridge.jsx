@@ -92,7 +92,7 @@ export default function RemoteBridge({ modeNames = [] }) {
       qrRef.current.innerHTML = '';
       new window.QRCode(qrRef.current, {
         text: remoteUrl, width: 220, height: 220,
-        colorDark: '#0B0A08', colorLight: '#F2EBDD',
+        colorDark: '#000000', colorLight: '#ffffff',
       });
     }
   }, [show, remoteUrl]);
@@ -120,6 +120,13 @@ export default function RemoteBridge({ modeNames = [] }) {
               <button onClick={() => setShow(false)} title="Fechar">✕</button>
             </div>
             <div className="rt-qr-body">
+              {statusTxt && (
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '14px', width: '100%' }}>
+                  <span className={`rt-qr-status ${status === 'connected' ? 'rt-qr-status--ok' : ''}`}>
+                    {statusTxt}
+                  </span>
+                </div>
+              )}
               {remoteUrl ? (
                 <>
                   <div className="rt-qr-box"><div ref={qrRef} /></div>
@@ -131,11 +138,6 @@ export default function RemoteBridge({ modeNames = [] }) {
                 </>
               ) : (
                 <p>Preparando…</p>
-              )}
-              {statusTxt && (
-                <span className={`rt-qr-status ${status === 'connected' ? 'rt-qr-status--ok' : ''}`}>
-                  {statusTxt}
-                </span>
               )}
             </div>
           </div>

@@ -403,6 +403,180 @@ body.fix .cb--p,body.fix .cb--v,body.fix .cb--x{opacity:.62}
 .flash{position:fixed;inset:0;background:var(--accent);opacity:0;pointer-events:none;z-index:70;transition:opacity .12s}
 .flash.on{opacity:.28}
 
+/* QR Modal fixo sem sobreposição */
+.qr-status-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 0.8vh 0 1.6vh;
+}
+.qr-status-pill {
+  position: static !important;
+  transform: none !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.9vh 2.4vh;
+  border-radius: 99vh;
+  background: var(--panel3);
+  border: 0.18vh solid var(--line);
+  color: var(--goldhi);
+  font-size: 1.8vh;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-align: center;
+  box-shadow: 0 0.8vh 2.4vh rgba(0,0,0,0.5);
+  transition: all 0.25s;
+}
+.qr-status-pill.ok {
+  background: rgba(76,196,106,.22);
+  border-color: rgba(76,196,106,.6);
+  color: #4ade80;
+}
+.qr-code-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 0 auto;
+}
+.qr-code-box {
+  background: #ffffff !important;
+  padding: 16px !important;
+  border-radius: 14px;
+  box-shadow: 0 1.2vh 3.5vh rgba(0,0,0,0.65);
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: auto !important;
+  height: auto !important;
+  min-width: 212px;
+  min-height: 212px;
+  box-sizing: border-box;
+}
+.qr-code-box canvas, .qr-code-box img {
+  display: block !important;
+  margin: 0 auto !important;
+  width: 180px !important;
+  height: 180px !important;
+}
+
+/* ============ SPOTIFY PLAYER DOCK PERSISTENTE ============ */
+.spot-dock {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 60;
+  background: linear-gradient(180deg, rgba(17,20,29,0.97), rgba(9,11,17,0.99));
+  border-top: 0.2vh solid rgba(46,224,106,0.35);
+  box-shadow: 0 -1vh 3vh rgba(0,0,0,0.7);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.spot-dock.minimized .spot-embed-box {
+  display: none;
+}
+.spot-dock-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.8vh 2.5vw;
+  gap: 1.5vw;
+}
+.spot-dock-left {
+  display: flex;
+  align-items: center;
+  gap: 1.2vh;
+  min-width: 0;
+  flex: 1;
+}
+.spot-dock-dot {
+  width: 1.2vh;
+  height: 1.2vh;
+  border-radius: 50%;
+  background: #2ee06a;
+  box-shadow: 0 0 1vh #2ee06a;
+  animation: spotPulse 1.4s infinite ease-in-out;
+  flex-shrink: 0;
+}
+@keyframes spotPulse {
+  0% { transform: scale(0.9); opacity: 0.7; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(0.9); opacity: 0.7; }
+}
+.spot-dock-tag {
+  font-size: 1.4vh;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  color: #2ee06a;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+.spot-dock-name {
+  font-size: 1.9vh;
+  font-weight: 800;
+  color: #f1f5f9;
+  letter-spacing: 0.04em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.spot-dock-actions {
+  display: flex;
+  align-items: center;
+  gap: 1vh;
+  flex-shrink: 0;
+}
+.spot-embed-box {
+  padding: 0 2vw 1.2vh;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.spot-embed-box iframe {
+  width: 100%;
+  height: 80px;
+  border-radius: 12px;
+  border: none;
+}
+
+/* Player embutido dentro do modal maskMusic */
+.spot-modal-player {
+  background: var(--panel3);
+  border: 0.18vh solid rgba(46,224,106,0.3);
+  border-radius: 1.4vh;
+  padding: 1.4vh;
+  margin-bottom: 1.5vh;
+}
+.spot-modal-player-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1vh;
+}
+.spot-modal-tag {
+  font-size: 1.4vh;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #2ee06a;
+}
+.spot-modal-now {
+  font-size: 1.7vh;
+  font-weight: 700;
+  color: var(--bone);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.spot-modal-embed iframe {
+  width: 100%;
+  height: 152px;
+  border-radius: 12px;
+  border: none;
+}
+
 @media (max-aspect-ratio:13/10){
   .cards{flex-wrap:wrap}
   .card{flex:1 1 40%}
@@ -744,21 +918,35 @@ body.fix .cb--p,body.fix .cb--v,body.fix .cb--x{opacity:.62}
 </div>
 
 <div class="mask" id="maskMusic">
-  <div class="modal">
-    <h2>♫ Música</h2>
-    <div class="modal-actions" style="margin-top:0">
-      <button class="btn btn--spot btn--big" id="spotOpen">▶ Abrir App Spotify TV</button>
-      <button class="btn btn--gold" id="spotLogin">🔑 Entrar no Spotify</button>
-      <button class="btn" id="spotQrMobile">📱 Enviar do Celular</button>
+  <div class="modal" style="max-width:88vw;width:660px">
+    <h2>♫ Música no Tatame</h2>
+    
+    <!-- Player Ativo Integrado dentro do modal -->
+    <div class="spot-modal-player" id="spotModalPlayer">
+      <div class="spot-modal-player-head">
+        <span class="spot-modal-tag">PLAYER INTEGRADO NA TV</span>
+        <span class="spot-modal-now" id="spotNowTitle">Selecione uma playlist para tocar direto aqui</span>
+      </div>
+      <div id="spotModalEmbed" class="spot-modal-embed">
+        <p class="modal-note" style="margin:2vh auto;color:var(--mute)">Nenhuma música tocando no momento. Escolha abaixo:</p>
+      </div>
     </div>
-    <p class="modal-note">
-      Faça login na sua conta para tocar músicas completas. Ou escolha uma das playlists de treino abaixo:
+
+    <div class="modal-actions" style="margin-top:1.2vh">
+      <button class="btn btn--spot" id="plAdd">＋ Adicionar Playlist por Link</button>
+      <button class="btn btn--gold" id="spotLogin">🔑 Entrar no Spotify</button>
+      <button class="btn btn--ghost" id="spotOpen">↗ Abrir App Spotify TV</button>
+      <button class="btn" id="spotQrMobile">📱 Celular & Spotify</button>
+    </div>
+
+    <p class="modal-note" style="margin:1vh auto 0.6vh">
+      Toque em qualquer playlist abaixo para tocar direto dentro da TV (sem sair do app):
     </p>
+
     <div class="pl-list" id="plList"></div>
-    <div id="tvSpotifyEmbedContainer" style="margin-top:1.4vh;display:none;width:100%"></div>
+
     <div class="modal-actions">
-      <button class="btn" id="plAdd">＋ Salvar atalho</button>
-      <button class="btn" id="plClose">✕ Fechar</button>
+      <button class="btn btn--gold" id="plClose">✕ Fechar</button>
     </div>
   </div>
 </div>
@@ -776,15 +964,25 @@ body.fix .cb--p,body.fix .cb--v,body.fix .cb--x{opacity:.62}
 <div class="mask" id="maskQr">
   <div class="modal" style="max-width:88vw;width:580px">
     <h2>📱 Celular & Voz</h2>
-    <div id="qrCodeTarget" style="display:flex;align-items:center;justify-content:center;margin:1.4vh auto;background:#f2ebdd;padding:1.4vh;border-radius:1.2vh;width:24vh;height:24vh;box-sizing:border-box"></div>
-    <div id="qrStatusPill" class="toast on" style="position:static;transform:none;opacity:1;pointer-events:auto;margin:1vh auto 1.4vh;display:inline-block;font-size:1.8vh">Iniciando conexão…</div>
-    <p class="modal-note" style="text-align:left;line-height:1.45;font-size:1.7vh">
+
+    <!-- 1. MENSAGEM DE STATUS NO TOPO, CLARA E TOTALMENTE LIVRE DE SOBREPOSIÇÃO -->
+    <div class="qr-status-row">
+      <span id="qrStatusPill" class="qr-status-pill">Aguardando celular… escaneie o QR code</span>
+    </div>
+
+    <!-- 2. QR CODE COM FUNDO BRANCO E QUIET ZONE ISOLADA -->
+    <div class="qr-code-wrap">
+      <div id="qrCodeTarget" class="qr-code-box"></div>
+    </div>
+
+    <p class="modal-note" style="text-align:center;line-height:1.45;font-size:1.7vh;margin:1.4vh auto 0">
       • Aponte a câmera do celular para o QR Code acima.<br>
-      • <strong>Pontue por voz:</strong> Fale <em>"dois pontos para o lutador A"</em>, <em>"retirar 2 pontos do A"</em>, <em>"desvantagem para o lutador A"</em>, <em>"punição para o B"</em>.<br>
+      • <strong>Pontue por voz:</strong> Fale <em>"dois pontos azul"</em>, <em>"queda"</em>, <em>"raspagem"</em>, <em>"vantagem"</em>...<br>
       • Ou use os botões rápidos CBJJ (+2, +3, +4, +V, +P) na tela do celular.<br>
       • Você também pode enviar qualquer playlist do Spotify do celular para a TV!
     </p>
-    <div class="modal-actions">
+
+    <div class="modal-actions" style="margin-top:2vh">
       <button class="btn btn--gold" id="qrClose">✕ Fechar</button>
     </div>
   </div>
@@ -801,9 +999,24 @@ body.fix .cb--p,body.fix .cb--v,body.fix .cb--x{opacity:.62}
   </div>
 </div>
 
-
 <div class="flash" id="flash"></div>
 <div class="toast" id="toast"></div>
+
+<!-- DOCK / MINI-PLAYER PERSISTENTE DO SPOTIFY NA TV -->
+<div id="tvSpotifyDock" class="spot-dock" style="display:none">
+  <div class="spot-dock-bar">
+    <div class="spot-dock-left">
+      <span class="spot-dock-dot"></span>
+      <span class="spot-dock-tag">SPOTIFY TATAME</span>
+      <span class="spot-dock-name" id="spotDockName">Nenhuma playlist selecionada</span>
+    </div>
+    <div class="spot-dock-actions">
+      <button class="btn btn--xs btn--spot" id="btnSpotDockToggle">↕ Alternar Player</button>
+      <button class="btn btn--xs" id="btnSpotDockClose" title="Ocultar player">✕ Fechar</button>
+    </div>
+  </div>
+  <div id="tvSpotifyEmbedPersistent" class="spot-embed-box"></div>
+</div>
 
 <script>
 'use strict';
@@ -1362,22 +1575,22 @@ function renderPlacar(){
 }
 
 /* ============================================================
-   8. SPOTIFY (mesma API de embed usada no /timer do site)
-   ============================================================ */
-/* ============================================================
-   8. SPOTIFY — entrega para o app do Spotify da TV
-      Não existe player embutido: sem login o embed só toca 30s e ainda
-      pesa na WebView. Aqui a playlist vai para o app nativo, que toca
-      completa e continua tocando por trás do timer.
+   8. SPOTIFY — PLAYER INTEGRADO DENTRO DO APP (TATAME TV)
    ============================================================ */
 
-/* abre o app do Spotify da TV ou o web player */
+let currentSpotifyPl = null;
+
+/* abre o app do Spotify da TV nativo se o usuário pedir explicitamente */
 function openSpotifyApp(){
-  if(window.TV && TV.openSpotify){ toast('Abrindo o Spotify…'); TV.openSpotify(); return; }
+  if(window.TV && TV.openSpotify){
+    toast('Abrindo o app nativo do Spotify TV…');
+    TV.openSpotify();
+    return;
+  }
   window.open('https://open.spotify.com', '_blank');
 }
 
-/* login na conta do Spotify (para tocar músicas completas) */
+/* login na conta do Spotify (para tocar faixas completas) */
 function loginSpotifyFlow(){
   const url = 'https://accounts.spotify.com/pt-BR/login';
   if(window.TV && TV.openBrowser){
@@ -1388,21 +1601,49 @@ function loginSpotifyFlow(){
   toast('Abrindo login do Spotify…');
 }
 
-/* carrega player embutido na TV */
+/* carrega player integrado e persistente na TV */
 function loadEmbedPlayer(pl){
-  const box = $('#tvSpotifyEmbedContainer');
-  if(!box) return;
-  box.style.display = 'block';
-  box.innerHTML = '<iframe style="border-radius:12px;border:none" src="https://open.spotify.com/embed/' + pl.type + '/' + pl.id + '?utm_source=generator&theme=0" width="100%" height="152" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>';
+  if(!pl) return;
+  currentSpotifyPl = pl;
+
+  const dock = $('#tvSpotifyDock');
+  const dockName = $('#spotDockName');
+  const persistentBox = $('#tvSpotifyEmbedPersistent');
+  const modalBox = $('#spotModalEmbed');
+  const modalNow = $('#spotNowTitle');
+
+  if(dockName) dockName.textContent = pl.name;
+  if(modalNow) modalNow.textContent = 'Tocando: ' + pl.name;
+
+  const embedUrl = 'https://open.spotify.com/embed/' + pl.type + '/' + pl.id + '?utm_source=generator&theme=0';
+  const iframeHtml = '<iframe src="' + embedUrl + '" width="100%" height="80" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>';
+  const modalIframeHtml = '<iframe src="' + embedUrl + '" width="100%" height="152" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>';
+
+  if(persistentBox) persistentBox.innerHTML = iframeHtml;
+  if(modalBox) modalBox.innerHTML = modalIframeHtml;
+  if(dock) dock.style.display = 'block';
 }
 
-/* abre playlist: toca no player embutido e também abre no app Spotify se disponível */
+/* abre playlist: toca no player embutido integrado da TV sem sair do app */
 function openSpotifyPlaylist(pl){
-  toast('Tocando "' + pl.name + '"…');
+  if(!pl) return;
+  toast('🎵 Tocando "' + pl.name + '" no Tatame!');
   loadEmbedPlayer(pl);
-  if(window.TV && TV.openSpotify){
-    try { window.location.href = 'spotify:' + pl.type + ':' + pl.id; } catch(e){}
-  }
+  save();
+  renderPlaylists();
+}
+
+function toggleSpotDock(){
+  const dock = $('#tvSpotifyDock');
+  if(!dock) return;
+  dock.classList.toggle('minimized');
+}
+
+function closeSpotDock(){
+  const dock = $('#tvSpotifyDock');
+  if(dock) dock.style.display = 'none';
+  const persistentBox = $('#tvSpotifyEmbedPersistent');
+  if(persistentBox) persistentBox.innerHTML = '';
 }
 
 /* aceita link completo, URI spotify: ou só o ID */
@@ -1440,14 +1681,20 @@ function initQrBridge(onReady){
   };
 
   const statusPill = $('#qrStatusPill');
-  if(statusPill) statusPill.textContent = 'Carregando conexão…';
+  if(statusPill){
+    statusPill.textContent = 'Carregando conexão…';
+    statusPill.classList.remove('ok');
+  }
 
   Promise.all([loadScript(SCRIPTS.peer), loadScript(SCRIPTS.qr)]).then(()=>{
     qrSessionId = 'hshk-tv-' + Math.random().toString(36).slice(2, 9);
     try {
       qrPeer = new window.Peer(qrSessionId);
     } catch(err) {
-      if(statusPill) statusPill.textContent = 'Erro ao iniciar WebRTC';
+      if(statusPill){
+        statusPill.textContent = 'Erro ao iniciar WebRTC';
+        statusPill.classList.remove('ok');
+      }
       return;
     }
 
@@ -1456,17 +1703,21 @@ function initQrBridge(onReady){
         ? location.origin
         : (localStorage.getItem('tatame_remote_host') || 'https://bjjsite.vercel.app');
       qrRemoteUrl = base + '/placar/control#' + qrSessionId;
-      if(statusPill) statusPill.textContent = 'Aguardando celular… escaneie o QR code';
+      if(statusPill){
+        statusPill.textContent = 'Aguardando celular… escaneie o QR code';
+        statusPill.classList.remove('ok');
+      }
 
       const target = $('#qrCodeTarget');
       if(target && window.QRCode){
         target.innerHTML = '';
         new window.QRCode(target, {
           text: qrRemoteUrl,
-          width: 200,
-          height: 200,
-          colorDark: '#0B0A08',
-          colorLight: '#F2EBDD',
+          width: 180,
+          height: 180,
+          colorDark: '#000000',
+          colorLight: '#ffffff',
+          correctLevel: window.QRCode.CorrectLevel.M
         });
       }
       if(onReady) onReady();
@@ -1476,8 +1727,8 @@ function initQrBridge(onReady){
       qrConns.push(conn);
       conn.on('open', ()=>{
         if(statusPill){
-          statusPill.textContent = '✓ Celular conectado! Pronto para pontuar por voz ou botões';
-          statusPill.style.color = 'var(--go)';
+          statusPill.textContent = '✓ Celular conectado com sucesso!';
+          statusPill.classList.add('ok');
         }
         toast('✓ Celular conectado ao placar!');
         conn.send({
@@ -1496,7 +1747,7 @@ function initQrBridge(onReady){
         if(!msg || typeof msg !== 'object') return;
         if(msg.kind === 'ctrl'){
           handleRemoteCtrl(msg);
-        } else if(msg.kind === 'playlist' && msg.url){
+        } else if((msg.kind === 'playlist' || msg.kind === 'spotify') && msg.url){
           const parsed = parseSpotify(msg.url);
           if(parsed){
             const name = (msg.name || '').trim() || ('Playlist ' + (S.playlists.length + 1));
@@ -1512,7 +1763,7 @@ function initQrBridge(onReady){
         qrConns = qrConns.filter(c => c !== conn);
         if(!qrConns.length && statusPill){
           statusPill.textContent = 'Aguardando celular…';
-          statusPill.style.color = '';
+          statusPill.classList.remove('ok');
         }
       });
     });
@@ -1769,6 +2020,8 @@ document.addEventListener('click', e=>{
   }
 
   /* ---- música ---- */
+  if(id === 'btnSpotDockToggle' || id === 'spotDockToggle'){ toggleSpotDock(); return; }
+  if(id === 'btnSpotDockClose' || id === 'spotDockClose'){ closeSpotDock(); return; }
   if(id === 'spotOpen'){ openSpotifyApp(); return; }
   if(id === 'spotLogin'){ loginSpotifyFlow(); return; }
   if(id === 'spotQrMobile'){

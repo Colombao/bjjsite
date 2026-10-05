@@ -152,6 +152,61 @@ body {
   animation: slideDownToast 0.2s ease-out;
 }
 
+/* Card de reprodução ativa */
+.spotify-card--active {
+  background: linear-gradient(135deg, rgba(29, 185, 84, 0.15), rgba(15, 23, 42, 0.9));
+  border: 1px solid rgba(74, 222, 128, 0.4);
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+.spotify-active-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.spotify-active-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.spotify-pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #2ee06a;
+  box-shadow: 0 0 8px #2ee06a;
+  animation: spotPulse 1.4s infinite ease-in-out;
+}
+.spotify-active-label {
+  font-size: 0.72rem;
+  font-weight: 900;
+  color: #2ee06a;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.spotify-active-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #f8fafc;
+  margin-bottom: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.spotify-stop-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 2px 6px;
+}
+.spotify-stop-btn:hover {
+  color: #fff;
+}
+
 .spotify-card-head {
   display: flex;
   align-items: center;
